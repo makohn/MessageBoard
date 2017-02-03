@@ -1,16 +1,17 @@
-package client;
+package de.htwsaar.client.client;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
 import java.util.Scanner;
 
-import api.MessageBoard;
+import de.htwsaar.remote.remote.MessageBoard;
 
 public class Main {
 	
 	public static void main(String[] args) {
 		try {
+
 			Scanner s = new Scanner(System.in);
 			System.out.print("Port: ");
 			int port = s.nextInt();

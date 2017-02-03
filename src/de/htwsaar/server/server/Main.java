@@ -1,10 +1,10 @@
-package server;
+package de.htwsaar.server.server;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
-import api.MessageBoard;
+import de.htwsaar.remote.remote.MessageBoard;
 
 public class Main {
 
