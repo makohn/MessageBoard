@@ -1,4 +1,4 @@
-package de.htwsaar.client.gui;/**
+package de.htwsaar.wirth.client.gui;/**
  * Created by stefanschloesser1 on 03.02.17.
  */
 

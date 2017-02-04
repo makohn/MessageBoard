@@ -1,4 +1,4 @@
-package de.htwsaar.remote.remoteModel.impls;
+package de.htwsaar.wirth.remote.model;
 
 import java.io.Serializable;
 import java.rmi.server.UID;
@@ -14,7 +14,7 @@ public class MessageImpl implements Serializable {
     private String author;
     private String section;
 
-    public MessageImpl (String msg, LocalDateTime time,String author,String section){
+    public MessageImpl (String msg, LocalDateTime time,String author,String section) {
         this.id = new UID();
         this.msg = msg;
         this.author = author;
@@ -32,28 +32,28 @@ public class MessageImpl implements Serializable {
         time = LocalDateTime.now();
     }
 
-    public LocalDateTime getTime()
-    {
+    public LocalDateTime getTime() {
         return time;
     }
 
-    public UID getID()
-    {
+    public UID getID() {
         return id;
     }
 
-    public String getAuthor(){
+    public String getAuthor() {
         return author;
     }
-    public String getSection(){
+    
+    public String getSection() {
         return author;
     }
-    public void setSection(String section){
+    
+    public void setSection(String section) {
         this.section = section;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuffer sb = new StringBuffer();
 
         sb.append("ID : ").append(author).append("\n");

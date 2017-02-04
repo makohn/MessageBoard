@@ -1,4 +1,10 @@
 #
+# Project specific excludes
+#
+
+tomcat
+
+#
 # Default excludes
 #
 
@@ -27,7 +33,6 @@ target/
 *.iws
 *.ipr
 .idea/
-out
 
 # eclipse project file
 .settings/
@@ -42,7 +47,6 @@ dist/
 nbdist/
 nbactions.xml
 nb-configuration.xml
-
 
 # OS
 .DS_Store
