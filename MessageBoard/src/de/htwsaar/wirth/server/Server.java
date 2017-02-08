@@ -1,7 +1,5 @@
 package de.htwsaar.wirth.server;
 
-import de.htwsaar.wirth.remote.MessageBoard;
-import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 
 import java.rmi.AlreadyBoundException;

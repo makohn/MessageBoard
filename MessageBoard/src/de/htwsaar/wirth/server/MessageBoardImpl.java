@@ -38,17 +38,29 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		
 	}
 
+
 	public void notifyServerEdit(Message msg) throws RemoteException {
 		// TODO Auto-generated method stub
 		
 	}
 
+
+	/**
+	 *publish is capsuled in the ParentServer-Interface and in the MessageBoard-Interface.
+	 * This method  
+	 * @param msg
+	 */
 	public void publish(Message msg) {
 		// TODO Auto-generated method stub
 		
 	}
 
-
+	/**
+	 * registerServer is capsuled in the ParentServer-Interface. This method is called from a child-server to bind it's
+	 * self to it's parent. The register is important for the notify process
+	 * @param childServer
+	 * @throws RemoteException
+	 */
 	public void registerServer(Notifiable childServer) throws RemoteException {
 		//TODO
 	}
@@ -121,28 +133,59 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		return null;
 	}
 
-
+	/**
+	 * registerClient is capsuled in the MessageBoard-Interface .
+	 * This method can be called by a client to connect his self by his group server.
+	 * @param client
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws RemoteException
+	 */
 	public UUID registerClient(Notifiable client, String username, String password) throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
-
+	/**
+	 * notifyNew is capsuled in the Notifyable-Interface. Every time a new message is transmitted to the server
+	 * either trough a client or the parent, the notifyNew-method notifies all components which implements the
+	 * Notify-Interface.
+	 * @param msg
+	 * @throws RemoteException
+	 */
 	public void notifyNew(Message msg) throws RemoteException {
 		
 	}
 
-
+	/**
+	 * notifyDelete is capsuled in the Notifyable-Interface. Every time a message will be deleted on the server
+	 * trough a admin, the notifyNew-method notifies all components which implements the
+	 * Notify-Interface.
+	 * @param msg
+	 * @throws RemoteException
+	 */
 	public void notifyDelete(Message msg) throws RemoteException {
 
 	}
 
 
+	/**
+	 * notifyEdit is capsuled in the Notifyable-Interface. Every time a message will be edited on the server
+	 * trough a admin or client, the notifyNew-method notifies all components which implements the
+	 * Notify-Interface.
+	 * @param msg
+	 * @throws RemoteException
+	 */
 	public void notifyEdit(Message msg) throws RemoteException {
 
 	}
 
+	/**
+	 * addParent will only be called by the server.class to bind the parent to this server.
+	 * @param parent
+	 */
 	protected void addParent(ParentServer parent){
 			this.parent = parent;
 	}
