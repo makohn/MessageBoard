@@ -3,7 +3,6 @@ package de.htwsaar.wirth.remote.model;
 import javax.persistence.*;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.Date;
 
@@ -42,7 +41,7 @@ public class MessageImpl implements Serializable, Message {
      * @param isPublic
      */
     public MessageImpl(String msg, String author, String section, String group, boolean isPublic) {
-        this.id = new UUID();
+        this.id =  UUID.randomUUID();
         this.msg = msg;
         this.createdAt = new Date();
         this.author = author;
