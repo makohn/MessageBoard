@@ -2,9 +2,12 @@ package de.htwsaar.wirth.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
@@ -24,9 +27,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 	public MessageBoardImpl(String groupName) throws RemoteException {
 		this.groupName = groupName;
-		clientList = Collections.synchronizedList(new ArrayList());
-		serverList = Collections.synchronizedList(new ArrayList());
-		sessions = new ConcurrentHashMap();
+		clientList = Collections.synchronizedList(new ArrayList<Notifiable>());
+		serverList = Collections.synchronizedList(new ArrayList<Notifiable>());
+		sessions = new ConcurrentHashMap<String, UUID>();
 
 	}
 
