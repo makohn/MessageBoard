@@ -1,6 +1,7 @@
 package de.htwsaar.wirth.remote.model.interfaces;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -8,17 +9,23 @@ import java.util.UUID;
  */
 public interface Message
 {
+    public UUID getID() ;
+
+    public String getGroup();
+
+    public boolean isPublic();
+
+    public boolean isPublished();
+
     public String getMessage();
-
-    public void changeMessage(String msg);
-
-
-
-    public UUID getID();
 
     public String getAuthor();
 
-    public String getSection();
+    public Date getCreatedAt();
 
-    public void setSection(String section);
+    public Date getModifiedAt();
+
+    public void setPublished(boolean published);
+
+    public void changeMessage(String msg);
 }

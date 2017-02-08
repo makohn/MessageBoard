@@ -23,12 +23,9 @@ public class MessageImpl implements Serializable, Message {
     @Column
     private String author;
     @Column
-    private String section;
-    @Column
     private String group;
     @Column
     private boolean isPublic;
-
     @Column
     private boolean isPublished;
 
@@ -45,7 +42,6 @@ public class MessageImpl implements Serializable, Message {
         this.msg = msg;
         this.createdAt = new Date();
         this.author = author;
-        this.section = section;
         this.group = group;
         this.isPublic = isPublic;
     }
@@ -66,17 +62,9 @@ public class MessageImpl implements Serializable, Message {
         return author;
     }
 
-    public String getSection() {
-        return author;
-    }
-
     public Date getCreatedAt() { return createdAt; }
 
     public Date getModifiedAt() { return modifiedAt; }
-
-    public void setSection(String section) {
-        this.section = section;
-    }
 
     public void setPublished(boolean published) { isPublished = published; }
 
@@ -94,7 +82,6 @@ public class MessageImpl implements Serializable, Message {
                 ", createdAt=" + createdAt +
                 ", modifiedAt=" + modifiedAt +
                 ", author='" + author + '\'' +
-                ", section='" + section + '\'' +
                 ", group='" + group + '\'' +
                 ", isPublic=" + isPublic +
                 ", isPublished=" + isPublished +
