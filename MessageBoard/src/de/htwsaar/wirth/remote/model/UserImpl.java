@@ -16,6 +16,7 @@ import java.util.Date;
 public class UserImpl implements User {
     @Column
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column(unique = true)
     private String username;
@@ -40,7 +41,6 @@ public class UserImpl implements User {
      * @param isGroupLeader
      */
     public UserImpl(String username, String firstName, String lastName, String password, boolean isGroupLeader) {
-        // this.id = new UID(); auto increment von der Datenbank beim ersten speichern eines Nutzers sinnvoll?
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
