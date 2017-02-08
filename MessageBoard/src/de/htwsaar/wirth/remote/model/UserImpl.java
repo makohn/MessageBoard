@@ -2,22 +2,33 @@ package de.htwsaar.wirth.remote.model;
 
 import de.htwsaar.wirth.remote.model.interfaces.User;
 
+import javax.persistence.*;
 import java.rmi.server.UID;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Implements User-Interface
  * Created by stefanschloesser1 on 03.02.17.
- * Edited by oliverseibert on 07.02.17
+ * Edited by oliverseibert on 08.02.17
  */
+@Entity
+@Table(name="users")
 public class UserImpl implements User {
+    @Column
     private UID id;
+    @Column
     private String username;
+    @Column
     private String firstName;
+    @Column
     private String lastName;
+    @Column
     private String password;
+    @Column
     private boolean isGroupLeader;
-    private LocalDateTime createdAt;
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
 
     /**
      * Constructor
@@ -28,7 +39,7 @@ public class UserImpl implements User {
      * @param isGroupLeader
      * @param createdAt
      */
-    public UserImpl(String username, String firstName, String lastName, String password, boolean isGroupLeader, LocalDateTime createdAt) {
+    public UserImpl(String username, String firstName, String lastName, String password, boolean isGroupLeader, Date createdAt) {
         this.id = new UID();
         this.username = username;
         this.firstName = firstName;
@@ -52,7 +63,7 @@ public class UserImpl implements User {
 
     public boolean isGroupLeader() { return isGroupLeader; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public Date getCreatedAt() { return createdAt; }
 
     public void setFirstName(String firstName) { this.firstName = firstName; }
 

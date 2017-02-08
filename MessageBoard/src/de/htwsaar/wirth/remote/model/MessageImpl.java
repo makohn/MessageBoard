@@ -1,65 +1,109 @@
 package de.htwsaar.wirth.remote.model;
 
+import de.htwsaar.wirth.remote.model.interfaces.Message;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.rmi.server.UID;
-import java.time.LocalDateTime;
+import java.util.Date;
 
-public class MessageImpl implements Serializable {
+/**
+ * Implements Message-Interface
+ * Created by stefanschloesser1 on 03.02.17.
+ * Edited by oliverseibert on 08.02.17
+ */
+@Entity
+@Table(name="messages")
+public class MessageImpl implements Serializable, Message {
 
     private static final long serialVersionUID = -5415774293797687291L;
-
+    @Column
     private UID id;
+    @Column
     private String msg;
-    private LocalDateTime time;
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modifiedAt;
+    @Column
     private String author;
+    @Column
     private String section;
+    @Column
+    private String group;
+    @Column
+    private boolean isPublic;
 
-    public MessageImpl (String msg, LocalDateTime time,String author,String section) {
+    @Column
+    private boolean isPublished;
+
+    /**
+     * Constructor
+     * @param msg
+     * @param author
+     * @param section
+     * @param group
+     * @param isPublic
+     */
+    public MessageImpl(String msg, String author, String section, String group, boolean isPublic) {
         this.id = new UID();
         this.msg = msg;
+        this.createdAt = new Date();
         this.author = author;
         this.section = section;
-        this.time = time;
-
-    }
-
-    public String getMessage(){
-        return msg;
-    }
-
-    public void changeMessage(String msg){
-        this.msg = msg;
-        time = LocalDateTime.now();
-    }
-
-    public LocalDateTime getTime() {
-        return time;
+        this.group = group;
+        this.isPublic = isPublic;
     }
 
     public UID getID() {
         return id;
     }
 
+    public String getGroup() { return group; }
+
+    public boolean isPublic() { return isPublic; }
+
+    public boolean isPublished() { return isPublished; }
+
+    public String getMessage(){ return msg; }
+
     public String getAuthor() {
         return author;
     }
-    
+
     public String getSection() {
         return author;
     }
+
+    public Date getCreatedAt() { return createdAt; }
+
+    public Date getModifiedAt() { return modifiedAt; }
     
     public void setSection(String section) {
         this.section = section;
     }
 
+    public void setPublished(boolean published) { isPublished = published; }
+
+    public void changeMessage(String msg){
+        this.msg = msg;
+        modifiedAt = new Date();
+    }
+
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append("ID : ").append(author).append("\n");
-        sb.append("Abteilung :").append(section).append("\n");
-        sb.append("Time: ").append(time).append("\n");
-        sb.append(msg);
-        return sb.toString();
+        return "MessageImpl{" +
+                "id=" + id +
+                ", msg='" + msg + '\'' +
+                ", createdAt=" + createdAt +
+                ", modifiedAt=" + modifiedAt +
+                ", author='" + author + '\'' +
+                ", section='" + section + '\'' +
+                ", group='" + group + '\'' +
+                ", isPublic=" + isPublic +
+                ", isPublished=" + isPublished +
+                '}';
     }
 }
