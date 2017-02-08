@@ -1,5 +1,7 @@
 package de.htwsaar.wirth.server.util;
 
-public class Command {
+import java.rmi.RemoteException;
 
+public interface Command {
+	public void execute() throws RemoteException;
 }
