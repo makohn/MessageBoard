@@ -3,12 +3,12 @@ package de.htwsaar.wirth.client;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-import de.htwsaar.wirth.remote.NotifiableClient;
+import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
-public class ClientImpl extends UnicastRemoteObject implements NotifiableClient {
+public class Impl extends UnicastRemoteObject implements Notifiable {
 
-	protected ClientImpl() throws RemoteException {
+	protected Impl() throws RemoteException {
 		// TODO Auto-generated constructor stub
 	}
 

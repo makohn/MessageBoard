@@ -2,18 +2,30 @@ package de.htwsaar.wirth.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import de.htwsaar.wirth.remote.MessageBoard;
-import de.htwsaar.wirth.remote.NotifiableClient;
-import de.htwsaar.wirth.remote.NotifiableServer;
+import de.htwsaar.wirth.remote.Notifiable;
+import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
-import de.htwsaar.wirth.remote.model.interfaces.User;
 
-public class MessageBoardImpl extends UnicastRemoteObject implements MessageBoard, NotifiableServer {
+public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
 
-	protected MessageBoardImpl() throws RemoteException {
-		// TODO Auto-generated constructor stub
+	private String groupName;
+	private List<Notifiable> serverList;
+	private List<Notifiable> clientList;
+	private ParentServer parent;
+
+	private Map<String,UUID> sessions;
+
+	public MessageBoardImpl(String groupName) throws RemoteException {
+		this.groupName = groupName;
+		clientList = Collections.synchronizedList(new ArrayList<>());
+		serverList = Collections.synchronizedList(new ArrayList<>());
+		sessions = new ConcurrentHashMap<>();
+
 	}
 
 	private static final long serialVersionUID = -4613549994529764225L;
@@ -33,24 +45,30 @@ public class MessageBoardImpl extends UnicastRemoteObject implements MessageBoar
 		
 	}
 
-	public void newMessage(Message msg, User user) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public void registerServer(Notifiable childServer) throws RemoteException {
+		//TODO
 	}
 
-	public void deleteMessage(Message msg, User user) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+
+	@Override
+	public void newMessage(String msg, String username, UUID token) throws RemoteException {
+
 	}
 
-	public void editMessage(Message msg, User user) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException {
+
 	}
 
-	public void publish(Message msg, User user) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public void editMessage(Message msg, String username, UUID token) throws RemoteException {
+
+	}
+
+	@Override
+	public void publish(Message msg, String username, UUID token) throws RemoteException {
+
 	}
 
 	public List<Message> getMessages() throws RemoteException {
@@ -58,15 +76,25 @@ public class MessageBoardImpl extends UnicastRemoteObject implements MessageBoar
 		return null;
 	}
 
-	public void register(NotifiableClient client) throws RemoteException {
+	@Override
+	public UUID registerClient(Notifiable client, String username, String password) throws RemoteException {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void notifyNew(Message msg) throws RemoteException {
 		
 	}
 
-	public void register(NotifiableServer server) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public void notifyDelete(Message msg) throws RemoteException {
+
 	}
 
-	
+	@Override
+	public void notifyEdit(Message msg) throws RemoteException {
+
+	}
 }

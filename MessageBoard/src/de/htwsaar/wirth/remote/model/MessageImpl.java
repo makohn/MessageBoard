@@ -1,25 +1,27 @@
 package de.htwsaar.wirth.remote.model;
 
+import de.htwsaar.wirth.remote.model.interfaces.Message;
+
 import java.io.Serializable;
-import java.rmi.server.UID;
+import java.util.UUID;
 import java.time.LocalDateTime;
 
-public class MessageImpl implements Serializable {
+public class MessageImpl implements Serializable,Message {
 
     private static final long serialVersionUID = -5415774293797687291L;
 
-    private UID id;
+    private UUID id;
     private String msg;
     private LocalDateTime time;
     private String author;
     private String section;
 
-    public MessageImpl (String msg, LocalDateTime time,String author,String section) {
-        this.id = new UID();
+    public MessageImpl (String msg,String author,String section) {
+        this.id = UUID.randomUUID();
         this.msg = msg;
         this.author = author;
         this.section = section;
-        this.time = time;
+        this.time = LocalDateTime.now();
 
     }
 
@@ -36,7 +38,7 @@ public class MessageImpl implements Serializable {
         return time;
     }
 
-    public UID getID() {
+    public UUID getID() {
         return id;
     }
 
@@ -50,6 +52,15 @@ public class MessageImpl implements Serializable {
     
     public void setSection(String section) {
         this.section = section;
+    }
+
+
+    public boolean equals(Object o){
+        if(o instanceof Message){
+            Message m = (Message) o;
+            return this.getID().equals(m.getID());
+        }
+        return false;
     }
 
     @Override

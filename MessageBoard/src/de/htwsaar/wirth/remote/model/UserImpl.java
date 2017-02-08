@@ -2,7 +2,6 @@ package de.htwsaar.wirth.remote.model;
 
 import de.htwsaar.wirth.remote.model.interfaces.User;
 
-import java.rmi.server.UID;
 import java.time.LocalDateTime;
 
 /**
@@ -10,8 +9,8 @@ import java.time.LocalDateTime;
  * Created by stefanschloesser1 on 03.02.17.
  * Edited by oliverseibert on 07.02.17
  */
-public class UserImpl implements User {
-    private UID id;
+public class UserImpl {
+    private long id;
     private String username;
     private String firstName;
     private String lastName;
@@ -29,7 +28,7 @@ public class UserImpl implements User {
      * @param createdAt
      */
     public UserImpl(String username, String firstName, String lastName, String password, boolean isGroupLeader, LocalDateTime createdAt) {
-        this.id = new UID();
+        // this.id = new UID(); auto increment von der Datenbank beim ersten speichern eines Nutzers sinnvoll?
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -38,7 +37,7 @@ public class UserImpl implements User {
         this.createdAt = createdAt;
     }
 
-    public UID getID() {
+    public long getID() {
         return id;
     }
 
