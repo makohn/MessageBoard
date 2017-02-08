@@ -3,6 +3,7 @@ package de.htwsaar.wirth.remote.model;
 import javax.persistence.*;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.Date;
 
@@ -84,6 +85,7 @@ public class MessageImpl implements Serializable, Message {
         this.msg = msg;
         modifiedAt = new Date();
     }
+
 
     @Override
     public String toString() {

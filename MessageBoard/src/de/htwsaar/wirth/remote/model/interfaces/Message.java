@@ -12,7 +12,7 @@ public interface Message
 
     public void changeMessage(String msg);
 
-    public LocalDateTime getTime();
+
 
     public UUID getID();
 
