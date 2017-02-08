@@ -44,7 +44,7 @@ public class Server {
         Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
         ParentServer parent = (ParentServer) parentRegistry.lookup(BIND_KEY);
         parent.registerServer(messageBoard);
-        messageBoard.addParent(parent);
+        messageBoard.setParent(parent);
     }
 
 }
