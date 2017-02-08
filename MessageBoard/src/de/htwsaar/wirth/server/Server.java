@@ -1,5 +1,7 @@
 package de.htwsaar.wirth.server;
 
+import de.htwsaar.wirth.remote.MessageBoard;
+import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 
 import java.rmi.AlreadyBoundException;
@@ -9,13 +11,13 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 
 /**
- * Created by stefanschloesser1 on 08.02.17.
+ * A Server binds
  */
 public class Server {
     private String groupName;
-    private int portParent;
+    private int parentPort;
     private int localPort;
-    private String hostParent;
+    private String parentHost;
     private MessageBoardImpl messageBoard;
 
     public Server(String groupName, int localPort) throws RemoteException, AlreadyBoundException, NotBoundException {
@@ -26,24 +28,24 @@ public class Server {
         createRegistry();
     }
 
-    public Server(String groupName, int localPort, String hostParent, int portParent) throws RemoteException, NotBoundException, AlreadyBoundException {
+    public Server(String groupName, int localPort, String parentHost, int parentPort) throws RemoteException, NotBoundException, AlreadyBoundException {
         this(groupName, localPort);
-        this.hostParent = hostParent;
-        this.portParent = portParent;
+        this.parentHost = parentHost;
+        this.parentPort = parentPort;
         bindToParent();
-
     }
 
 
-    public void createRegistry() throws RemoteException, AlreadyBoundException {
-        Registry rg = LocateRegistry.createRegistry(localPort);
-        rg.bind("server", messageBoard);
+    private void createRegistry() throws RemoteException, AlreadyBoundException {
+        Registry registry = LocateRegistry.createRegistry(localPort);
+        registry.bind("server", messageBoard);
     }
 
     public void bindToParent() throws RemoteException, NotBoundException {
-        Registry parentRegistry = LocateRegistry.getRegistry(hostParent, portParent);
-        ParentServer server = (ParentServer) parentRegistry.lookup("server");
-        server.registerServer(messageBoard);
+        Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
+        ParentServer parent = (ParentServer) parentRegistry.lookup("server");
+        parent.registerServer(messageBoard);
+        messageBoard.addParent(parent);
     }
 
 }

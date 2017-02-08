@@ -33,11 +33,10 @@ public class MessageImpl implements Serializable, Message {
      * Constructor
      * @param msg
      * @param author
-     * @param section
      * @param group
      * @param isPublic
      */
-    public MessageImpl(String msg, String author, String section, String group, boolean isPublic) {
+    public MessageImpl(String msg, String author, String group, boolean isPublic) {
         this.id =  UUID.randomUUID();
         this.msg = msg;
         this.createdAt = new Date();
