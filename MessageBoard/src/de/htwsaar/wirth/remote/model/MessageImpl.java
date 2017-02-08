@@ -18,6 +18,7 @@ public class MessageImpl implements Serializable, Message {
 
     private static final long serialVersionUID = -5415774293797687291L;
     @Column
+    @Id
     private UID id;
     @Column
     private String msg;

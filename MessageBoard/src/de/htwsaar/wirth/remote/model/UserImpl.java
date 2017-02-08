@@ -15,8 +15,9 @@ import java.util.Date;
 @Table(name="users")
 public class UserImpl implements User {
     @Column
+    @Id
     private UID id;
-    @Column
+    @Column(unique = true)
     private String username;
     @Column
     private String firstName;
