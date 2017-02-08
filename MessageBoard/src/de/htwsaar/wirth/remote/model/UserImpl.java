@@ -38,16 +38,15 @@ public class UserImpl implements User {
      * @param lastName
      * @param password
      * @param isGroupLeader
-     * @param createdAt
      */
-    public UserImpl(String username, String firstName, String lastName, String password, boolean isGroupLeader, Date createdAt) {
+    public UserImpl(String username, String firstName, String lastName, String password, boolean isGroupLeader) {
         this.id = new UID();
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.isGroupLeader = isGroupLeader;
-        this.createdAt = createdAt;
+        this.createdAt = new Date();
     }
 
     public UID getID() {
