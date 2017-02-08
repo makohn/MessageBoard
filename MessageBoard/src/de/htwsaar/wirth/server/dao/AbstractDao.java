@@ -19,8 +19,7 @@ public abstract class AbstractDao<T> {
 
             return true;
         } catch (Exception e){
-            System.out.println(String.format("Error while saving %s '%d' to database: %s"
-                    ,obj.getClass() , obj, e.getLocalizedMessage()));
+            System.out.println(e.getMessage());
             return false;
         }
     }
@@ -35,8 +34,7 @@ public abstract class AbstractDao<T> {
             session.getTransaction().commit();
             session.close();
         } catch (Exception e) {
-            System.out.println(String.format("Error while deleting %s '%d' from database: %s"
-                    , obj.getClass(), obj, e.getLocalizedMessage()));
+            System.out.println(e.getMessage());
             success = false;
         }
         return success;
