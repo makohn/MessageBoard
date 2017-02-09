@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Implements User-Interface
  * Created by stefanschloesser1 on 03.02.17.
- * Edited by oliverseibert on 08.02.17
+ * Edited by oliverseibert on 09.02.17
  */
 @Entity
 @Table(name="users")
@@ -48,6 +48,8 @@ public class UserImpl implements User {
         this.isGroupLeader = isGroupLeader;
         this.createdAt = new Date();
     }
+
+    public UserImpl() {}
 
     public long getID() {
         return id;

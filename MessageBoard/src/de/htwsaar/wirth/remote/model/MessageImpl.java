@@ -6,6 +6,13 @@ import java.io.Serializable;
 import java.util.UUID;
 import java.util.Date;
 
+/**
+ *  Implements Message-Interface
+ * Created by stefanschloesser1 on 03.02.17.
+ * Edited by oliverseibert on 09.02.17
+ */
+@Entity
+@Table(name="messages")
 public class MessageImpl implements Serializable, Message {
 
     private static final long serialVersionUID = -5415774293797687291L;
@@ -44,6 +51,8 @@ public class MessageImpl implements Serializable, Message {
         this.group = group;
         this.isPublic = isPublic;
     }
+
+    public MessageImpl() {}
 
     public UUID getID() {
         return id;

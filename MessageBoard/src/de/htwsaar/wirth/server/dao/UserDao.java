@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class UserDao extends AbstractDao<User>{
     public List<User> getAll() {
-        return query("from Users");
+        return query("from UserImpl");
     }
 
 }

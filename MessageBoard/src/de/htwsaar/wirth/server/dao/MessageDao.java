@@ -11,7 +11,7 @@ import java.util.List;
 public class MessageDao extends AbstractDao<Message> {
 
     public List<Message> getAll() {
-        return query("from Messages");
+        return query("from MessageImpl");
     }
 
 }
