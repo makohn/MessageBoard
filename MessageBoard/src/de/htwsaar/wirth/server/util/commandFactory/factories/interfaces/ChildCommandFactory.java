@@ -11,6 +11,6 @@ public interface ChildCommandFactory {
 
 
     ChildCommand makeCommand(Notifiable server, Message msg, ChildCmd commandType);
-    ChildCommand makeCommand( Message msg, ChildCmd commandType);
+
 
 }

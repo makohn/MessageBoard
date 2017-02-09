@@ -45,10 +45,10 @@ public class CommandFactoryImpl implements CommandFactory {
     public ChildCommand makeCommand( Message msg, Cmd commandType) {
         ChildCommand command = null;
         if (commandType == Cmd.DELETE) {
-            command = new DeleteMessageCommandChild( msg);
+            command = new DeleteMessageCommandChild(null, msg);
         } else if (commandType == Cmd.EDIT) {
 
-            command = new EditMessageCommandChild( msg);
+            command = new EditMessageCommandChild(null, msg);
         }
 
         return command;

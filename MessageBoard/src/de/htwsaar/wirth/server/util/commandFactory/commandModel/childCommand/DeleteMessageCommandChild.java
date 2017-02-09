@@ -16,9 +16,6 @@ public class DeleteMessageCommandChild extends ChildCommand {
         this.childServer = childServer;
     }
 
-    public DeleteMessageCommandChild(Message messageToDelete) {
-        this.messageToDelete = messageToDelete;
-    }
 
     public void execute() throws RemoteException {
         childServer.notifyDelete(messageToDelete);

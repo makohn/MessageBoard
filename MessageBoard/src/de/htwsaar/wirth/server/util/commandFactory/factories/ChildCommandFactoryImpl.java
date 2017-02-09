@@ -21,12 +21,5 @@ public class ChildCommandFactoryImpl implements ChildCommandFactory {
 
         return command;
     }
-    public ChildCommand makeCommand( Message msg, ChildCmd commandType) {
-        ChildCommand command = null;
-        if (commandType == ChildCmd.NEW) {
-            command = new NewMessageCommand(msg);
-        }
 
-        return command;
-    }
 }

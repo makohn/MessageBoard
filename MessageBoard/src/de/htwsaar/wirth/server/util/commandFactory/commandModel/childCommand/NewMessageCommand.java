@@ -15,9 +15,7 @@ public class NewMessageCommand extends ChildCommand {
 		this.message = message;
 		this.childServer = childServer;
 	}
-	public NewMessageCommand( Message message) {
-		this.message = message;
-	}
+
 
 	public void execute() throws RemoteException {
 		childServer.notifyNew(message);
