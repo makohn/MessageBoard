@@ -83,8 +83,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	}
 
 	/**
-	 * publish is capsuled in the ParentServer-Interface and in the
-	 * MessageBoard-Interface. This method
+	 * publish is capsuled in the ParentServer-Interface.
 	 * 
 	 * @param msg
 	 */
@@ -113,8 +112,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * called from a child-server to bind itself to its parent. The register is
 	 * important for the notify process
 	 * 
-	 * @param childServer
-	 * @throws RemoteException
+	 * @param childServer a server which will be notified by his parent
+	 * @throws RemoteException An Exception which occurs if the server is not responding
 	 */
 	public void registerServer(Notifiable childServer) throws RemoteException {
 		childServerList.add(childServer);
@@ -129,7 +128,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * authenticate the User a username and a valid authentication token is
 	 * required.
 	 * 
-	 * @param msg
+	 * @param msg c
 	 * @param username
 	 * @param token
 	 * @throws RemoteException
