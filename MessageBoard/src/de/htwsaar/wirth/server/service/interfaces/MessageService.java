@@ -9,6 +9,7 @@ import java.util.List;
  */
 public interface MessageService {
     public List<Message> getAll();
+    public List<Message> getUnpublished();
     public void saveMessage(Message message);
     public void deleteMessage(Message message);
 }

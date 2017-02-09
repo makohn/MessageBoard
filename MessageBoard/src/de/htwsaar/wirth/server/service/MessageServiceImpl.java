@@ -21,6 +21,12 @@ public class MessageServiceImpl implements MessageService {
     }
 
     /**
+     * Gibt alle Messages zurück, die öffentlich sind, aber noch nicht veröffentlicht wurden
+     * @return Liste mit noch nicht veröffentlichen Message-Objekten
+     */
+    public List<Message> getUnpublished() { return messageDao.getUnpublished(); }
+
+    /**
      * Speichert eine Message
      * @param message Message-Objekt
      */
