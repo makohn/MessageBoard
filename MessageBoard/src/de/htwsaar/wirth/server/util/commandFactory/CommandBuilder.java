@@ -4,6 +4,9 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ChildCmd;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.Cmd;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ParentCmd;
 import de.htwsaar.wirth.server.util.commandFactory.factories.ChildCommandFactoryImpl;
 import de.htwsaar.wirth.server.util.commandFactory.factories.CommandFactoryImpl;
 import de.htwsaar.wirth.server.util.commandFactory.factories.ParentCommandFactoryImpl;
@@ -15,7 +18,7 @@ import de.htwsaar.wirth.server.util.commandFactory.factories.interfaces.ParentCo
 public class CommandBuilder {
     private static Command command;
 
-    public static Command buildCommand(ParentServer server, Message msg, int commandType) {
+    public static Command buildCommand(ParentServer server, Message msg, Cmd commandType) {
 
         CommandFactory factory = new CommandFactoryImpl();
         command = factory.makeCommand(server, msg, commandType);
@@ -23,21 +26,21 @@ public class CommandBuilder {
         return command;
     }
 
-    public static Command buildCommand(Notifiable server, Message msg, int commandType) {
+    public static Command buildCommand(Notifiable server, Message msg, Cmd commandType) {
         CommandFactory factory = new CommandFactoryImpl();
         command = factory.makeCommand(server, msg, commandType);
 
         return command;
     }
 
-    public static Command buildChildCommand(Notifiable server, Message msg, int commandType) {
+    public static Command buildChildCommand(Notifiable server, Message msg, ChildCmd commandType) {
         ChildCommandFactory factory = new ChildCommandFactoryImpl();
         command = factory.makeCommand(server, msg, commandType);
 
         return command;
     }
 
-    public static Command buildParentCommand(ParentServer server, Message msg, int commandType) {
+    public static Command buildParentCommand(ParentServer server, Message msg, ParentCmd commandType) {
         ParentCommandFactory factory = new ParentCommandFactoryImpl();
         command = factory.makeCommand(server, msg, commandType);
 

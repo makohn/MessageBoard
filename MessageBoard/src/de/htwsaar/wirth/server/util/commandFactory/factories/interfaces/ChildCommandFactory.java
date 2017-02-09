@@ -3,11 +3,12 @@ package de.htwsaar.wirth.server.util.commandFactory.factories.interfaces;
 import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ChildCmd;
 
 public interface ChildCommandFactory {
 
-    int NEW_COMMAND = 3;
 
-    Command makeCommand(Notifiable server, Message msg, int commandType);
+
+    Command makeCommand(Notifiable server, Message msg, ChildCmd commandType);
 
 }

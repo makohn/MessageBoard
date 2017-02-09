@@ -5,6 +5,7 @@ import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.server.util.commandFactory.CommandBuilder;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.Cmd;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.childCommand.DeleteMessageCommandChild;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.childCommand.EditMessageCommandChild;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.parentCommand.DeleteMessageCommandParent;
@@ -16,22 +17,22 @@ import de.htwsaar.wirth.server.util.commandFactory.factories.interfaces.CommandF
 public class CommandFactoryImpl implements CommandFactory {
 
 
-    public Command makeCommand(ParentServer server, Message msg, int commandType) {
+    public Command makeCommand(ParentServer server, Message msg, Cmd commandType) {
         Command command = null;
-        if (commandType == DELETE_COMMAND) {
+        if (commandType == Cmd.DELETE) {
             command = new DeleteMessageCommandParent(server, msg);
-        } else if (commandType == EDIT_COMMAND) {
+        } else if (commandType == Cmd.EDIT) {
             command = new EditMessageCommandParent(server, msg);
         }
 
         return command;
     }
 
-    public Command makeCommand(Notifiable server, Message msg, int commandType) {
+    public Command makeCommand(Notifiable server, Message msg, Cmd commandType) {
         Command command = null;
-        if (commandType == DELETE_COMMAND) {
+        if (commandType == Cmd.DELETE) {
             command = new DeleteMessageCommandChild(server, msg);
-        } else if (commandType == EDIT_COMMAND) {
+        } else if (commandType == Cmd.EDIT) {
             command = new EditMessageCommandChild(server, msg);
         }
 
