@@ -9,11 +9,11 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 
 public interface MessageBoard extends Remote {
 	
-	public void newMessage(String msg, String username, UUID token) throws RemoteException;
-	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException;
-	public void editMessage(Message msg, String username, UUID token) throws RemoteException;
-	public void publish(Message msg, String username, UUID token) throws RemoteException;
-	public List<Message> getMessages() throws RemoteException;
-	public UUID registerClient(Notifiable client, String username, String password) throws RemoteException;
+	void newMessage(String msg, String username, UUID token) throws RemoteException;
+	void deleteMessage(Message msg, String username, UUID token) throws RemoteException;
+	void editMessage(Message msg, String username, UUID token) throws RemoteException;
+	void publish(Message msg, String username, UUID token) throws RemoteException;
+	List<Message> getMessages() throws RemoteException;
+	UUID registerClient(Notifiable client, String username, String password) throws RemoteException;
 
 }

@@ -7,8 +7,8 @@ import java.rmi.RemoteException;
 public class Main {
 
 	private static final String USAGE = "Usage:\n"
-			+ "to start as root-server:\t server groupName localPort parentHostname parentPort\n"
-			+ "to start as a child-server:\t server groupName localPort";
+			+ "to start as child-server:\t server groupName localPort parentHostname parentPort\n"
+			+ "to start as a root-server:\t server groupName localPort";
 
 	private static final String ALREADY_IN_USE = "The specified port is already in use.";
 	private static final String PARENT_NOT_AVAILABLE = "The parent is not responding.";

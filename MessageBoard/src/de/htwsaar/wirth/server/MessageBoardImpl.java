@@ -14,12 +14,14 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.MessageImpl;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
-import de.htwsaar.wirth.server.util.Command;
 import de.htwsaar.wirth.server.util.CommandRunner;
-import de.htwsaar.wirth.server.util.DeleteMessageCommand;
-import de.htwsaar.wirth.server.util.EditMessageCommand;
-import de.htwsaar.wirth.server.util.NewMessageCommand;
-import de.htwsaar.wirth.server.util.PublishMessageCommand;
+import de.htwsaar.wirth.server.util.commandFactory.CommandBuilder;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ChildCmd;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.Cmd;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ParentCmd;
+import de.htwsaar.wirth.server.util.commandFactory.commandModel.childCommand.ChildCommand;
+
 
 public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
 
@@ -79,11 +81,11 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			}
 		}
 	}
-	
-	private void queueCommandForAllChildServer(Command cmd) {
+
+	private void queueCommandForAllChildServer(ChildCommand cmd) {
 		synchronized (childServerList) {
 			for (Notifiable childServer : childServerList) {
-				Command clonedCommand = cmd.clone();
+				ChildCommand clonedCommand = cmd.clone();
 				clonedCommand.setNotifiable(childServer);
 				childServerQueueMap.get(childServer).addCommand(clonedCommand);
 			}
@@ -102,7 +104,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	/**
 	 * publish is capsuled in the ParentServer-Interface and in the
 	 * MessageBoard-Interface. This method
-	 * 
+	 *
 	 * @param msg
 	 */
 	public void publish(Message msg) throws RemoteException {
@@ -111,7 +113,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Change msg to a published msg in the local database
 
 		// Add a PublishMessageCommand to the ParentQueue
-		PublishMessageCommand cmd = new PublishMessageCommand(parent, msg);
+		Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.PUBLISH);
 		childServerQueueMap.get(parent).addCommand(cmd);
 
 		// Notify each client
@@ -122,7 +124,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * registerServer is capsuled in the ParentServer-Interface. This method is
 	 * called from a child-server to bind itself to its parent. The register is
 	 * important for the notify process
-	 * 
+	 *
 	 * @param childServer
 	 * @throws RemoteException
 	 */
@@ -138,7 +140,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * called by the clients to submit a new message to their group-server. To
 	 * authenticate the User a username and a valid authentication token is
 	 * required.
-	 * 
+	 *
 	 * @param msg
 	 * @param username
 	 * @param token
@@ -154,7 +156,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * be called by the admin to delete a existing message on their
 	 * group-server. To authenticate the User a username and a valid
 	 * authentication token is required.
-	 * 
+	 *
 	 * @param msg
 	 * @param username
 	 * @param token
@@ -170,7 +172,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * group-server. In case the message was published the change effects also
 	 * all other servers which received this published message. To authenticate
 	 * the User a username and a valid authentication token is required.
-	 * 
+	 *
 	 * @param msg
 	 * @param username
 	 * @param token
@@ -185,7 +187,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * called by the admin to push a existing message to the parent-server. To
 	 * authenticate the User a username and a valid authentication token is
 	 * required.
-	 * 
+	 *
 	 * @param msg
 	 * @param username
 	 * @param token
@@ -200,7 +202,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * ParentServer-Interface. This method can be called by a client to
 	 * initialise his messageboard or it can called by a just new born server
 	 * which want to receive all messages from his parent .
-	 * 
+	 *
 	 * @return
 	 * @throws RemoteException
 	 */
@@ -212,7 +214,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	/**
 	 * registerClient is capsuled in the MessageBoard-Interface . This method
 	 * can be called by a client to connect his self by his group server.
-	 * 
+	 *
 	 * @param client
 	 * @param username
 	 * @param password
@@ -233,7 +235,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * message is transmitted to the server either trough a client or the
 	 * parent, the notifyNew-method notifies all components which implements the
 	 * Notify-Interface.
-	 * 
+	 *
 	 * @param msg
 	 * @throws RemoteException
 	 */
@@ -241,7 +243,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Save msg to local database
 
 		// Add a NewMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(new NewMessageCommand(msg));
+		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
 
 		// Notify each client
 		notifyClients((cl) -> cl.notifyNew(msg));
@@ -252,7 +254,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * will be edited on the server trough a admin or client, the
 	 * notifyNew-method notifies all components which implements the
 	 * Notify-Interface.
-	 * 
+	 *
 	 * @param msg
 	 * @throws RemoteException
 	 */
@@ -262,8 +264,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// only execute the following, if the edit was successful
 
 		// Add a EditMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(new EditMessageCommand(msg));
-		
+		queueCommandForAllChildServer(CommandBuilder.buildCommand(msg,Cmd.EDIT));
+
 		// Notify each client
 		notifyClients((cl) -> cl.notifyEdit(msg));
 	}
@@ -273,7 +275,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * message will be deleted on the server through a admin, the
 	 * notifyNew-method notifies all components which implements the
 	 * Notify-Interface.
-	 * 
+	 *
 	 * @param msg
 	 * @throws RemoteException
 	 */
@@ -283,7 +285,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// only execute the following, if the delete was successful
 
 		// Add a DeleteMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(new DeleteMessageCommand(msg));
+		queueCommandForAllChildServer(CommandBuilder.buildCommand(msg,Cmd.DELETE));
 
 		// Notify each client
 		notifyClients((cl) -> cl.notifyDelete(msg));
@@ -292,7 +294,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	/**
 	 * addParent will only be called by the server.class to bind the parent to
 	 * this server.
-	 * 
+	 *
 	 * @param parent
 	 */
 	public void setParent(ParentServer parent) {
