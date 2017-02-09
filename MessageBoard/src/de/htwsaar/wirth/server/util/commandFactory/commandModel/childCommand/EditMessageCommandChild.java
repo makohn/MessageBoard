@@ -16,6 +16,11 @@ public class EditMessageCommandChild extends ChildCommand {
         this.childServer = childServer;
     }
 
+    public EditMessageCommandChild( Message message) {
+        this.message = message;
+
+    }
+
     public void execute() throws RemoteException {
         childServer.notifyEdit(message);
     }

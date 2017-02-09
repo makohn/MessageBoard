@@ -5,5 +5,5 @@ import java.rmi.RemoteException;
 public interface Command {
 
 	void execute() throws RemoteException;
-	Command clone();
+
 }
