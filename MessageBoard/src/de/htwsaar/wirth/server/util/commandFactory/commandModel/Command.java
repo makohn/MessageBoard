@@ -1,4 +1,4 @@
-package de.htwsaar.wirth.server.util.CommandFactory.CommandModel;
+package de.htwsaar.wirth.server.util.commandFactory.commandModel;
 
 import java.rmi.RemoteException;
 
