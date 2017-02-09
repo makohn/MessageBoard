@@ -26,11 +26,5 @@ public class PublishMessageCommand extends ParentCommand {
 	
 
 
-	public void setNotifiable(Notifiable n) {
-	}
-
-	public ParentCommand clone() {
-		return new PublishMessageCommand(parentToNotify,messageToPublish);
-	}
 
 }
