@@ -6,18 +6,27 @@ import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
 
 import java.rmi.RemoteException;
 
-public class EditMessageCommandChild implements Command {
+public class EditMessageCommandChild extends ChildCommand {
 
     private Message message;
-    private Notifiable childserver;
+    private Notifiable childServer;
 
-    public EditMessageCommandChild(Notifiable childserver, Message message) {
+    public EditMessageCommandChild(Notifiable childServer, Message message) {
         this.message = message;
-        this.childserver = childserver;
+        this.childServer = childServer;
     }
 
     public void execute() throws RemoteException {
-        childserver.notifyEdit(message);
+        childServer.notifyEdit(message);
+    }
+
+    @Override
+    public void setNotifiable(Notifiable childServer) {
+        this.childServer = childServer;
+    }
+
+    public ChildCommand clone() {
+        return new EditMessageCommandChild(this.childServer,this.message);
     }
 }
 

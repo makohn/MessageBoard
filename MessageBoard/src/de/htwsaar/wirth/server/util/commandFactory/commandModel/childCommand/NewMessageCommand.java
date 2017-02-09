@@ -6,18 +6,27 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
 
-public class NewMessageCommand implements Command {
+public class NewMessageCommand extends ChildCommand {
 
 	private Message message;
-	private Notifiable childserver;
+	private Notifiable childServer;
 
-	public NewMessageCommand(Notifiable childserver, Message message) {
+	public NewMessageCommand(Notifiable childServer, Message message) {
 		this.message = message;
-		this.childserver = childserver;
+		this.childServer = childServer;
 	}
 
 	public void execute() throws RemoteException {
-		childserver.notifyNew(message);
+		childServer.notifyNew(message);
+	}
+
+	@Override
+	public void setNotifiable(Notifiable childServer) {
+		this.childServer = childServer;
+	}
+
+	public ChildCommand clone() {
+		return new NewMessageCommand(this.childServer,this.message);
 	}
 
 }

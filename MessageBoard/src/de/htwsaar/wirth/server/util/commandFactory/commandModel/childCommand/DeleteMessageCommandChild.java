@@ -6,7 +6,7 @@ import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
 
 import java.rmi.RemoteException;
 
-public class DeleteMessageCommandChild implements Command {
+public class DeleteMessageCommandChild extends ChildCommand {
 
     private Message messageToDelete;
     private Notifiable childServer;
@@ -18,6 +18,15 @@ public class DeleteMessageCommandChild implements Command {
 
     public void execute() throws RemoteException {
         childServer.notifyDelete(messageToDelete);
+    }
+
+    @Override
+    public void setNotifiable(Notifiable childServer) {
+        this.childServer = childServer;
+    }
+
+    public ChildCommand clone() {
+        return new DeleteMessageCommandChild(this.childServer,this.messageToDelete);
     }
 }
 
