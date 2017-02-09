@@ -24,15 +24,13 @@ public class PublishMessageCommand extends ParentCommand {
 		parentToNotify.publish(messageToPublish);
 	}
 	
-	public PublishMessageCommand clone() {
-		return new PublishMessageCommand(parentToNotify, messageToPublish);
-	}
+
 
 	public void setNotifiable(Notifiable n) {
 	}
 
 	public ParentCommand clone() {
-		return new PublishMessageCommand(this.parentToNotify,this.messageToPublish);
+		return new PublishMessageCommand(parentToNotify,messageToPublish);
 	}
 
 }

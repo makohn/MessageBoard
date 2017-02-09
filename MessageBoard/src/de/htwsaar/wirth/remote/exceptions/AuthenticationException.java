@@ -1,7 +1,6 @@
 package de.htwsaar.wirth.remote.exceptions;
 
 public class AuthenticationException extends RuntimeException {
-<<<<<<< HEAD
 	
 	private static final long serialVersionUID = 584940483247442084L;
 
