@@ -20,9 +20,7 @@ public class EditMessageCommandParent extends ParentCommand {
         parent.notifyServerEdit(message);
     }
 
-    public ParentCommand clone() {
-        return new EditMessageCommandParent(this.parent,this.message);
-    }
+
 }
 
 

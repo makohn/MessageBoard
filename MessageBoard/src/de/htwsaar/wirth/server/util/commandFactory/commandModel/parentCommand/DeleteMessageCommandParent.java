@@ -21,9 +21,7 @@ public class DeleteMessageCommandParent extends ParentCommand {
         parent.notifyServerDelete(messageToDelete);
     }
 
-    public ParentCommand clone() {
-        return new DeleteMessageCommandParent(this.parent,this.messageToDelete);
-    }
+
 }
 
 

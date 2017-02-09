@@ -60,9 +60,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		this.groupName = groupName;
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
 		childServerQueueMap = new ConcurrentHashMap<Notifiable, CommandRunner>();
-
 		clientList = Collections.synchronizedList(new ArrayList<Notifiable>());
-
 	}
 
 	private boolean isRoot() {
