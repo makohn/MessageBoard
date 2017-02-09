@@ -32,8 +32,6 @@ public class MessageImpl implements Serializable, Message {
     @Column
     private String group;
     @Column
-    private boolean isSent;
-    @Column
     private boolean isPublic;
     @Column
     private boolean isPublished;
@@ -76,10 +74,6 @@ public class MessageImpl implements Serializable, Message {
 
     public Date getModifiedAt() { return modifiedAt; }
 
-    public boolean isSent() { return isSent; }
-
-    public void setSent(boolean sent) { isSent = sent; }
-
     public void setPublished(boolean published) { isPublished = published; }
 
     public void changeMessage(String msg){
@@ -96,7 +90,6 @@ public class MessageImpl implements Serializable, Message {
                 ", modifiedAt=" + modifiedAt +
                 ", author='" + author + '\'' +
                 ", group='" + group + '\'' +
-                ", isSent=" + isSent +
                 ", isPublic=" + isPublic +
                 ", isPublished=" + isPublished +
                 '}';

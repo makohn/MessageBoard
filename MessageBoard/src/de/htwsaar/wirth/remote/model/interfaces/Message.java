@@ -18,8 +18,6 @@ public interface Message
     public String getAuthor();
     public Date getCreatedAt();
     public Date getModifiedAt();
-    public boolean isSent();
-    public void setSent(boolean sent);
     public void setPublished(boolean published);
     public void changeMessage(String msg);
 }
