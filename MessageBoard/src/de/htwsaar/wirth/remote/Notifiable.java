@@ -8,6 +8,6 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 public interface Notifiable extends Remote {
 	
 	void notifyNew(Message msg) throws RemoteException;
-	void notifyDelete(Message msg) throws RemoteException;
 	void notifyEdit(Message msg) throws RemoteException;
+	void notifyDelete(Message msg) throws RemoteException;
 }

@@ -14,6 +14,7 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.MessageImpl;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.server.service.Services;
 import de.htwsaar.wirth.server.util.CommandRunner;
 import de.htwsaar.wirth.server.util.commandFactory.CommandBuilder;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
@@ -64,11 +65,33 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		clientList = Collections.synchronizedList(new ArrayList<Notifiable>());
 
 	}
+	
+	/**
+	 * addParent will only be called by the server.class to bind the parent to
+	 * this server.
+	 *
+	 * @param parent
+	 */
+	public void setParent(ParentServer parent) {
+		if (parentQueue != null) {
+			parentQueue.interrupt();
+		}
+		this.parent = parent;
+		this.parentQueue = new CommandRunner();
+	}
 
+	/**
+	 * checks, if the current Server is the root-server
+	 * @return
+	 */
 	private boolean isRoot() {
 		return this.parent == null;
 	}
-
+	
+	/**
+	 * notify all clients
+	 * @param handler
+	 */
 	private void notifyClients(ClientNotifyHandler handler) {
 		synchronized (clientList) {
 			for (Notifiable client : clientList) {
@@ -82,6 +105,10 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		}
 	}
 
+	/**
+	 * queue up a command for each child-server
+	 * @param cmd
+	 */
 	private void queueCommandForAllChildServer(ChildCommand cmd) {
 		synchronized (childServerList) {
 			for (Notifiable childServer : childServerList) {
@@ -91,126 +118,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			}
 		}
 	}
-
-	public void notifyServerDelete(Message msg) throws RemoteException {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void notifyServerEdit(Message msg) throws RemoteException {
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * publish is capsuled in the ParentServer-Interface and in the
-	 * MessageBoard-Interface. This method
-	 *
-	 * @param msg
-	 */
-	public void publish(Message msg) throws RemoteException {
-		// check if we are the root server
-
-		// Change msg to a published msg in the local database
-
-		// Add a PublishMessageCommand to the ParentQueue
-		Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.PUBLISH);
-		childServerQueueMap.get(parent).addCommand(cmd);
-
-		// Notify each client
-		notifyClients((cl) -> cl.notifyNew(msg));
-	}
-
-	/**
-	 * registerServer is capsuled in the ParentServer-Interface. This method is
-	 * called from a child-server to bind itself to its parent. The register is
-	 * important for the notify process
-	 *
-	 * @param childServer
-	 * @throws RemoteException
-	 */
-	public void registerServer(Notifiable childServer) throws RemoteException {
-		childServerList.add(childServer);
-		CommandRunner commandRunner = new CommandRunner();
-		commandRunner.start();
-		childServerQueueMap.put(childServer, commandRunner);
-	}
-
-	/**
-	 * NewMessage is capsuled in the MessageBoard-Interface. This method can be
-	 * called by the clients to submit a new message to their group-server. To
-	 * authenticate the User a username and a valid authentication token is
-	 * required.
-	 *
-	 * @param msg
-	 * @param username
-	 * @param token
-	 * @throws RemoteException
-	 */
-	public void newMessage(String msg, String username, UUID token) throws RemoteException {
-		Message message = new MessageImpl(msg, username, groupName, false);
-		notifyNew(message);
-	}
-
-	/**
-	 * deleteMessage is capsuled in the MessageBoard-Interface. This method can
-	 * be called by the admin to delete a existing message on their
-	 * group-server. To authenticate the User a username and a valid
-	 * authentication token is required.
-	 *
-	 * @param msg
-	 * @param username
-	 * @param token
-	 * @throws RemoteException
-	 */
-	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException {
-
-	}
-
-	/**
-	 * editMessage is capsuled in the MessageBoard-Interface. This method can be
-	 * called by the author of a message to edit the existing message on their
-	 * group-server. In case the message was published the change effects also
-	 * all other servers which received this published message. To authenticate
-	 * the User a username and a valid authentication token is required.
-	 *
-	 * @param msg
-	 * @param username
-	 * @param token
-	 * @throws RemoteException
-	 */
-	public void editMessage(Message msg, String username, UUID token) throws RemoteException {
-
-	}
-
-	/**
-	 * publish is capsuled in the MessageBoard-Interface. This method can be
-	 * called by the admin to push a existing message to the parent-server. To
-	 * authenticate the User a username and a valid authentication token is
-	 * required.
-	 *
-	 * @param msg
-	 * @param username
-	 * @param token
-	 * @throws RemoteException
-	 */
-	public void publish(Message msg, String username, UUID token) throws RemoteException {
-
-	}
-
-	/**
-	 * getMessages is capsuled in the MessageBoard-Interface and in the
-	 * ParentServer-Interface. This method can be called by a client to
-	 * initialise his messageboard or it can called by a just new born server
-	 * which want to receive all messages from his parent .
-	 *
-	 * @return
-	 * @throws RemoteException
-	 */
-	public List<Message> getMessages() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
+	//---------------------------------- MessageBoard Interface ----------------------------------
+	
 	/**
 	 * registerClient is capsuled in the MessageBoard-Interface . This method
 	 * can be called by a client to connect his self by his group server.
@@ -229,7 +139,101 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		clientList.add(client);
 		return userToken;
 	}
-
+	
+	/**
+	 * @param newUsername
+	 * @param newPassword
+	 * @param username
+	 * @param token
+	 */
+	public void addUser(String newUsername, String newPassword, String username, UUID token) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(username, token);
+		// TODO:
+	}
+	
+	/**
+	 * publish is capsuled in the MessageBoard-Interface. This method can be
+	 * called by the admin to push a existing message to the parent-server. To
+	 * authenticate the User a username and a valid authentication token is
+	 * required.
+	 *
+	 * @param msg
+	 * @param username
+	 * @param token
+	 * @throws RemoteException
+	 */
+	public void publish(Message msg, String username, UUID token) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(username, token);
+		// TODO:
+	}
+	
+	/**
+	 * NewMessage is capsuled in the MessageBoard-Interface. This method can be
+	 * called by the clients to submit a new message to their group-server. To
+	 * authenticate the User a username and a valid authentication token is
+	 * required.
+	 *
+	 * @param msg
+	 * @param username
+	 * @param token
+	 * @throws RemoteException
+	 */
+	public void newMessage(String msg, String username, UUID token) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(username, token);
+		Message message = new MessageImpl(msg, username, groupName, false);
+		notifyNew(message);
+	}
+	
+	/**
+	 * editMessage is capsuled in the MessageBoard-Interface. This method can be
+	 * called by the author of a message to edit the existing message on their
+	 * group-server. In case the message was published the change effects also
+	 * all other servers which received this published message. To authenticate
+	 * the User a username and a valid authentication token is required.
+	 *
+	 * @param msg
+	 * @param username
+	 * @param token
+	 * @throws RemoteException
+	 */
+	public void editMessage(Message msg, String username, UUID token) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(username, token);
+		//TODO:
+	}
+	
+	/**
+	 * deleteMessage is capsuled in the MessageBoard-Interface. This method can
+	 * be called by the admin to delete a existing message on their
+	 * group-server. To authenticate the User a username and a valid
+	 * authentication token is required.
+	 *
+	 * @param msg
+	 * @param username
+	 * @param token
+	 * @throws RemoteException
+	 */
+	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(username, token);
+		//TODO:
+	}
+	
+	/**
+	 * getMessages is used by the MessageBoard-Interface.
+	 * This method can be called by a client to
+	 * initialise and update his messageboard
+	 *
+	 * @param username
+	 * @param token
+	 * @return
+	 * @throws RemoteException
+	 */
+	public List<Message> getMessages(String username, UUID token) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(username, token);
+		return getMessages();
+	}
+	
+	//---------------------------------- Notifiable Interface ----------------------------------
+	
 	/**
 	 * notifyNew is capsuled in the Notifyable-Interface. Every time a new
 	 * message is transmitted to the server either trough a client or the
@@ -240,7 +244,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyNew(Message msg) throws RemoteException {
-		// Save msg to local database
+		//TODO: Save msg to local database
 
 		// Add a NewMessageCommand to each CommandRunner
 		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
@@ -259,7 +263,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyEdit(Message msg) throws RemoteException {
-		// Edit msg to local database
+		//TODO: Edit msg to local database
 
 		// only execute the following, if the edit was successful
 
@@ -280,7 +284,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyDelete(Message msg) throws RemoteException {
-		// Delete msg from local database
+		//TODO: Delete msg from local database
 
 		// only execute the following, if the delete was successful
 
@@ -290,18 +294,52 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Notify each client
 		notifyClients((cl) -> cl.notifyDelete(msg));
 	}
-
+	
+	//---------------------------------- ParentServer Interface ----------------------------------
+	
 	/**
-	 * addParent will only be called by the server.class to bind the parent to
-	 * this server.
+	 * registerServer is capsuled in the ParentServer-Interface. This method is
+	 * called from a child-server to bind itself to its parent. The register is
+	 * important for the notify process
 	 *
-	 * @param parent
+	 * @param childServer
+	 * @throws RemoteException
 	 */
-	public void setParent(ParentServer parent) {
-		if (parentQueue != null) {
-			parentQueue.interrupt();
-		}
-		this.parent = parent;
-		this.parentQueue = new CommandRunner();
+	public void registerServer(Notifiable childServer) throws RemoteException {
+		childServerList.add(childServer);
+		CommandRunner commandRunner = new CommandRunner();
+		commandRunner.start();
+		childServerQueueMap.put(childServer, commandRunner);
+	}
+	
+	/**
+	 * publish is capsuled in the ParentServer-Interface and in the
+	 * MessageBoard-Interface. This method
+	 *
+	 * @param msg
+	 */
+	public void publish(Message msg) throws RemoteException {
+		//TODO: check if we are the root server
+
+		// Change msg to a published msg in the local database
+
+		// Add a PublishMessageCommand to the ParentQueue
+		Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.PUBLISH);
+		childServerQueueMap.get(parent).addCommand(cmd);
+
+		// Notify each client
+		notifyClients((cl) -> cl.notifyNew(msg));
+	}
+	
+	public void notifyServerEdit(Message msg) throws RemoteException {
+		// TODO
+	}
+
+	public void notifyServerDelete(Message msg) throws RemoteException {
+		// TODO
+	}
+
+	public List<Message> getMessages() throws RemoteException {
+		return Services.getInstance().getMessageService().getAll();
 	}
 }
