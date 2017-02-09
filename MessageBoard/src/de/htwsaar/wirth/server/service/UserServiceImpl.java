@@ -35,4 +35,17 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(User user){
         userDao.delete(user);
     }
+
+    /**
+     * Sucht einen User anhand des eindeutigen Usernames
+     * @param username Username als String
+     * @return User-Objekt, wenn vorhanden ansonsten null
+     */
+    public User getUser(String username) { return userDao.getUser(username); }
+
+    /**
+     * Gibt an, ob ein User bereits das Flag "isGroupLeader" beseitzt
+     * @return true oder false
+     */
+    public boolean existsGroupLeader(){ return userDao.existsGroupLeader(); }
 }
