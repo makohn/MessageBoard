@@ -87,5 +87,4 @@ public class UserImpl implements User {
                 ", createdAt=" + createdAt +
                 '}';
     }
-
 }
