@@ -10,9 +10,17 @@ public class NewMessageCommand implements Command {
 	private Message message;
 	private Notifiable serverToCall;
 	
+	public NewMessageCommand(Message message) {
+		this.message = message;
+	}
+	
 	public NewMessageCommand(Notifiable serverToCall, Message message) {
 		this.serverToCall = serverToCall;
 		this.message = message;
+	}
+
+	public void setNotifiable(Notifiable n) {
+		this.serverToCall = n;
 	}
 
 	public void execute() throws RemoteException {
@@ -20,6 +28,10 @@ public class NewMessageCommand implements Command {
 			return;
 		}
 		serverToCall.notifyNew(message);
+	}
+	
+	public NewMessageCommand clone() {
+		return new NewMessageCommand(null, message);
 	}
 
 }

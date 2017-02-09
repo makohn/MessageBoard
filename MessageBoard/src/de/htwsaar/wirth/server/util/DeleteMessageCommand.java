@@ -11,6 +11,10 @@ public class DeleteMessageCommand implements Command {
 	private Message messageToDelete;
 	private Notifiable childServer;
 	private ParentServer parentToNotify;
+	
+	public DeleteMessageCommand(Message messageToDelete) {
+		this.messageToDelete = messageToDelete;
+	}
 
 	public DeleteMessageCommand(Notifiable childServer, Message messageToDelete) {
 		this.messageToDelete = messageToDelete;
@@ -21,6 +25,10 @@ public class DeleteMessageCommand implements Command {
 		this.messageToDelete = messageToEdit;
 		this.parentToNotify = parentToNotify;
 	}
+	
+	public void setNotifiable(Notifiable childServer) {
+		this.childServer = childServer;
+	}
 
 	public void execute() throws RemoteException {
 		if (messageToDelete != null) {
@@ -30,6 +38,10 @@ public class DeleteMessageCommand implements Command {
 				childServer.notifyDelete(messageToDelete);
 			}
 		}
+	}
+	
+	public DeleteMessageCommand clone() {
+		return new DeleteMessageCommand(this.messageToDelete);
 	}
 	
 }

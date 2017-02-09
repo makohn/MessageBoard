@@ -14,6 +14,7 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.MessageImpl;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.server.util.Command;
 import de.htwsaar.wirth.server.util.CommandRunner;
 import de.htwsaar.wirth.server.util.DeleteMessageCommand;
 import de.htwsaar.wirth.server.util.EditMessageCommand;
@@ -23,39 +24,34 @@ import de.htwsaar.wirth.server.util.PublishMessageCommand;
 public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
 
 	private String groupName;
-	
+
 	/**
-	 *  childServerList with each ChildServer
+	 * childServerList with each ChildServer
 	 */
 	private List<Notifiable> childServerList;
-	
+
 	/**
-	 *  a Map with CommandRunners used to lookup a CommandRunner by its Notifiable
-	 *  each CommandRunner is a Thread, which executes every Command it gets
+	 * a Map with CommandRunners used to lookup a CommandRunner by its
+	 * Notifiable each CommandRunner is a Thread, which executes every Command
+	 * it gets
 	 */
 	private Map<Notifiable, CommandRunner> childServerQueueMap;
 
 	/**
-	 * the parent of this server
-	 * null, if this server is the root-server
+	 * the parent of this server null, if this server is the root-server
 	 */
 	private ParentServer parent;
-	
+
 	/**
 	 * the queue to send commands to the parent
 	 */
 	private CommandRunner parentQueue;
-	
+
 	/**
 	 * a list of clients
 	 */
 	private List<Notifiable> clientList;
 
-	/**
-	 * the session map, which stores a authentification token for each username
-	 */
-	private Map<String, UUID> sessions;
-	
 	private static final long serialVersionUID = -4613549994529764225L;
 
 	public MessageBoardImpl(String groupName) throws RemoteException {
@@ -65,12 +61,33 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 		clientList = Collections.synchronizedList(new ArrayList<Notifiable>());
 
-		sessions = new ConcurrentHashMap<String, UUID>();
-
 	}
-	
+
 	private boolean isRoot() {
 		return this.parent == null;
+	}
+
+	private void notifyClients(ClientNotifyHandler handler) {
+		synchronized (clientList) {
+			for (Notifiable client : clientList) {
+				try {
+					handler.handle(client);
+				} catch (RemoteException e) {
+					// Ignore it, if a client cannot be called back
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private void queueCommandForAllChildServer(Command cmd) {
+		synchronized (childServerList) {
+			for (Notifiable childServer : childServerList) {
+				Command clonedCommand = cmd.clone();
+				clonedCommand.setNotifiable(childServer);
+				childServerQueueMap.get(childServer).addCommand(clonedCommand);
+			}
+		}
 	}
 
 	public void notifyServerDelete(Message msg) throws RemoteException {
@@ -90,7 +107,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void publish(Message msg) throws RemoteException {
 		// check if we are the root server
-		
+
 		// Change msg to a published msg in the local database
 
 		// Add a PublishMessageCommand to the ParentQueue
@@ -98,14 +115,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		childServerQueueMap.get(parent).addCommand(cmd);
 
 		// Notify each client
-		for (Notifiable client : clientList) {
-			try {
-				client.notifyNew(msg);
-			} catch (RemoteException e) {
-				// Ignore it, if a client cannot be called back
-				e.printStackTrace();
-			}
-		}
+		notifyClients((cl) -> cl.notifyNew(msg));
 	}
 
 	/**
@@ -210,8 +220,12 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public UUID registerClient(Notifiable client, String username, String password) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		// Authenticate throws an exception, if the username or password are
+		// wrong
+		// this exception can be handled on clientside
+		UUID userToken = SessionManager.authenticate(username, password);
+		clientList.add(client);
+		return userToken;
 	}
 
 	/**
@@ -227,51 +241,10 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Save msg to local database
 
 		// Add a NewMessageCommand to each CommandRunner
-		for (Notifiable childServer : childServerList) {
-			NewMessageCommand cmd = new NewMessageCommand(childServer, msg);
-			childServerQueueMap.get(childServer).addCommand(cmd);
-		}
+		queueCommandForAllChildServer(new NewMessageCommand(msg));
 
 		// Notify each client
-		for (Notifiable client : clientList) {
-			try {
-				client.notifyNew(msg);
-			} catch (RemoteException e) {
-				// Ignore it, if a client cannot be called back
-				e.printStackTrace();
-			}
-		}
-	}
-
-	/**
-	 * notifyDelete is capsuled in the Notifyable-Interface. Every time a
-	 * message will be deleted on the server trough a admin, the
-	 * notifyNew-method notifies all components which implements the
-	 * Notify-Interface.
-	 * 
-	 * @param msg
-	 * @throws RemoteException
-	 */
-	public void notifyDelete(Message msg) throws RemoteException {
-		// Delete msg from local database
-
-		// only execute the following, if the delete was successful
-
-		// Add a DeleteMessageCommand to each CommandRunner
-		for (Notifiable childServer : childServerList) {
-			DeleteMessageCommand cmd = new DeleteMessageCommand(childServer, msg);
-			childServerQueueMap.get(childServer).addCommand(cmd);
-		}
-
-		// Notify each client
-		for (Notifiable client : clientList) {
-			try {
-				client.notifyDelete(msg);
-			} catch (RemoteException e) {
-				// Ignore it, if a client cannot be called back
-				e.printStackTrace();
-			}
-		}
+		notifyClients((cl) -> cl.notifyNew(msg));
 	}
 
 	/**
@@ -289,20 +262,31 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// only execute the following, if the edit was successful
 
 		// Add a EditMessageCommand to each CommandRunner
-		for (Notifiable childServer : childServerList) {
-			EditMessageCommand cmd = new EditMessageCommand(childServer, msg);
-			childServerQueueMap.get(childServer).addCommand(cmd);
-		}
+		queueCommandForAllChildServer(new EditMessageCommand(msg));
+		
+		// Notify each client
+		notifyClients((cl) -> cl.notifyEdit(msg));
+	}
+
+	/**
+	 * notifyDelete is capsuled in the Notifyable-Interface. Every time a
+	 * message will be deleted on the server through a admin, the
+	 * notifyNew-method notifies all components which implements the
+	 * Notify-Interface.
+	 * 
+	 * @param msg
+	 * @throws RemoteException
+	 */
+	public void notifyDelete(Message msg) throws RemoteException {
+		// Delete msg from local database
+
+		// only execute the following, if the delete was successful
+
+		// Add a DeleteMessageCommand to each CommandRunner
+		queueCommandForAllChildServer(new DeleteMessageCommand(msg));
 
 		// Notify each client
-		for (Notifiable client : clientList) {
-			try {
-				client.notifyEdit(msg);
-			} catch (RemoteException e) {
-				// Ignore it, if a client cannot be called back
-				e.printStackTrace();
-			}
-		}
+		notifyClients((cl) -> cl.notifyDelete(msg));
 	}
 
 	/**

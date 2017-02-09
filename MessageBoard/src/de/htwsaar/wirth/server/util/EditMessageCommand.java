@@ -11,6 +11,10 @@ public class EditMessageCommand implements Command {
 	private Message messageToEdit;
 	private Notifiable childServer;
 	private ParentServer parentToNotify;
+	
+	public EditMessageCommand(Message messageToEdit) {
+		this.messageToEdit = messageToEdit;
+	}
 
 	public EditMessageCommand(Notifiable childServer, Message messageToEdit) {
 		this.messageToEdit = messageToEdit;
@@ -21,6 +25,10 @@ public class EditMessageCommand implements Command {
 		this.messageToEdit = messageToEdit;
 		this.parentToNotify = parentToNotify;
 	}
+	
+	public void setNotifiable(Notifiable n) {
+		this.childServer = n;
+	}
 
 	public void execute() throws RemoteException {
 		if (messageToEdit != null) {
@@ -30,6 +38,10 @@ public class EditMessageCommand implements Command {
 				childServer.notifyEdit(messageToEdit);
 			}
 		}
+	}
+	
+	public EditMessageCommand clone() {
+		return new EditMessageCommand(messageToEdit);
 	}
 
 }
