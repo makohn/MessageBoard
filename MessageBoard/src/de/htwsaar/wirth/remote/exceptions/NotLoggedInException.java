@@ -1,8 +1,6 @@
 package de.htwsaar.wirth.remote.exceptions;
 
-import java.rmi.RemoteException;
-
-public class NotLoggedInException extends RemoteException {
+public class NotLoggedInException extends RuntimeException {
 
 	private static final long serialVersionUID = -2351205831297789107L;
 

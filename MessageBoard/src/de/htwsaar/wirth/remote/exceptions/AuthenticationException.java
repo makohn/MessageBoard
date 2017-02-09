@@ -1,8 +1,6 @@
 package de.htwsaar.wirth.remote.exceptions;
 
-import java.rmi.RemoteException;
-
-public class AuthenticationException extends RemoteException {
+public class AuthenticationException extends RuntimeException {
 	
 	private static final long serialVersionUID = 584940483247442084L;
 
