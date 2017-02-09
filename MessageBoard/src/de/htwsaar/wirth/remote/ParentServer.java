@@ -8,10 +8,10 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 
 public interface ParentServer extends Remote {
 	
-	public void notifyServerDelete (Message msg) throws RemoteException;
-	public void notifyServerEdit (Message msg) throws RemoteException;
-	public void publish(Message msg)  throws RemoteException;
-	public void registerServer(Notifiable childServer) throws RemoteException;
-	public List<Message> getMessages() throws RemoteException;
+	void notifyServerDelete (Message msg) throws RemoteException;
+	void notifyServerEdit (Message msg) throws RemoteException;
+	void publish(Message msg)  throws RemoteException;
+	void registerServer(Notifiable childServer) throws RemoteException;
+	List<Message> getMessages() throws RemoteException;
 	
 }

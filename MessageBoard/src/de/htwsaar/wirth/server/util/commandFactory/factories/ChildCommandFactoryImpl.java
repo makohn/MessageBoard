@@ -11,15 +11,10 @@ import de.htwsaar.wirth.server.util.commandFactory.factories.interfaces.ChildCom
 public class ChildCommandFactoryImpl implements ChildCommandFactory {
 
 
-
-
-
-
-    public Command makeCommand(Notifiable server, Message msg, int commandType){
+    public Command makeCommand(Notifiable server, Message msg, int commandType) {
         Command command = null;
-        if(commandType == NEW_COMMAND)
-        {
-            command = new NewMessageCommand(server,msg);
+        if (commandType == NEW_COMMAND) {
+            command = new NewMessageCommand(server, msg);
         }
 
         return command;

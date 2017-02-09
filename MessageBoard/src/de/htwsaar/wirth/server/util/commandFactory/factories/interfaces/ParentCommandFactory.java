@@ -8,7 +8,7 @@ public interface ParentCommandFactory {
 
     int PUBLISH_COMMAND = 4;
 
-    public Command makeCommand(ParentServer server, Message msg,int commandType);
+    Command makeCommand(ParentServer server, Message msg, int commandType);
 
 
 }

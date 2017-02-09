@@ -13,33 +13,33 @@ import de.htwsaar.wirth.server.util.commandFactory.factories.interfaces.ParentCo
 
 
 public class CommandBuilder {
-
+    private static Command command;
 
     public static Command buildCommand(ParentServer server, Message msg, int commandType) {
 
         CommandFactory factory = new CommandFactoryImpl();
-        Command command = factory.makeCommand(server,msg,commandType);
+        command = factory.makeCommand(server, msg, commandType);
 
         return command;
     }
 
-    public static Command buildCommand(Notifiable server,Message msg, int commandType) {
+    public static Command buildCommand(Notifiable server, Message msg, int commandType) {
         CommandFactory factory = new CommandFactoryImpl();
-        Command command = factory.makeCommand(server,msg,commandType);
+        command = factory.makeCommand(server, msg, commandType);
 
         return command;
     }
 
-    public static Command buildChildCommand( Notifiable server,Message msg, int commandType) {
+    public static Command buildChildCommand(Notifiable server, Message msg, int commandType) {
         ChildCommandFactory factory = new ChildCommandFactoryImpl();
-        Command command = factory.makeCommand(server,msg,commandType);
+        command = factory.makeCommand(server, msg, commandType);
 
         return command;
     }
 
-    public static Command buildParentCommand( ParentServer server,Message msg, int commandType) {
+    public static Command buildParentCommand(ParentServer server, Message msg, int commandType) {
         ParentCommandFactory factory = new ParentCommandFactoryImpl();
-        Command command = factory.makeCommand(server,msg,commandType);
+        command = factory.makeCommand(server, msg, commandType);
 
         return command;
     }
