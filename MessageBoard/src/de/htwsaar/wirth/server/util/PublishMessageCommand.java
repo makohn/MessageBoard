@@ -2,6 +2,7 @@ package de.htwsaar.wirth.server.util;
 
 import java.rmi.RemoteException;
 
+import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
@@ -20,6 +21,13 @@ public class PublishMessageCommand implements Command {
 			return;
 		}
 		parentToNotify.publish(messageToPublish);
+	}
+	
+	public PublishMessageCommand clone() {
+		return new PublishMessageCommand(parentToNotify, messageToPublish);
+	}
+
+	public void setNotifiable(Notifiable n) {
 	}
 
 }
