@@ -1,5 +1,7 @@
 package de.htwsaar.wirth.server.util;
 
+import de.htwsaar.wirth.server.util.CommandFactory.CommandModel.Command;
+
 import java.rmi.RemoteException;
 import java.util.concurrent.LinkedBlockingDeque;
 

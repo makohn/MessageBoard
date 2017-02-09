@@ -14,15 +14,16 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.MessageImpl;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
-import de.htwsaar.wirth.server.util.CommandRunner;
-import de.htwsaar.wirth.server.util.DeleteMessageCommand;
-import de.htwsaar.wirth.server.util.EditMessageCommand;
-import de.htwsaar.wirth.server.util.NewMessageCommand;
-import de.htwsaar.wirth.server.util.PublishMessageCommand;
+import de.htwsaar.wirth.server.util.*;
+import de.htwsaar.wirth.server.util.CommandFactory.CommandBuilder;
+import de.htwsaar.wirth.server.util.CommandFactory.CommandModel.Command;
+import de.htwsaar.wirth.server.util.CommandFactory.CommandModel.NewMessageCommand;
+import de.htwsaar.wirth.server.util.CommandFactory.CommandModel.PublishMessageCommand;
 
 public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
 
 	private String groupName;
+
 	
 	/**
 	 *  childServerList with each ChildServer
@@ -93,7 +94,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Change msg to a published msg in the local database
 
 		// Add a PublishMessageCommand to the ParentQueue
-		PublishMessageCommand cmd = new PublishMessageCommand(parent, msg);
+		Command cmd = CommandBuilder.buildCommand(parent,msg,CommandBuilder.PUBLISH_COMMAND);
 		childServerQueueMap.get(parent).addCommand(cmd);
 
 		// Notify each client
@@ -227,7 +228,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 		// Add a NewMessageCommand to each CommandRunner
 		for (Notifiable childServer : childServerList) {
-			NewMessageCommand cmd = new NewMessageCommand(childServer, msg);
+			Command cmd = CommandBuilder.buildCommand(childServer,msg,CommandBuilder.NEW_COMMAND);
 			childServerQueueMap.get(childServer).addCommand(cmd);
 		}
 
@@ -258,7 +259,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 		// Add a DeleteMessageCommand to each CommandRunner
 		for (Notifiable childServer : childServerList) {
-			DeleteMessageCommand cmd = new DeleteMessageCommand(childServer, msg);
+			Command cmd = CommandBuilder.buildCommand(childServer,msg,CommandBuilder.DELETE_COMMAND);
 			childServerQueueMap.get(childServer).addCommand(cmd);
 		}
 
@@ -289,7 +290,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 		// Add a EditMessageCommand to each CommandRunner
 		for (Notifiable childServer : childServerList) {
-			EditMessageCommand cmd = new EditMessageCommand(childServer, msg);
+			Command cmd = CommandBuilder.buildCommand(childServer,msg,CommandBuilder.DELETE_COMMAND);
 			childServerQueueMap.get(childServer).addCommand(cmd);
 		}
 

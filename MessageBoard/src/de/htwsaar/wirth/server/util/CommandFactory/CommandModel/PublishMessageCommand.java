@@ -1,9 +1,10 @@
-package de.htwsaar.wirth.server.util;
+package de.htwsaar.wirth.server.util.CommandFactory.CommandModel;
 
 import java.rmi.RemoteException;
 
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.server.util.CommandFactory.CommandModel.Command;
 
 public class PublishMessageCommand implements Command {
 	
