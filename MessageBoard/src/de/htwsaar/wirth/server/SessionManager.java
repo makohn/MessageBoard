@@ -70,6 +70,13 @@ public class SessionManager {
             throw new NoPermissionException("The user is not a group-leader");
         }
     }
+
+    public static void isAuthor(String username,String author) throws RemoteException {
+        // TODO: check if the user is a group leader
+        if (true) {
+            throw new NoPermissionException("The user is not a group-leader");
+        }
+    }
     
     /**
      * removes the username from the sessionMap

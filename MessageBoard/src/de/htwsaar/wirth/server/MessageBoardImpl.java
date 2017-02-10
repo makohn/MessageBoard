@@ -173,7 +173,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void publish(Message msg, String username, UUID token) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(username, token);
-		// TODO: Is admin if not exeption
+		SessionManager.isGroupLeader(username);
+
 		if(needToPublish(msg)) {
 			msg.setPublished(true);
 			Command cmd = CommandBuilder.buildParentCommand(parent,msg,ParentCmd.PUBLISH);
@@ -215,7 +216,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void editMessage(Message msg, String username, UUID token) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(username, token);
-		// TODO: if User == Author continue else exception
+		SessionManager.isAuthor(username,msg.getAuthor());
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
@@ -236,7 +237,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(username, token);
-		// TODO: if User == Admin or Author continue else exception
+		SessionManager.isGroupLeader(username);
 		notifyDelete(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
