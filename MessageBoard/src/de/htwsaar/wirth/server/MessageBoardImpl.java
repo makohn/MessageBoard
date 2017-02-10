@@ -118,11 +118,19 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	}
 
 	/**
-	 *	needToPublish decides whether a message has to publish to the parent or not.
+	 *	needToSend decides whether a message has to send to the parent or not.
 	 */
 	private boolean needToSendParent(Message msg){
 		// add condition Database has msg
 		return (msg.isPublished() && !isRoot());
+	}
+
+	/**
+	 *	needToPublish decides whether a message has to publish to the parent or not.
+	 */
+	private boolean needToPublish(Message msg){
+		// add condition Database has msg
+		return (!msg.isPublished() && !isRoot());
 	}
 	
 	//---------------------------------- MessageBoard Interface ----------------------------------
@@ -170,7 +178,15 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void publish(Message msg, String username, UUID token) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(username, token);
-		// TODO:
+		// TODO: Is admin if not exeption
+		if(needToPublish(msg)) {
+			msg.setPublished(true);
+			Command cmd = CommandBuilder.buildParentCommand(parent,msg,ParentCmd.PUBLISH);
+			parentQueue.addCommand(cmd);
+		}
+
+
+
 	}
 	
 	/**
@@ -225,7 +241,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(username, token);
-		// TODO: if User == Author continue else exception
+		// TODO: if User == Admin or Author continue else exception
 		notifyDelete(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.DELETE);
@@ -249,7 +265,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	}
 	
 	//---------------------------------- Notifiable Interface ----------------------------------
-	
+
+
 	/**
 	 * notifyNew is capsuled in the Notifyable-Interface. Every time a new
 	 * message is transmitted to the server either trough a client or the
@@ -335,16 +352,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 */
 	public void publish(Message msg) throws RemoteException {
-		//TODO: check if we are the root server
 
-		// Change msg to a published msg in the local database
-
-		// Add a PublishMessageCommand to the ParentQueue
-		Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.PUBLISH);
-		childServerQueueMap.get(parent).addCommand(cmd);
-
-		// Notify each client
-		notifyClients((cl) -> cl.notifyNew(msg));
+		notifyNew(msg);
 	}
 
 
