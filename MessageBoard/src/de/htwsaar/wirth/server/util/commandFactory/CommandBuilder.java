@@ -4,65 +4,18 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ChildCmd;
-import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.Cmd;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ParentCmd;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.childCommand.ChildCommand;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.parentCommand.ParentCommand;
 import de.htwsaar.wirth.server.util.commandFactory.factories.ChildCommandFactoryImpl;
-import de.htwsaar.wirth.server.util.commandFactory.factories.CommandFactoryImpl;
 import de.htwsaar.wirth.server.util.commandFactory.factories.ParentCommandFactoryImpl;
 import de.htwsaar.wirth.server.util.commandFactory.factories.interfaces.ChildCommandFactory;
-import de.htwsaar.wirth.server.util.commandFactory.factories.interfaces.CommandFactory;
 import de.htwsaar.wirth.server.util.commandFactory.factories.interfaces.ParentCommandFactory;
 
 
 public class CommandBuilder {
 
 
-    /**
-     * buildCommand creates a Command depend on the commandType.
-     *
-     * @param server      ParentServer
-     * @param msg         a Message
-     * @param commandType a commandType specified in ENUM Cmd
-     * @return a ParentCommand
-     */
-    public static ParentCommand buildCommand(ParentServer server, Message msg, Cmd commandType) {
-
-        CommandFactory factory = new CommandFactoryImpl();
-        ParentCommand command = factory.makeCommand(server, msg, commandType);
-
-        return command;
-    }
-
-    /**
-     * buildCommand creates a Command depend on the commandType.
-     *
-     * @param server      ParentServer
-     * @param msg         a Message
-     * @param commandType a commandType specified in ENUM Cmd
-     * @return a ChildCommand
-     */
-    public static ChildCommand buildCommand(Notifiable server, Message msg, Cmd commandType) {
-        CommandFactory factory = new CommandFactoryImpl();
-        ChildCommand command = factory.makeCommand(server, msg, commandType);
-
-        return command;
-    }
-
-    /**
-     * buildCommand creates a ChildCommand depend on the commandType.
-     *
-     * @param msg
-     * @param commandType
-     * @return a ChildCommand
-     */
-    public static ChildCommand buildCommand(Message msg, Cmd commandType) {
-        CommandFactory factory = new CommandFactoryImpl();
-        ChildCommand command = factory.makeCommand(msg, commandType);
-
-        return command;
-    }
 
     /**
      * buildChildCommand creates a Command that is only for ChildServer

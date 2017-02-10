@@ -10,7 +10,7 @@ public class CommandRunner extends Thread {
 	private LinkedBlockingDeque<Command> queue;
 
 	public CommandRunner() {
-		queue = new LinkedBlockingDeque<Command>();
+		queue = new LinkedBlockingDeque<>();
 	}
 
 	/**

@@ -1,14 +1,5 @@
 package de.htwsaar.wirth.server;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
@@ -19,9 +10,13 @@ import de.htwsaar.wirth.server.util.CommandRunner;
 import de.htwsaar.wirth.server.util.commandFactory.CommandBuilder;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Command;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ChildCmd;
-import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.Cmd;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.Constants.ParentCmd;
 import de.htwsaar.wirth.server.util.commandFactory.commandModel.childCommand.ChildCommand;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
@@ -223,7 +218,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// TODO: if User == Author continue else exception
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
-			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.EDIT);
+			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
 			parentQueue.addCommand(cmd);
 		}
 	}
@@ -244,7 +239,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// TODO: if User == Admin or Author continue else exception
 		notifyDelete(msg);
 		if(needToSendParent(msg)) {
-			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.DELETE);
+			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
 			parentQueue.addCommand(cmd);
 		}
 	}
@@ -301,7 +296,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// only execute the following, if the edit was successful
 
 		// Add a EditMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(CommandBuilder.buildCommand(msg,Cmd.EDIT));
+		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg,ChildCmd.EDIT));
 
 		// Notify each client
 		notifyClients((cl) -> cl.notifyEdit(msg));
@@ -322,7 +317,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// only execute the following, if the delete was successful
 
 		// Add a DeleteMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(CommandBuilder.buildCommand(msg,Cmd.DELETE));
+		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg,ChildCmd.DELETE));
 
 		// Notify each client
 		notifyClients((cl) -> cl.notifyDelete(msg));
@@ -361,7 +356,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
-			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.EDIT);
+			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
 			parentQueue.addCommand(cmd);
 			notifyServerEdit(msg);
 		}
@@ -372,7 +367,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public void notifyServerDelete(Message msg) throws RemoteException {
 		notifyDelete(msg);
 		if(needToSendParent(msg)) {
-			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.DELETE);
+			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
 			parentQueue.addCommand(cmd);
 			notifyServerEdit(msg);
 		}
