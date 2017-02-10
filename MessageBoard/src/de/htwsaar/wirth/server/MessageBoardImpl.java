@@ -116,6 +116,14 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			}
 		}
 	}
+
+	/**
+	 *	needToPublish decides whether a message has to publish to the parent or not.
+	 */
+	private boolean needToSendParent(Message msg){
+		// add condition Database has msg
+		return (msg.isPublished() && !isRoot());
+	}
 	
 	//---------------------------------- MessageBoard Interface ----------------------------------
 	
@@ -196,7 +204,12 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void editMessage(Message msg, String username, UUID token) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(username, token);
-		//TODO:
+		// TODO: if User == Author continue else exception
+		notifyEdit(msg);
+		if(needToSendParent(msg)) {
+			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.EDIT);
+			parentQueue.addCommand(cmd);
+		}
 	}
 	
 	/**
@@ -212,7 +225,12 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(username, token);
-		//TODO:
+		// TODO: if User == Author continue else exception
+		notifyDelete(msg);
+		if(needToSendParent(msg)) {
+			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.DELETE);
+			parentQueue.addCommand(cmd);
+		}
 	}
 	
 	/**
@@ -261,7 +279,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyEdit(Message msg) throws RemoteException {
-		//TODO: Edit msg to local database
+		//TODO: Edit msg to local database (only when Element in DB then successful)
 
 		// only execute the following, if the edit was successful
 
@@ -282,7 +300,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyDelete(Message msg) throws RemoteException {
-		//TODO: Delete msg from local database
+		//TODO: Delete msg from local database (only when Element in DB then successful)
 
 		// only execute the following, if the delete was successful
 
@@ -328,13 +346,27 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Notify each client
 		notifyClients((cl) -> cl.notifyNew(msg));
 	}
-	
+
+
 	public void notifyServerEdit(Message msg) throws RemoteException {
-		// TODO
+
+		notifyEdit(msg);
+		if(needToSendParent(msg)) {
+			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.EDIT);
+			parentQueue.addCommand(cmd);
+			notifyServerEdit(msg);
+		}
+
+
 	}
 
 	public void notifyServerDelete(Message msg) throws RemoteException {
-		// TODO
+		notifyDelete(msg);
+		if(needToSendParent(msg)) {
+			Command cmd = CommandBuilder.buildCommand(parent, msg, Cmd.DELETE);
+			parentQueue.addCommand(cmd);
+			notifyServerEdit(msg);
+		}
 	}
 
 	public List<Message> getMessages() throws RemoteException {
