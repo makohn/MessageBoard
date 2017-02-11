@@ -17,6 +17,9 @@ public class NewMessageCommand extends ChildCommand {
 
 
 	public void execute() throws RemoteException {
+		if (childServer == null || message == null) {
+			return;
+		}
 		childServer.notifyNew(message);
 	}
 

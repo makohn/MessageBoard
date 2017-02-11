@@ -15,6 +15,10 @@ public class PublishMessageCommand extends ParentCommand {
 		this.parentToNotify = parentToNotify;
 	}
 
+	/**
+	 * After a parent received this command it will be executed by the CommandRunner.
+	 * @throws RemoteException
+	 */
 	public void execute() throws RemoteException {
 		if (parentToNotify == null || messageToPublish == null) {
 			return;

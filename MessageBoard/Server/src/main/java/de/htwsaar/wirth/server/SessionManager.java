@@ -21,8 +21,7 @@ public class SessionManager {
     /**
      * logs a user in and generates a new token for the given username
      * if the username or password is wrong, a AuthenticationException gets thrown
-     * @param username
-     * @param password
+
      * @return the AuthPacket, which can be used by the client to access the remote methods
      * @throws RemoteException
      * @throws AuthenticationException, when the username or password is wrong
@@ -42,7 +41,7 @@ public class SessionManager {
     /**
      * check, if the user is authenticated by the given token.
      * 
-     * @param username
+
      * @param auth
      * @throws RemoteException
      * @throws NotLoggedInException, if the there is no such user token
@@ -62,7 +61,7 @@ public class SessionManager {
      * if the user is a GroupLeader nothing happens
      * if the user is not a GroupLeader a NoPermissionException gets thrown
      * it should be catched on the client-side
-     * @param username
+
      * @throws RemoteException
      * @throws NoPermissionException
      */

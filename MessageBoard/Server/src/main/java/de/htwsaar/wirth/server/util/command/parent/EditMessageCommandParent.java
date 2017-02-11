@@ -7,16 +7,23 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 
 public class EditMessageCommandParent extends ParentCommand {
 
-    private Message message;
-    private ParentServer parent;
+    private Message messageToEdit;
+    private ParentServer parentToEdit;
 
-    public EditMessageCommandParent(ParentServer parent, Message message) {
-        this.message = message;
-        this.parent = parent;
+    public EditMessageCommandParent(ParentServer parentToEdit, Message message) {
+        this.messageToEdit = message;
+        this.parentToEdit = parentToEdit;
     }
 
+    /**
+     * After a parent received this command it will be executed by the CommandRunner.
+     * @throws RemoteException
+     */
     public void execute() throws RemoteException {
-        parent.notifyServerEdit(message);
+        if (parentToEdit == null || messageToEdit == null) {
+            return;
+        }
+        parentToEdit.notifyServerEdit(messageToEdit);
     }
 
 

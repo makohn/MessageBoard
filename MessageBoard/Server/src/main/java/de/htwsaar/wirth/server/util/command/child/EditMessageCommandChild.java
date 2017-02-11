@@ -7,17 +7,20 @@ import java.rmi.RemoteException;
 
 public class EditMessageCommandChild extends ChildCommand {
 
-    private Message message;
+    private Message messageToEdit;
     private Notifiable childServer;
 
-    public EditMessageCommandChild(Notifiable childServer, Message message) {
-        this.message = message;
+    public EditMessageCommandChild(Notifiable childServer, Message messageToEdit ) {
+        this.messageToEdit  = messageToEdit ;
         this.childServer = childServer;
     }
 
 
     public void execute() throws RemoteException {
-        childServer.notifyEdit(message);
+        if (childServer == null || messageToEdit == null) {
+            return;
+        }
+        childServer.notifyEdit(messageToEdit );
     }
 
     @Override
@@ -26,7 +29,7 @@ public class EditMessageCommandChild extends ChildCommand {
     }
 
     public ChildCommand clone() {
-        return new EditMessageCommandChild(this.childServer,this.message);
+        return new EditMessageCommandChild(this.childServer,this.messageToEdit );
     }
 }
 

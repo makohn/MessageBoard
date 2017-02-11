@@ -8,15 +8,22 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 public class DeleteMessageCommandParent extends ParentCommand {
 
     private Message messageToDelete;
-    private ParentServer parent;
+    private ParentServer parentToDelete;
 
-    public DeleteMessageCommandParent(ParentServer parent, Message messageToDelete) {
+    public DeleteMessageCommandParent(ParentServer parentToDelete, Message messageToDelete) {
         this.messageToDelete = messageToDelete;
-        this.parent = parent;
+        this.parentToDelete = parentToDelete;
     }
 
+    /**
+     * After a parent received this command it will be executed by the CommandRunner.
+     * @throws RemoteException
+     */
     public void execute() throws RemoteException {
-        parent.notifyServerDelete(messageToDelete);
+        if (parentToDelete == null || messageToDelete == null) {
+            return;
+        }
+        parentToDelete.notifyServerDelete(messageToDelete);
     }
 
 

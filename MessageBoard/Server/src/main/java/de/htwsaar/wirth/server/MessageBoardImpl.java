@@ -137,8 +137,6 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * can be called by a client to connect his self by his group server.
 	 *
 	 * @param client
-	 * @param username
-	 * @param password
 	 * @return
 	 * @throws RemoteException
 	 */
@@ -168,9 +166,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * authenticate the User a username and a valid authentication token is
 	 * required.
 	 *
+	 * @param auth AuthPack given by the login
 	 * @param msg
-	 * @param username
-	 * @param token
 	 * @throws RemoteException
 	 */
 	public void publish(AuthPacket auth, Message msg) throws RemoteException {
@@ -193,9 +190,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * authenticate the User a username and a valid authentication token is
 	 * required.
 	 *
+	 * @param auth AuthPack given by the login
 	 * @param msg
-	 * @param username
-	 * @param token
 	 * @throws RemoteException
 	 */
 	public void newMessage(AuthPacket auth, String msg) throws RemoteException {
@@ -211,9 +207,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * all other servers which received this published message. To authenticate
 	 * the User a username and a valid authentication token is required.
 	 *
+	 * @param auth AuthPack given by the login
 	 * @param msg
-	 * @param username
-	 * @param token
 	 * @throws RemoteException
 	 */
 	public void editMessage(AuthPacket auth, Message msg) throws RemoteException {
@@ -232,9 +227,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * group-server. To authenticate the User a username and a valid
 	 * authentication token is required.
 	 *
+	 * @param auth AuthPack given by the login
 	 * @param msg
-	 * @param username
-	 * @param token
 	 * @throws RemoteException
 	 */
 	public void deleteMessage(AuthPacket auth, Message msg) throws RemoteException {
@@ -252,8 +246,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * This method can be called by a client to
 	 * initialise and update his messageboard
 	 *
-	 * @param username
-	 * @param token
+	 * @param auth AuthPack given by the login
 	 * @return
 	 * @throws RemoteException
 	 */
@@ -271,7 +264,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * parent, the notifyNew-method notifies all components which implements the
 	 * Notify-Interface.
 	 *
-	 * @param msg
+	 * @param msg message to be created
 	 * @throws RemoteException
 	 */
 	public void notifyNew(Message msg) throws RemoteException {
@@ -290,7 +283,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * notifyNew-method notifies all components which implements the
 	 * Notify-Interface.
 	 *
-	 * @param msg
+	 * @param msg message to be edited
 	 * @throws RemoteException
 	 */
 	public void notifyEdit(Message msg) throws RemoteException {
@@ -313,7 +306,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * notifyNew-method notifies all components which implements the
 	 * Notify-Interface.
 	 *
-	 * @param msg
+	 * @param msg message to be delete
 	 * @throws RemoteException
 	 */
 	public void notifyDelete(Message msg) throws RemoteException {
@@ -345,18 +338,28 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		commandRunner.start();
 		childServerQueueMap.put(childServer, commandRunner);
 	}
-	
+
 	/**
-	 * publish is capsuled in the ParentServer-Interface and in the
-	 * MessageBoard-Interface. This method
-	 *
+	 * notifyServerDelete is capsuled in the ParentServer-Interface. Only if the message exist in
+	 * the Database this Method will be published and send a newMessage-command to all child-server.
+	 * In addition it will notify all clients.
+	 * If the message was already published this method has no effect.
 	 * @param msg
+	 * @throws RemoteException
 	 */
 	public void publish(Message msg) throws RemoteException {
 		notifyNew(msg);
 	}
 
 
+	/**
+	 * notifyServerEdit is capsuled in the ParentServer-Interface. Only if the message exist in
+	 * the Database this Method will edit the entry and send a edit-command to all child-server.
+	 * In addition it will notify all clients.
+	 * If the message was published, the edit-command will be send further to the parent.
+	 * @param msg
+	 * @throws RemoteException
+	 */
 	public void notifyServerEdit(Message msg) throws RemoteException {
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
@@ -368,6 +371,14 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 	}
 
+	/**
+	 * notifyServerDelete is capsuled in the ParentServer-Interface. Only if the message exist in
+	 * the Database this Method will delete the entry and send a delete-command to all child-server.
+	 * In addition it will notify all clients.
+	 * If the message was published, the delete-command will be send further to the parent.
+	 * @param msg
+	 * @throws RemoteException
+	 */
 	public void notifyServerDelete(Message msg) throws RemoteException {
 		notifyDelete(msg);
 		if(needToSendParent(msg)) {
