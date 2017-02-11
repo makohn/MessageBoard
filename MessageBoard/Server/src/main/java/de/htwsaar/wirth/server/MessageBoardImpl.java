@@ -4,6 +4,8 @@ import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.MessageImpl;
+import de.htwsaar.wirth.remote.model.auth.AuthPacket;
+import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.server.service.Services;
 import de.htwsaar.wirth.server.util.CommandRunner;
@@ -140,23 +142,23 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @return
 	 * @throws RemoteException
 	 */
-	public UUID registerClient(Notifiable client, String username, String password) throws RemoteException {
+	public AuthPacket registerClient(LoginPacket login, Notifiable client) throws RemoteException {
 		// Authenticate throws an exception, if the username or password are
 		// wrong
 		// this exception can be handled on clientside
-		UUID userToken = SessionManager.authenticate(username, password);
+		AuthPacket auth = SessionManager.authenticate(login);
 		clientList.add(client);
-		return userToken;
+		return auth;
 	}
 	
 	/**
+	 * @param auth
 	 * @param newUsername
 	 * @param newPassword
-	 * @param username
-	 * @param token
 	 */
-	public void addUser(String newUsername, String newPassword, String username, UUID token) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(username, token);
+	public void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+		SessionManager.isGroupLeader(auth);
 		// TODO:
 	}
 	
@@ -171,9 +173,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param token
 	 * @throws RemoteException
 	 */
-	public void publish(Message msg, String username, UUID token) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(username, token);
-		SessionManager.isGroupLeader(username);
+	public void publish(AuthPacket auth, Message msg) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+		SessionManager.isGroupLeader(auth);
 
 		if(needToPublish(msg)) {
 			msg.setPublished(true);
@@ -196,9 +198,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param token
 	 * @throws RemoteException
 	 */
-	public void newMessage(String msg, String username, UUID token) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(username, token);
-		Message message = new MessageImpl(msg, username, groupName, false);
+	public void newMessage(AuthPacket auth, String msg) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+		Message message = new MessageImpl(msg, auth.getUsername(), groupName, false);
 		notifyNew(message);
 	}
 	
@@ -214,9 +216,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param token
 	 * @throws RemoteException
 	 */
-	public void editMessage(Message msg, String username, UUID token) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(username, token);
-		SessionManager.isAuthor(username,msg.getAuthor());
+	public void editMessage(AuthPacket auth, Message msg) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+		SessionManager.isAuthor(auth, msg);
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
@@ -235,9 +237,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param token
 	 * @throws RemoteException
 	 */
-	public void deleteMessage(Message msg, String username, UUID token) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(username, token);
-		SessionManager.isGroupLeader(username);
+	public void deleteMessage(AuthPacket auth, Message msg) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+		SessionManager.isGroupLeader(auth);
 		notifyDelete(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
@@ -255,8 +257,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @return
 	 * @throws RemoteException
 	 */
-	public List<Message> getMessages(String username, UUID token) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(username, token);
+	public List<Message> getMessages(AuthPacket auth) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
 		return getMessages();
 	}
 	
@@ -273,7 +275,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyNew(Message msg) throws RemoteException {
-		//TODO: Save msg to local database
+		//Services.getInstance().getMessageService().saveMessage(msg);
 
 		// Add a NewMessageCommand to each CommandRunner
 		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
@@ -292,6 +294,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyEdit(Message msg) throws RemoteException {
+		//TODO: check if the edit msg, we get notified of, is newer than the one we have in the database
+		//Services.getInstance().getMessageService().saveMessage(msg);
 		//TODO: Edit msg to local database (only when Element in DB then successful)
 
 		// only execute the following, if the edit was successful
@@ -313,6 +317,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyDelete(Message msg) throws RemoteException {
+		//Services.getInstance().getMessageService().deleteMessage(msg);
 		//TODO: Delete msg from local database (only when Element in DB then successful)
 
 		// only execute the following, if the delete was successful
@@ -348,13 +353,11 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 */
 	public void publish(Message msg) throws RemoteException {
-
 		notifyNew(msg);
 	}
 
 
 	public void notifyServerEdit(Message msg) throws RemoteException {
-
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
