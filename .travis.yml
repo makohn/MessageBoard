@@ -1,0 +1,11 @@
+sudo: false
+language: java
+jdk:
+  - oraclejdk8
+
+script: mvn install
+
+# white list
+branches:
+  only:
+    - master

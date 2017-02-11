@@ -1,0 +1,28 @@
+package de.htwsaar.wirth.server.util.command.parent;
+
+import java.rmi.RemoteException;
+
+import de.htwsaar.wirth.remote.ParentServer;
+import de.htwsaar.wirth.remote.model.interfaces.Message;
+
+public class PublishMessageCommand extends ParentCommand {
+	
+	private Message messageToPublish;
+	private ParentServer parentToNotify;
+	
+	public PublishMessageCommand(ParentServer parentToNotify, Message messageToPublish) {
+		this.messageToPublish = messageToPublish;
+		this.parentToNotify = parentToNotify;
+	}
+
+	public void execute() throws RemoteException {
+		if (parentToNotify == null || messageToPublish == null) {
+			return;
+		}
+		parentToNotify.publish(messageToPublish);
+	}
+	
+
+
+
+}
