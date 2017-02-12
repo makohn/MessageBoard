@@ -29,7 +29,7 @@ public class MessageImpl implements Serializable, Message {
     private Date modifiedAt;
     @Column
     private String author;
-    @Column
+    @Column(name="groupName")
     private String group;
     @Column
     private boolean isPublished;

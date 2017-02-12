@@ -1,6 +1,9 @@
 package de.htwsaar.wirth.server.dao;
 
 import org.hibernate.Session;
+import org.hibernate.mapping.KeyValue;
+import org.hibernate.query.Query;
+import org.hibernate.query.QueryParameter;
 
 import java.util.List;
 
@@ -44,10 +47,24 @@ public abstract class AbstractDao<T> {
     public List<T> query(String query) {
         Session session = PersistenceManager.getSession();
         session.beginTransaction();
-        
-        //TODO: Replace deprecated method 
+
         List<T> result = session.createQuery(query).list();
 
+        session.getTransaction().commit();
+        session.close();
+
+        return result;
+    }
+
+    public List<T> query(String query, List<DatabaseQueryParameter> parameterList) {
+        Session session = PersistenceManager.getSession();
+        session.beginTransaction();
+
+        Query queryObj = session.createQuery(query);
+        for(int i=0; i<parameterList.size();i++){
+            queryObj.setParameter(parameterList.get(i).getKey(), parameterList.get(i).getValue());
+        }
+        List<T> result = queryObj.list();
         session.getTransaction().commit();
         session.close();
 
