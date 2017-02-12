@@ -1,0 +1,32 @@
+
+.buttonSearchCloseIcon {
+    -glyph-size: 15;
+    -glyph-name: CLOSE;
+}
+
+.buttonSearchClose, .buttonSearchUp, .buttonSearchDown {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.searchBoxLabel {
+    -fx-padding: 0 7 0 10;
+}
+
+.searchField {
+    -fx-background-radius: 20px;
+}
+
+.searchBoxLabelIcon {
+    -glyph-size: 13;
+    -glyph-name: SEARCH;
+}
+
+.combo-box-base {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+    -fx-background-radius: 3px, 3px, 2px, 1px;
+    -fx-border-style: solid;
+    -fx-border-radius: 10px;
+    -fx-border-color: grey;
+}
