@@ -3,6 +3,7 @@ package de.htwsaar.wirth.server;
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
+import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
 import de.htwsaar.wirth.remote.model.MessageImpl;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
@@ -129,6 +130,10 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// add condition Database has msg
 		return (!msg.isPublished() && !isRoot());
 	}
+
+	private boolean messageExists(Message msg){
+		return Services.getInstance().getMessageService().existsMessage(msg);
+	}
 	
 	//---------------------------------- MessageBoard Interface ----------------------------------
 	
@@ -173,7 +178,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public void publish(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isGroupLeader(auth);
-
+		if(!messageExists(msg)) {
+			throw new MessageNotExistsException("The message doesn't exists on this server");
+		}
 		if(needToPublish(msg)) {
 			msg.setPublished(true);
 			Command cmd = CommandBuilder.buildParentCommand(parent,msg,ParentCmd.PUBLISH);
@@ -214,6 +221,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public void editMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isAuthor(auth, msg);
+		if(!messageExists(msg)) {
+			throw new MessageNotExistsException("The message doesn't exists on this server");
+		}
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
@@ -234,6 +244,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public void deleteMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isGroupLeader(auth);
+		if(!messageExists(msg)) {
+			throw new MessageNotExistsException("The message doesn't exists on this server");
+		}
 		notifyDelete(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
@@ -268,7 +281,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyNew(Message msg) throws RemoteException {
-		//Services.getInstance().getMessageService().saveMessage(msg);
+		Services.getInstance().getMessageService().saveMessage(msg);
 
 		// Add a NewMessageCommand to each CommandRunner
 		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
@@ -288,16 +301,15 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void notifyEdit(Message msg) throws RemoteException {
 		//TODO: check if the edit msg, we get notified of, is newer than the one we have in the database
-		//Services.getInstance().getMessageService().saveMessage(msg);
-		//TODO: Edit msg to local database (only when Element in DB then successful)
+		if(messageExists(msg)) {
+			Services.getInstance().getMessageService().saveMessage(msg);
 
-		// only execute the following, if the edit was successful
+			// Add a EditMessageCommand to each CommandRunner
+			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.EDIT));
 
-		// Add a EditMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg,ChildCmd.EDIT));
-
-		// Notify each client
-		notifyClients((cl) -> cl.notifyEdit(msg));
+			// Notify each client
+			notifyClients((cl) -> cl.notifyEdit(msg));
+		}
 	}
 
 	/**
@@ -310,16 +322,17 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyDelete(Message msg) throws RemoteException {
-		//Services.getInstance().getMessageService().deleteMessage(msg);
-		//TODO: Delete msg from local database (only when Element in DB then successful)
+		if(messageExists(msg)) {
+			Services.getInstance().getMessageService().deleteMessage(msg);
 
-		// only execute the following, if the delete was successful
+			// only execute the following, if the delete was successful
 
-		// Add a DeleteMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg,ChildCmd.DELETE));
+			// Add a DeleteMessageCommand to each CommandRunner
+			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.DELETE));
 
-		// Notify each client
-		notifyClients((cl) -> cl.notifyDelete(msg));
+			// Notify each client
+			notifyClients((cl) -> cl.notifyDelete(msg));
+			}
 	}
 	
 	//---------------------------------- ParentServer Interface ----------------------------------

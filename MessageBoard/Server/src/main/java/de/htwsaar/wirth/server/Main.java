@@ -1,5 +1,9 @@
 package de.htwsaar.wirth.server;
 
+import de.htwsaar.wirth.remote.MessageBoard;
+import de.htwsaar.wirth.remote.ParentServer;
+import de.htwsaar.wirth.remote.model.auth.AuthPacket;
+
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -14,7 +18,7 @@ public class Main {
 	private static final String PARENT_NOT_AVAILABLE = "The parent is not responding.";
 
 	public static void main(String[] args) {
-		System.out.println("Server is alive and kicking.");
+		System.out.println("Server is alive,running on Port "+args[1]+" and kicking.");
 		String groupName;
 		int localPort;
 		String parentHostname = null;
@@ -56,6 +60,9 @@ public class Main {
 		} else {
 			try {
 				new Server(groupName, localPort, parentHostname, parentPort);
+				System.out.println("Server is connected to "+parentHostname+" : "+parentPort);
+
+
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (AlreadyBoundException e) {
