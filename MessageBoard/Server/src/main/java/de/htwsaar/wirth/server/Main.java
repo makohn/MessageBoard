@@ -1,9 +1,5 @@
 package de.htwsaar.wirth.server;
 
-import de.htwsaar.wirth.remote.MessageBoard;
-import de.htwsaar.wirth.remote.ParentServer;
-import de.htwsaar.wirth.remote.model.auth.AuthPacket;
-
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
