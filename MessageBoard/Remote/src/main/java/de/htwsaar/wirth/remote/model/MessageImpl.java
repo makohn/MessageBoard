@@ -32,8 +32,6 @@ public class MessageImpl implements Serializable, Message {
     @Column
     private String group;
     @Column
-    private boolean isPublic;
-    @Column
     private boolean isPublished;
 
     /**
@@ -41,15 +39,13 @@ public class MessageImpl implements Serializable, Message {
      * @param msg
      * @param author
      * @param group
-     * @param isPublic
      */
-    public MessageImpl(String msg, String author, String group, boolean isPublic) {
+    public MessageImpl(String msg, String author, String group) {
         this.id =  UUID.randomUUID();
         this.msg = msg;
         this.createdAt = new Date();
         this.author = author;
         this.group = group;
-        this.isPublic = isPublic;
     }
 
     public MessageImpl() {}
@@ -59,8 +55,6 @@ public class MessageImpl implements Serializable, Message {
     }
 
     public String getGroup() { return group; }
-
-    public boolean isPublic() { return isPublic; }
 
     public boolean isPublished() { return isPublished; }
 
@@ -90,7 +84,6 @@ public class MessageImpl implements Serializable, Message {
                 ", modifiedAt=" + modifiedAt +
                 ", author='" + author + '\'' +
                 ", group='" + group + '\'' +
-                ", isPublic=" + isPublic +
                 ", isPublished=" + isPublished +
                 '}';
     }

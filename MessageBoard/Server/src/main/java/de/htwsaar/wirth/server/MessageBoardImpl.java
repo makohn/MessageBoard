@@ -196,7 +196,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void newMessage(AuthPacket auth, String msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
-		Message message = new MessageImpl(msg, auth.getUsername(), groupName, false);
+		Message message = new MessageImpl(msg, auth.getUsername(), groupName);
 		notifyNew(message);
 	}
 	

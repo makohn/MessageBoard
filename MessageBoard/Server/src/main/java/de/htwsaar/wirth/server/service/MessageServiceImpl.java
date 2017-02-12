@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by olli on 08.02.17.
+ * Edited by oliverseibert on 12.02.2017
  */
 public class MessageServiceImpl implements MessageService {
     private MessageDao messageDao = new MessageDao();
@@ -21,10 +22,10 @@ public class MessageServiceImpl implements MessageService {
     }
 
     /**
-     * Gibt alle Messages zurück, die öffentlich sind, aber noch nicht veröffentlicht wurden
-     * @return Liste mit noch nicht veröffentlichen Message-Objekten
+     * Überprüft, ob es die übergebene Nachricht bereits in der Datenhaltungsschicht existiert
+     * @return true / false
      */
-    public List<Message> getUnpublished() { return messageDao.getUnpublished(); }
+    public boolean existsMessage(Message message) { return messageDao.existsMessage(message); }
 
     /**
      * Speichert eine Message

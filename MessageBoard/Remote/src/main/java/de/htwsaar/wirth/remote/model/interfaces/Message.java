@@ -11,7 +11,6 @@ public interface Message
 {
     public UUID getID();
     public String getGroup();
-    public boolean isPublic();
     public boolean isPublished();
     public String getMessage();
     public String getAuthor();
