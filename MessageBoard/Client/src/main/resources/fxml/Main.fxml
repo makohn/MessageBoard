@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+<?import org.controlsfx.glyphfont.Glyph?>
+
+<BorderPane maxHeight="620.0" 
+			maxWidth="1040.0" 
+			prefHeight="620.0" 
+			prefWidth="1040.0" 
+			xmlns="http://javafx.com/javafx/8" 
+			xmlns:fx="http://javafx.com/fxml/1" 
+			fx:controller="de.htwsaar.wirth.client.controller.MainViewController">
+   <center>
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+         <children>
+            <BorderPane maxHeight="1.7976931348623157E308" 
+            			maxWidth="1.7976931348623157E308" 
+            			minHeight="-Infinity" 
+            			prefHeight="93.0" 
+            			prefWidth="823.0">
+               <left>
+                  <HBox prefHeight="93.0" prefWidth="384.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fitHeight="69.0" fitWidth="59.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@/img/default.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <VBox prefHeight="59.0" prefWidth="141.0">
+                           <HBox.margin>
+                              <Insets left="10.0" top="30.0" />
+                           </HBox.margin>
+                           <children>
+                              <Label text="Max Mustermann" textFill="#fa6648">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox prefHeight="25.0" prefWidth="101.0" promptText="Online">
+                                 <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                       <String fx:value="Online" />
+                                       <String fx:value="Abwesend" />
+                                       <String fx:value="Offline" />
+                                    </FXCollections>
+                                 </items>
+
+                              </ComboBox>
+         
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </left>
+               <right>        
+				<CustomTextField prefHeight="30.0" 
+								 prefWidth="148.0" 
+								 promptText="Search..." 
+								 styleClass="searchField" 
+								 BorderPane.alignment="CENTER">
+								<right>
+							    <Label>
+									<graphic>
+										<Glyph fontFamily="FontAwesome" 
+											   icon="SEARCH" 
+											   styleClass="searchBoxLabel" />
+									</graphic>
+								</Label>
+							    </right>
+                    <BorderPane.margin>
+                       <Insets right="20.0" />
+                    </BorderPane.margin>
+					</CustomTextField>
+               </right>
+            </BorderPane>
+            <ScrollPane fitToHeight="true" 
+            			fitToWidth="true" 
+            			hbarPolicy="NEVER" 
+            			maxHeight="1.7976931348623157E308" 
+            			maxWidth="1.7976931348623157E308" 
+            			pannable="true" 
+            			prefHeight="496.0" 
+            			prefWidth="823.0" 
+            			vbarPolicy="NEVER" 
+            			vmin="1.0" 
+            			vvalue="1.0" 
+            			VBox.vgrow="ALWAYS">
+               <content>
+                  <ListView fx:id="chatPane" 
+			                maxHeight="1.7976931348623157E308" 
+			                maxWidth="1.7976931348623157E308" 
+			                prefHeight="481.0" 
+			                prefWidth="805.0" />
+               </content>
+            </ScrollPane>
+            <HBox  maxHeight="1.7976931348623157E308" 
+		           maxWidth="1.7976931348623157E308" 
+		           minHeight="-Infinity" 
+		           minWidth="100.0" 
+		           VBox.vgrow="NEVER">
+               <children>
+                  <TextArea fx:id="messageBox" 
+                  			maxHeight="1.7976931348623157E308" 
+                  			maxWidth="1.7976931348623157E308" 
+                  			minHeight="-Infinity" 
+                  			minWidth="100.0" 
+                  			nodeOrientation="LEFT_TO_RIGHT" 
+                  			onKeyPressed="#sendMethod" 
+                  			prefHeight="40.0" 
+                  			prefWidth="823.0" 
+                  			promptText="Enter Message..." 
+                  			scaleShape="false" 
+                  			HBox.hgrow="ALWAYS">
+	                     <font>
+	                        <Font size="14.0" />
+	                     </font>
+                  </TextArea>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+   <left>
+      <VBox maxHeight="1.7976931348623157E308" 
+      		style="-fx-background-color: #2A3644;" 
+      		BorderPane.alignment="CENTER">
+         <children>
+            <Label prefHeight="44.0" prefWidth="135.0" text="  ➥ Vorstand" textFill="WHITE">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="50.0" prefWidth="217.0">
+               <children>
+                  <Label prefHeight="53.0" prefWidth="110.0" 
+                  		 text="Online Users:" 
+                  		 textAlignment="CENTER" 
+                  		 textFill="#c9c9c8">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                     <opaqueInsets>
+                        <Insets bottom="10.0" />
+                     </opaqueInsets>
+                  </Label>
+                  <Label prefHeight="52.0" prefWidth="94.0" text="0" textFill="#c9c9c8">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <ListView fx:id="userList" 
+            		  focusTraversable="false" 
+            		  maxHeight="1.7976931348623157E308" 
+            		  prefHeight="358.0" 
+            		  prefWidth="217.0" 
+            		  style="-fx-background-color: transparent;">
+            </ListView>
+         </children>
+      </VBox>
+   </left>
+   <rotationAxis>
+      <Point3D />
+   </rotationAxis>
+</BorderPane>
