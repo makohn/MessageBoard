@@ -18,21 +18,29 @@ public class MessageServiceImpl implements MessageService {
      * @return Liste mit Message-Objekten
      */
     public List<Message> getAll(){
-        return messageDao.getAll();
+    	synchronized (Services.class) {
+    		return messageDao.getAll();
+    	}
     }
 
     /**
      * Überprüft, ob es die übergebene Nachricht bereits in der Datenhaltungsschicht existiert
      * @return true / false
      */
-    public boolean existsMessage(Message message) { return messageDao.existsMessage(message); }
+    public boolean existsMessage(Message message) { 
+    	synchronized (Services.class) {
+    		return messageDao.existsMessage(message); 
+    	}
+    }
 
     /**
      * Speichert eine Message
      * @param message Message-Objekt
      */
     public void saveMessage(Message message){
-        messageDao.save(message);
+    	synchronized (Services.class) {
+    		messageDao.save(message);
+    	}
     }
 
     /**
@@ -40,6 +48,8 @@ public class MessageServiceImpl implements MessageService {
      * @param message MessageDao-Objekt
      */
     public void deleteMessage(Message message){
-        messageDao.delete(message);
+    	synchronized (Services.class) {
+    		messageDao.delete(message);
+    	}
     }
 }

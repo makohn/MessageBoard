@@ -17,7 +17,9 @@ public class UserServiceImpl implements UserService {
      * @return Liste mit User-Objekten
      */
     public List<User> getAll(){
-        return userDao.getAll();
+    	synchronized (Services.class) {
+    		return userDao.getAll();
+    	}
     }
 
     /**
@@ -25,7 +27,9 @@ public class UserServiceImpl implements UserService {
      * @param user User-Objekt
      */
     public void saveUser(User user){
-        userDao.save(user);
+    	synchronized (Services.class) {
+    		userDao.save(user);
+    	}
     }
 
     /**
@@ -33,7 +37,9 @@ public class UserServiceImpl implements UserService {
      * @param user User-Objekt
      */
     public void deleteUser(User user){
-        userDao.delete(user);
+    	synchronized (Services.class) {
+    		userDao.delete(user);
+    	}
     }
 
     /**
@@ -41,11 +47,19 @@ public class UserServiceImpl implements UserService {
      * @param username Username als String
      * @return User-Objekt, wenn vorhanden ansonsten null
      */
-    public User getUser(String username) { return userDao.getUser(username); }
+    public User getUser(String username) { 
+    	synchronized (Services.class) {
+    		return userDao.getUser(username); 
+    	}
+    }
 
     /**
      * Gibt an, ob ein User bereits das Flag "isGroupLeader" beseitzt
      * @return true oder false
      */
-    public boolean existsGroupLeader(){ return userDao.existsGroupLeader(); }
+    public boolean existsGroupLeader(){ 
+    	synchronized (Services.class) {
+    		return userDao.existsGroupLeader(); 
+    	}
+    }
 }

@@ -221,10 +221,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public void editMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isAuthor(auth, msg);
-		if(!messageExists(msg)) {
-			throw new MessageNotExistsException("The message doesn't exists on this server");
+		// TODO: check, if the given message is equal to the msg in the database, except for the modified msgtxt.
+		synchronized (Message.class) {
+			if(!messageExists(msg)) {
+				throw new MessageNotExistsException("The message doesn't exists on this server");
+			}
+			notifyEdit(msg);
 		}
-		notifyEdit(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
 			parentQueue.addCommand(cmd);
@@ -243,11 +246,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void deleteMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isGroupLeader(auth);
-		if(!messageExists(msg)) {
-			throw new MessageNotExistsException("The message doesn't exists on this server");
+		SessionManager.isGroupLeader(auth); // TODO: or is the author of the message
+		synchronized (Message.class) {
+			if(!messageExists(msg)) {
+				throw new MessageNotExistsException("The message doesn't exists on this server");
+			}
+			notifyDelete(msg);
 		}
-		notifyDelete(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
 			parentQueue.addCommand(cmd);
