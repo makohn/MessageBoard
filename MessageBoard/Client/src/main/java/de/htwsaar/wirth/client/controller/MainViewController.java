@@ -3,13 +3,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import de.htwsaar.wirth.client.gui.component.MessageCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -33,31 +32,9 @@ public class MainViewController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		messages = FXCollections.observableArrayList();
 		users = FXCollections.observableArrayList("Folz", "Weber");
-		chatPane.setCellFactory(lv -> new ListCell<String>() {	
-			 private Node graphic;
-			 private MessageCellController controller ;
-			 {
-		        try {
-		            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MessageCell.fxml"));
-		            graphic = loader.load();
-		            controller = loader.getController();
-		        } catch (Exception exc) {
-		            throw new RuntimeException(exc);
-		        }
-		    }
-		
-			 @Override
-			    protected void updateItem(String msg, boolean empty) {
-			        super.updateItem(msg, empty);
-			        if(empty || msg == null) {
-			          setGraphic(null);
-			          setText(null);
-			        } else {
-			            controller.setMessage(msg);
-			            setGraphic(graphic);
-			        }
-			   }
-		});
+		chatPane.setMouseTransparent( true );
+		chatPane.setFocusTraversable( false );
+		chatPane.setCellFactory(lv -> new MessageCell());
 		chatPane.setItems(messages);
 		
 		userList.setCellFactory(lv -> new ListCell<String>() {
