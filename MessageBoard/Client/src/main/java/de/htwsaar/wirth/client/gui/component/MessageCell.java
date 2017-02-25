@@ -14,6 +14,7 @@ public class MessageCell extends ListCell<String>{
            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MessageCell.fxml"));
            graphic = loader.load();
            controller = loader.getController();
+           controller.init();
        } catch (Exception exc) {
            throw new RuntimeException(exc);
        }

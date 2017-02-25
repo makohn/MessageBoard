@@ -26,7 +26,7 @@ public class MainViewController implements Initializable {
 	private ObservableList<String> messages;
 	private ObservableList<Pair<String,Status>> users;
 	
-	///*-----------Example: Remove as soon as real datasets are available-----------------------------
+	///*-----------TestData: Remove as soon as real datasets are available-----------------------------
 	private final Pair<String,Status> user1 = new Pair<String,Status>("Folz", Status.AWAY);
 	private final Pair<String,Status> user2 = new Pair<String,Status>("Weber", Status.ONLINE);
 	private final Pair<String,Status> user3 = new Pair<String,Status>("Miede", Status.SHOW_AS_OFFLINE);
