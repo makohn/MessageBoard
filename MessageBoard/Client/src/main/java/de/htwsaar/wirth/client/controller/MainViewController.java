@@ -4,62 +4,44 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import de.htwsaar.wirth.client.gui.component.MessageCell;
+import de.htwsaar.wirth.client.gui.component.UserCell;
+import de.htwsaar.wirth.client.util.Status;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import javafx.util.Pair;
 
 public class MainViewController implements Initializable {
 
 	@FXML private ListView<String> chatPane;
-	@FXML private ListView<String> userList;
+	@FXML private ListView<Pair<String,Status>> userList;
 	@FXML private TextArea messageBox;
 	
 	
 	private ObservableList<String> messages;
-	private ObservableList<String> users;
+	private ObservableList<Pair<String,Status>> users;
 	
+	///*-----------Example: Remove as soon as real datasets are available-----------------------------
+	private final Pair<String,Status> user1 = new Pair<String,Status>("Folz", Status.AWAY);
+	private final Pair<String,Status> user2 = new Pair<String,Status>("Weber", Status.ONLINE);
+	private final Pair<String,Status> user3 = new Pair<String,Status>("Miede", Status.SHOW_AS_OFFLINE);
+	private final Pair<String,Status> user4 = new Pair<String,Status>("Esch", Status.BUSY);
+	///*----------------------------------------------------------------------------------------------
+	
+	@SuppressWarnings("unchecked") // Arraylist does not like Generics
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		messages = FXCollections.observableArrayList();
-		users = FXCollections.observableArrayList("Folz", "Weber");
-		chatPane.setMouseTransparent( true );
-		chatPane.setFocusTraversable( false );
-		chatPane.setCellFactory(lv -> new MessageCell());
+		chatPane.setCellFactory(list -> new MessageCell());
 		chatPane.setItems(messages);
 		
-		userList.setCellFactory(lv -> new ListCell<String>() {
-			@Override
-            protected void updateItem(String user, boolean bln) {
-                super.updateItem(user, bln);
-                setGraphic(null);
-                setText(null);
-                setBackground(null);
-                if (user != null) {
-                    HBox hBox = new HBox();
-
-                    Text name = new Text(user);
-                    name.setFill(Color.rgb(201, 201, 200));
-                    
-                    Text status = new Text("•  ");
-                    status.setFill(Color.rgb(124, 255, 25));
-
-                    hBox.getChildren().addAll(status, name);
-                    hBox.setAlignment(Pos.CENTER_LEFT);
-
-                    setGraphic(hBox);
-                }
-            }
-		});
+		users = FXCollections.observableArrayList(user1, user2, user3, user4);
+		userList.setCellFactory(list -> new UserCell());	
 		userList.setItems(users);
 		
 		/* Added to prevent the enter from adding a new line to inputMessageBox */
