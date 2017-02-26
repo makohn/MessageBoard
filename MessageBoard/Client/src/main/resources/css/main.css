@@ -1,12 +1,24 @@
 
-.buttonSearchCloseIcon {
-    -glyph-size: 15;
-    -glyph-name: CLOSE;
+.button {
+	-fx-background-color: transparent;
+	-fx-border-style: none;	
+	-fx-border-width: 0;	
 }
 
-.buttonSearchClose, .buttonSearchUp, .buttonSearchDown {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
+.editButtonGroup {
+	-fx-opacity: 0;	
+}
+
+.editButtonGroup:hover {
+	-fx-opacity: 1;	
+}
+
+.editButtonLabel {
+	 -fx-text-fill: lightgrey;
+}
+
+.editButtonLabel:hover {
+	 -fx-text-fill: grey;
 }
 
 .searchBoxLabel {
@@ -17,11 +29,6 @@
     -fx-background-radius: 20px;
 }
 
-.searchBoxLabelIcon {
-    -glyph-size: 13;
-    -glyph-name: SEARCH;
-}
-
 .combo-box-base {
     -fx-background-color: transparent;
     -fx-background-insets: 0 0 -1 0, 0, 1, 2;
@@ -29,4 +36,12 @@
     -fx-border-style: solid;
     -fx-border-radius: 10px;
     -fx-border-color: grey;
+}
+
+.reloadMessagesLabel {
+	-fx-text-fill: #2ba6ff;
+}
+
+.reloadMessagesLabel:hover {
+	-fx-underline: true;
 }

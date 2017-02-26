@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -21,6 +22,7 @@ public class MainViewController implements Initializable {
 	@FXML private ListView<String> chatPane;
 	@FXML private ListView<Pair<String,Status>> userList;
 	@FXML private TextArea messageBox;
+	@FXML private Label	reloadLabel;
 	
 	
 	private ObservableList<String> messages;
@@ -57,7 +59,6 @@ public class MainViewController implements Initializable {
         });
 	}
 
-	
     public void sendMethod(KeyEvent ke) throws IOException {
     	 if (ke.getCode().equals(KeyCode.ENTER)) {
         	messages.add(messageBox.getText());
