@@ -43,12 +43,12 @@ public class Main {
 		groupName = args[0];
 		localPort = Integer.parseInt(args[1]);
 		
-		if (!startAsRoot) {
-			parentHostname = args[2];			
-			parentPort = Integer.parseInt(args[3]);
-			username = args[4];
-			password = args[5];
-		}
+//		if (!startAsRoot) {
+//			parentHostname = args[2];			
+//			parentPort = Integer.parseInt(args[3]);
+//			username = args[4];
+//			password = args[5];
+//		}
 
 		// start server
 		if (startAsRoot) {
@@ -63,6 +63,10 @@ public class Main {
 			}
 		} else {
 			try {
+				parentHostname = args[2];			
+				parentPort = Integer.parseInt(args[3]);
+				username = args[4];
+				password = args[5];
 				new Server(groupName, localPort, parentHostname, parentPort, username, password);
 				System.out.println("Server is connected to "+parentHostname+" : "+parentPort);
 
