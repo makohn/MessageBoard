@@ -1,11 +1,13 @@
 package de.htwsaar.wirth.server;
 
 import de.htwsaar.wirth.remote.ParentServer;
+import de.htwsaar.wirth.server.service.Services;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.security.Provider.Service;
 import java.rmi.registry.LocateRegistry;
 
 /**
@@ -25,10 +27,24 @@ public class Server {
         this.localPort = localPort;
         messageBoard = new MessageBoardImpl(groupName);
         createRegistry();
-        // HIER
+        checkGroupLeader();
     }
 
-    public Server(String groupName, int localPort, String parentHost, int parentPort) throws RemoteException, NotBoundException, AlreadyBoundException {
+    private void checkGroupLeader() {
+		// gibts schon einen gl
+    	if (Services.getInstance().getUserService().existsGroupLeader()) {
+    		
+    		
+    		
+    	}
+    	// wenn nicht dann erstelle neuen user
+    	
+    	// mit gl-Flag
+    	
+    	// und speichere in db
+	}
+
+	public Server(String groupName, int localPort, String parentHost, int parentPort) throws RemoteException, NotBoundException, AlreadyBoundException {
         this(groupName, localPort);
         this.parentHost = parentHost;
         this.parentPort = parentPort;
