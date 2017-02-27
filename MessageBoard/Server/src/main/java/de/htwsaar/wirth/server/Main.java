@@ -5,7 +5,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 public class Main {
-
+		
+		// usage aktualisieren mit username und passwort des koordinators
 	private static final String USAGE = "Usage:\n"
 			+ "to start as child-server:\t server groupName localPort parentHostname parentPort\n"
 			+ "to start as a root-server:\t server groupName localPort";
@@ -19,13 +20,15 @@ public class Main {
 		int localPort;
 		String parentHostname = null;
 		int parentPort = 0;
+		String username;
+		String password;
 		boolean startAsRoot = false;
 		boolean isValid = true;
 
 		// start as root-server
-		if (args.length == 2) {
+		if (args.length == 4) {
 			startAsRoot = true;
-		} else if (args.length == 4) {
+		} else if (args.length == 6) { // username und password später optional
 			startAsRoot = false;
 		} else {
 			isValid = false;
@@ -39,14 +42,19 @@ public class Main {
 		// read arguments
 		groupName = args[0];
 		localPort = Integer.parseInt(args[1]);
+		
 		if (!startAsRoot) {
-			parentHostname = args[2];
+			parentHostname = args[2];			
 			parentPort = Integer.parseInt(args[3]);
+			username = args[4];
+			password = args[5];
 		}
 
 		// start server
 		if (startAsRoot) {
 			try {
+				username = args[2];
+				password = args[3];
 				new Server(groupName, localPort);
 			} catch (RemoteException e) {
 				e.printStackTrace();
