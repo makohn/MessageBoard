@@ -21,14 +21,14 @@ public class Server {
     private MessageBoardImpl messageBoard;
     
 
-    public Server(String groupName, int localPort) throws RemoteException, AlreadyBoundException {
+    public Server(String groupName, int localPort, String username, String password) throws RemoteException, AlreadyBoundException {
         this.localPort = localPort;
         messageBoard = new MessageBoardImpl(groupName);
         createRegistry();
     }
 
-    public Server(String groupName, int localPort, String parentHost, int parentPort) throws RemoteException, NotBoundException, AlreadyBoundException {
-        this(groupName, localPort);
+    public Server(String groupName, int localPort, String parentHost, int parentPort, String username, String password) throws RemoteException, NotBoundException, AlreadyBoundException {
+        this(groupName, localPort, username, password);
         this.parentHost = parentHost;
         this.parentPort = parentPort;
         bindToParent();

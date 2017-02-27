@@ -8,8 +8,8 @@ public class Main {
 		
 		// usage aktualisieren mit username und passwort des koordinators
 	private static final String USAGE = "Usage:\n"
-			+ "to start as child-server:\t server groupName localPort parentHostname parentPort\n"
-			+ "to start as a root-server:\t server groupName localPort";
+			+ "to start as child-server:\t server groupName localPort parentHostname parentPort username password\n"
+			+ "to start as a root-server:\t server groupName localPort username password";
 
 	private static final String ALREADY_IN_USE = "The specified port is already in use.";
 	private static final String PARENT_NOT_AVAILABLE = "The parent is not responding.";
@@ -55,7 +55,7 @@ public class Main {
 			try {
 				username = args[2];
 				password = args[3];
-				new Server(groupName, localPort);
+				new Server(groupName, localPort, username, password);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (AlreadyBoundException e) {
@@ -63,7 +63,7 @@ public class Main {
 			}
 		} else {
 			try {
-				new Server(groupName, localPort, parentHostname, parentPort);
+				new Server(groupName, localPort, parentHostname, parentPort, username, password);
 				System.out.println("Server is connected to "+parentHostname+" : "+parentPort);
 
 
