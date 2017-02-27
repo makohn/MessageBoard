@@ -12,5 +12,6 @@ public interface MessageService {
     public List<Message> getAll();
     public boolean existsMessage(Message message);
     public void saveMessage(Message message);
+    public void saveMessage(List<Message> messages);
     public void deleteMessage(Message message);
 }
