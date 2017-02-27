@@ -76,6 +76,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		this.parent = parent;
 		this.parentQueue = new CommandRunner();
 		
+		// müsste eigentlich nur beim ersten Start durchgeführt werden
 		syncParent();
 	}
 
@@ -393,8 +394,6 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			parentQueue.addCommand(cmd);
 			notifyServerEdit(msg);
 		}
-
-
 	}
 
 	/**
