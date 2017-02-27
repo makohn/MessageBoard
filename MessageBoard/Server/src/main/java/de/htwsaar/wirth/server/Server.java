@@ -25,6 +25,7 @@ public class Server {
         this.localPort = localPort;
         messageBoard = new MessageBoardImpl(groupName);
         createRegistry();
+        // HIER
     }
 
     public Server(String groupName, int localPort, String parentHost, int parentPort) throws RemoteException, NotBoundException, AlreadyBoundException {
