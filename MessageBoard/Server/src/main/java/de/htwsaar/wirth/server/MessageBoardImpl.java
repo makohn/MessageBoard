@@ -74,6 +74,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		}
 		this.parent = parent;
 		this.parentQueue = new CommandRunner();
+		
+		syncParent();
+	}
+
+	private void syncParent() {
+		List<Message> messages = parent.getMessages();
+		Services.getInstance().getMessageService().saveMessage(messages);
 	}
 
 	/**
@@ -407,6 +414,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	}
 
 	public List<Message> getMessages() throws RemoteException {
+		// hier evtl noch ein limit fuer nachrichten
 		return Services.getInstance().getMessageService().getAll();
 	}
 }
