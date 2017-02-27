@@ -52,4 +52,10 @@ public class MessageServiceImpl implements MessageService {
     		messageDao.delete(message);
     	}
     }
+
+	@Override
+	public void saveMessage(List<Message> messages) {
+		for (Message m : messages)
+			saveMessage(m);		
+	}
 }
