@@ -67,8 +67,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * this server.
 	 *
 	 * @param parent
+	 * @throws RemoteException 
 	 */
-	public void setParent(ParentServer parent) {
+	public void setParent(ParentServer parent) throws RemoteException {
 		if (parentQueue != null) {
 			parentQueue.interrupt();
 		}
@@ -78,9 +79,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		syncParent();
 	}
 
-	private void syncParent() {
+	private void syncParent() throws RemoteException {
 		List<Message> messages = parent.getMessages();
-		Services.getInstance().getMessageService().saveMessage(messages);
+		Services.getInstance().getMessageService().saveMessages(messages);
 	}
 
 	/**

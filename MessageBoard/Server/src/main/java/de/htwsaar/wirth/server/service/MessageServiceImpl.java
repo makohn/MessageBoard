@@ -54,7 +54,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
 	@Override
-	public void saveMessage(List<Message> messages) {
+	public void saveMessages(List<Message> messages) {
 		for (Message m : messages)
 			saveMessage(m);		
 	}
