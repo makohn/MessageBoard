@@ -1,6 +1,8 @@
 package de.htwsaar.wirth.server;
 
 import de.htwsaar.wirth.remote.ParentServer;
+import de.htwsaar.wirth.remote.model.UserImpl;
+import de.htwsaar.wirth.remote.model.interfaces.User;
 import de.htwsaar.wirth.server.service.Services;
 
 import java.rmi.AlreadyBoundException;
@@ -8,6 +10,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.security.Provider.Service;
+import java.util.Scanner;
 import java.rmi.registry.LocateRegistry;
 
 /**
@@ -31,17 +34,17 @@ public class Server {
     }
 
     private void checkGroupLeader() {
-		// gibts schon einen gl
-    	if (Services.getInstance().getUserService().existsGroupLeader()) {
+    	if (!Services.getInstance().getUserService().existsGroupLeader()) {
     		
+    		Scanner s = new Scanner(System.in);
+    		String username = s.nextLine();
+    		String password = s.nextLine();
+    		s.close();
     		
+    		User groupLeader = new UserImpl(username, "", "", password, true);
     		
+    		Services.getInstance().getUserService().saveUser(groupLeader);
     	}
-    	// wenn nicht dann erstelle neuen user
-    	
-    	// mit gl-Flag
-    	
-    	// und speichere in db
 	}
 
 	public Server(String groupName, int localPort, String parentHost, int parentPort) throws RemoteException, NotBoundException, AlreadyBoundException {
