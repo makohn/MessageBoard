@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
-
+	
 	private String groupName;
 
 	/**
@@ -56,7 +56,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	private List<Notifiable> clientList;
 	
 	// TODO: mein Vorschlag zur Überwachung des online-status
-	private List<String> onlineUsers;
+	private Map<String, Status> userStatus;
 
 	private static final long serialVersionUID = -4613549994529764225L;
 
@@ -65,7 +65,10 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
 		childServerQueueMap = new ConcurrentHashMap<Notifiable, CommandRunner>();
 		clientList = Collections.synchronizedList(new ArrayList<Notifiable>());
-		onlineUsers = Collections.synchronizedList(new ArrayList<String>());
+		
+		userStatus = new ConcurrentHashMap<String, Status>();
+		for (User user : Services.getInstance().getUserService().getAll())
+			userStatus.put(user.getUsername(), Status.SHOW_AS_OFFLINE);
 	}
 	
 	/**
@@ -173,16 +176,17 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 //		}
 		// und dann natürlich auch beim logout wieder weg
 		clientList.add(client);
-		onlineUsers.add(login.getUsername());
+		userStatus.put(login.getUsername(), Status.ONLINE);
 		return auth;
 	}
 	
 //	// TODO: logout
 //	public void logout(AuthPacket auth, Notifiable client) {
 //		clientList.remove(client);
+//		userStatus.put(auth.getUsername(), Status.SHOW_AS_OFFLINE);
 //		onlineUsers.remove(login.getUsername());
 //		for (Notifiable c : clientList) {
-//			c.notifyDeleteUser(auth.getUsername());
+//			c.notifyUserStatus(auth.getUsername());
 //		}
 //	}
 	
@@ -199,6 +203,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		SessionManager.isGroupLeader(auth);
 		User user = new UserImpl(newUsername, "", "", newPassword, false);
 		Services.getInstance().getUserService().saveUser(user);
+		userStatus.put(newUsername, Status.SHOW_AS_OFFLINE);
 	}
 	
 	public void deleteUser(AuthPacket auth, String username) throws RemoteException {
@@ -211,6 +216,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 //		if ( user == null )
 //			throw UserNotExistsException("This User does not exist on this server");
 		Services.getInstance().getUserService().deleteUser(user);
+		userStatus.remove(username);
 			
 	}
 	
@@ -324,7 +330,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		return getMessages();
 	}
 		
-	public List<String> getUsers(AuthPacket auth) throws RemoteException {
+	public Map<String, Status> getUsers(AuthPacket auth) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 	
 		// TODO: hier müsste man entscheiden, ob der Client immer alle Usernames erhält oder
@@ -332,7 +338,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// sonst ist das Problem rauszufinden welcher user online ist.
 		
 		// hier werden erstmal nur die User zurückgegeben, die online sind		
-		return onlineUsers;
+		return userStatus;
 	}
 	
 	//---------------------------------- Notifiable Interface ----------------------------------
