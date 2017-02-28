@@ -54,6 +54,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * a list of clients
 	 */
 	private List<Notifiable> clientList;
+	
+	// TODO: mein Vorschlag zur Überwachung des online-status
+	private List<String> onlineUsers;
 
 	private static final long serialVersionUID = -4613549994529764225L;
 
@@ -62,6 +65,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
 		childServerQueueMap = new ConcurrentHashMap<Notifiable, CommandRunner>();
 		clientList = Collections.synchronizedList(new ArrayList<Notifiable>());
+		onlineUsers = Collections.synchronizedList(new ArrayList<String>());
 	}
 	
 	/**
@@ -169,12 +173,14 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 //		}
 		// und dann natürlich auch beim logout wieder weg
 		clientList.add(client);
+		onlineUsers.add(login.getUsername());
 		return auth;
 	}
 	
 //	// TODO: logout
 //	public void logout(AuthPacket auth, Notifiable client) {
 //		clientList.remove(client);
+//		onlineUsers.remove(login.getUsername());
 //		for (Notifiable c : clientList) {
 //			c.notifyDeleteUser(auth.getUsername());
 //		}
@@ -301,6 +307,17 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public List<Message> getMessages(AuthPacket auth) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		return getMessages();
+	}
+		
+	public List<String> getUsers(AuthPacket auth) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+	
+		// TODO: hier müsste man entscheiden, ob der Client immer alle Usernames erhält oder
+		// nur die die online sind. in letzterem Fall müsste dann aber auch der status mitgegeben werden.
+		// sonst ist das Problem rauszufinden welcher user online ist.
+		
+		// hier werden erstmal nur die User zurückgegeben, die online sind		
+		return onlineUsers;
 	}
 	
 	//---------------------------------- Notifiable Interface ----------------------------------
@@ -438,14 +455,11 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		return Services.getInstance().getMessageService().getAll();
 	}
 
-	@Override
 	public void notifyNewUser(String string) throws RemoteException {
-		// TODO: Problem leere Methode			
+		// TODO: Problem leere Methode, vlt noch extra interfaces ableiten NotifiableClient und NotifiableServer
 	}
 
-	@Override
 	public void notifyDeleteUser(String string) throws RemoteException {
 		// TODO: Problem leere Methode	
 	}
-
 }
