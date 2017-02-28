@@ -21,9 +21,9 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 	private MainViewController gui;
 	private MessageBoard parent;
 	private AuthPacket auth;
-	private String username;	// sollte das ein attribut sein ?
-	private String group;	// sollte das ein attribut sein ?
-	private String password; // sollte das ein attribut sein ?
+//	private String username;	// sollte das ein attribut sein ?
+//	private String group;	// sollte das ein attribut sein ?
+//	private String password; // sollte das ein attribut sein ?
 
 	protected Impl() throws RemoteException {
 		// TODO Auto-generated constructor stub
@@ -111,14 +111,12 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 
 	public void notifyNewUser(String username) throws RemoteException {
 		// TODO:
-//		gui.insertUser(username)
-		
+//		gui.insertUser(username)		
 	}
 
 	@Override
 	public void notifyDeleteUser(String username) throws RemoteException {
 		// TODO
-//		gui.removeUser(username);
-		
+//		gui.removeUser(username);		
 	}
 }
