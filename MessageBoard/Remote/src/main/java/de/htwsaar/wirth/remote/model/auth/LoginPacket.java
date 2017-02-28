@@ -23,7 +23,12 @@ public class LoginPacket implements Serializable {
 	}
 
 	public String getPassword() {
+		
 		return password;
+		
+		// @Jan
+		// müsste es nicht so sein
+		//return Integer.toString(hashCode());
 	}
 
 	@Override

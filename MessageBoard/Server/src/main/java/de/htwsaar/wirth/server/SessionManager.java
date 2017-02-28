@@ -10,6 +10,8 @@ import de.htwsaar.wirth.remote.exceptions.NotLoggedInException;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.remote.model.interfaces.User;
+import de.htwsaar.wirth.server.service.Services;
 
 public class SessionManager {
 
@@ -66,8 +68,8 @@ public class SessionManager {
      * @throws NoPermissionException
      */
     public static void isGroupLeader(AuthPacket auth) throws RemoteException {
-        // TODO: check if the user is a group leader
-        if (true) {
+        User user = Services.getInstance().getUserService().getUser(auth.getUsername());
+        if (!user.isGroupLeader()) {
             throw new NoPermissionException("The user is not a group-leader");
         }
     }
