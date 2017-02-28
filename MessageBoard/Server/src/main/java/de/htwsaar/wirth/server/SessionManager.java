@@ -80,6 +80,14 @@ public class SessionManager {
         }
     }
     
+    public static void isGroupLeaderOrAuthor(AuthPacket auth, Message msg) throws RemoteException {
+    	try {
+    		isGroupLeader(auth);
+    	} catch (NoPermissionException e) {
+    		isAuthor(auth, msg);
+    	}
+    }
+    
     /**
      * removes the username from the sessionMap
      * call this to log the user out

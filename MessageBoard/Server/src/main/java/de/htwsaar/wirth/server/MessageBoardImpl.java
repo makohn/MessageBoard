@@ -198,9 +198,6 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			Command cmd = CommandBuilder.buildParentCommand(parent,msg,ParentCmd.PUBLISH);
 			parentQueue.addCommand(cmd);
 		}
-
-
-
 	}
 	
 	/**
@@ -232,9 +229,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void editMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isAuthor(auth, msg);
-		// TODO: check, if the given message is equal to the msg in the database, except for the modified msgtxt.
+		SessionManager.isAuthor(auth, msg);			
 		synchronized (Message.class) {
+			// TODO: check, if the given message is equal to the msg in the database, except for the modified msgtxt.
+//			Message oldMsg = Services.getInstance().getMessageService().getMessage(msgId);
+//			if ( oldMsg == null)
+//				throw new MessageNotExistsException("The message doesn't exists on this server");
+						
 			if(!messageExists(msg)) {
 				throw new MessageNotExistsException("The message doesn't exists on this server");
 			}
@@ -258,7 +259,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	public void deleteMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isGroupLeader(auth); // TODO: or is the author of the message
+		SessionManager.isGroupLeaderOrAuthor(auth, msg);
 		synchronized (Message.class) {
 			if(!messageExists(msg)) {
 				throw new MessageNotExistsException("The message doesn't exists on this server");
