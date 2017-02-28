@@ -199,6 +199,19 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		Services.getInstance().getUserService().saveUser(user);
 	}
 	
+	public void deleteUser(AuthPacket auth, String username) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+		SessionManager.isGroupLeader(auth);
+//		if (onlineUsers.contains(username))
+//			throw UserIsOnlineException("The User is still online");
+		// TODO: alternativ auch irgendwie den User rausschmeißen
+		User user = Services.getInstance().getUserService().getUser(username);
+//		if ( user == null )
+//			throw UserNotExistsException("This User does not exist on this server");
+		Services.getInstance().getUserService().deleteUser(user);
+			
+	}
+	
 	/**
 	 * publish is capsuled in the MessageBoard-Interface. This method can be
 	 * called by the admin to push a existing message to the parent-server. To

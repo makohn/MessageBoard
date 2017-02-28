@@ -70,6 +70,12 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 			parent.addUser(auth, newUsername, newPassword);
 	}
 	
+	// TODO: User löschen
+	public void deleteUser(String username) throws RemoteException {
+		if (parent != null)
+			parent.deleteUser(auth, username);
+	}
+	
 	public void sendMessage(String msg) throws RemoteException {
 		if (parent != null)
 			parent.newMessage(auth, msg);

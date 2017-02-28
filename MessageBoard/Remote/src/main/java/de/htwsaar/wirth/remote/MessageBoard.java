@@ -18,5 +18,6 @@ public interface MessageBoard extends Remote {
 	void deleteMessage(AuthPacket auth, Message msg) throws RemoteException;
 	List<Message> getMessages(AuthPacket auth) throws RemoteException;
 	List<String> getUsers(AuthPacket auth) throws RemoteException;
+	void deleteUser(AuthPacket auth, String username) throws RemoteException;
 	
 }
