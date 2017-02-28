@@ -64,17 +64,17 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 	// ----------------------- Notifiable ----------------------------------
 
 	public void notifyNew(Message msg) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		// TODO: s.o. bei login
+//		gui.insertMessage(msg);
 	}
 
 	public void notifyDelete(Message msg) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		// TODO: s.o.
+//		gui.deleteMessage(msg);		
 	}
 
 	public void notifyEdit(Message msg) throws RemoteException {
-		// TODO Auto-generated method stub
-		
+		// TODO: s.o.
+//		gui.editMessage(msg);
 	}
 }
