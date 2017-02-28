@@ -75,8 +75,7 @@ public class SessionManager {
     }
 
     public static void isAuthor(AuthPacket auth, Message msg) throws RemoteException {
-        // TODO: check if the user is a group leader
-        if (true) {
+        if (!auth.getUsername().equals(msg.getAuthor())) {
             throw new NoPermissionException("The user is not the author");
         }
     }

@@ -5,9 +5,11 @@ import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
 import de.htwsaar.wirth.remote.model.MessageImpl;
+import de.htwsaar.wirth.remote.model.UserImpl;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.remote.model.interfaces.User;
 import de.htwsaar.wirth.server.service.Services;
 import de.htwsaar.wirth.server.util.CommandRunner;
 import de.htwsaar.wirth.server.util.command.ChildCmd;
@@ -171,7 +173,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isGroupLeader(auth);
-		// TODO:
+		User user = new UserImpl(newUsername, "", "", newPassword, false);
+		Services.getInstance().getUserService().saveUser(user);
 	}
 	
 	/**
