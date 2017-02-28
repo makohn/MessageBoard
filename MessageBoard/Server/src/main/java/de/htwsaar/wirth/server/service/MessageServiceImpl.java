@@ -5,6 +5,7 @@ import de.htwsaar.wirth.server.dao.MessageDao;
 import de.htwsaar.wirth.server.service.interfaces.MessageService;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by olli on 08.02.17.
@@ -20,6 +21,12 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> getAll(){
     	synchronized (Services.class) {
     		return messageDao.getAll();
+    	}
+    }
+    
+    public Message getMessage(UUID id) {
+    	synchronized (Services.class) {
+    		return messageDao.getMessage(id);    		
     	}
     }
 
@@ -39,7 +46,9 @@ public class MessageServiceImpl implements MessageService {
      */
     public void saveMessage(Message message){
     	synchronized (Services.class) {
-    		messageDao.save(message);
+    		Message oldMsg = Services.getInstance().getMessageService().getMessage(message.getID());
+    		if ( (oldMsg == null) || (oldMsg.getCreatedAt().compareTo(message.getCreatedAt()) < 0))
+    			messageDao.save(message);
     	}
     }
 

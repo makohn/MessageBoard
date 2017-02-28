@@ -4,6 +4,7 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by stefanschloesser1 on 03.02.17.
@@ -14,6 +15,11 @@ public class MessageDao extends AbstractDao<Message> {
 
     public List<Message> getAll() {
         return query("from MessageImpl");
+    }
+    
+    public Message getMessage(UUID id) {
+    	// TODO: Nachricht mit der entsprechenden id holen
+    	return null;
     }
 
     public boolean existsMessage(Message message) {
