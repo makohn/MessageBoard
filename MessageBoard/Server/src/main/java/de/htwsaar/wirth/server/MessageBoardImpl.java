@@ -160,7 +160,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Authenticate throws an exception, if the username or password are
 		// wrong
 		// this exception can be handled on clientside
-		AuthPacket auth = SessionManager.authenticate(login);
+		AuthPacket auth = SessionManager.authenticate(login);		
+		// TODO: müsste man hier nicht noch allen Client-Childs bescheid sagen, dass ein neuer User da ist ?
+		// also etwa:
+//		for (Notifiable client : clientList) {
+//			client.notifyNewUser();
+//		}
+		// und dann natürlich auch beim logout wieder weg
 		clientList.add(client);
 		return auth;
 	}

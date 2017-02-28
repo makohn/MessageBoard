@@ -1,17 +1,22 @@
 package de.htwsaar.wirth.client;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import de.htwsaar.wirth.client.controller.MainViewController;
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
-import de.htwsaar.wirth.remote.model.MessageImpl;
+import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
 public class Impl extends UnicastRemoteObject implements Notifiable {
+	
+    private static final String BIND_KEY = "server";
 	
 	private AuthPacket auth;
 	private MainViewController gui;
@@ -28,11 +33,26 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 
 	private static final long serialVersionUID = -7940206816319176143L;
 	
-	public void login(String username, String password) throws RemoteException {
+	public void login(String username, String password, String parentHost, int parentPort) throws RemoteException, NotBoundException {
+		
+		// beim Server anmelden
+		Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
+        parent = (MessageBoard) parentRegistry.lookup(BIND_KEY);
+		
+        // User einloggen
 		LoginPacket login = new LoginPacket(username, password);
 		auth = parent.registerClient(login, this);
-		// TODO: insertMessages(List<Message> messages) für die GUI implementieren
+		
+		// Nachrichten und User holen
+		// TODO: insertMessages(List<Message> messages) für die GUI implementieren etc
 		// gui.insertMessages(parent.getMessages(auth));
+		// gui.insertUsers(parent.getUsers(auth));
+	}
+	
+	public void logout() {
+		// TODO:
+//		if (parent != null)
+//			parent.logout(auth);
 	}
 	
 	public void addUser(String newUsername, String newPassword) throws RemoteException {
@@ -41,24 +61,30 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 		// entweder könnte ja das Passwort nur noch verschlüsselt rausgegeben werden (hab ich das so richtig verstanden, siehe UserImpl)
 		// oder wir könnten gleich hier schon das Passwort hashen, so dass der server den klartext nicht mitkriegt
 		// beim login kriegt er natürlich klartext und muss in selber zerhacken und schauen ob derselbe hash dabei herauskommt.
-		parent.addUser(auth, newUsername, newPassword);
+		if (parent != null)
+			parent.addUser(auth, newUsername, newPassword);
 	}
 	
 	public void sendMessage(String msg) throws RemoteException {
-		parent.newMessage(auth, msg);
+		if (parent != null)
+			parent.newMessage(auth, msg);
 	}
 	
 	public void editMessage(Message msg, String text) throws RemoteException {		
-		msg.changeMessage(text);
-		parent.editMessage(auth, msg);
+		if (parent != null) {
+			msg.changeMessage(text);
+			parent.editMessage(auth, msg);
+		}
 	}
 	
 	public void publishMessage(Message msg) throws RemoteException {
-		parent.publish(auth, msg);
+		if (parent != null)
+			parent.publish(auth, msg);
 	}
 	
 	public void deleteMessage(Message msg) throws RemoteException {
-		parent.deleteMessage(auth, msg);
+		if (parent != null)
+			parent.deleteMessage(auth, msg);
 	}
 	
 	// ----------------------- Notifiable ----------------------------------
