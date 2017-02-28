@@ -10,4 +10,6 @@ public interface Notifiable extends Remote {
 	void notifyNew(Message msg) throws RemoteException;
 	void notifyEdit(Message msg) throws RemoteException;
 	void notifyDelete(Message msg) throws RemoteException;
+	void notifyNewUser(String username) throws RemoteException;
+	void notifyDeleteUser(String username) throws RemoteException;
 }

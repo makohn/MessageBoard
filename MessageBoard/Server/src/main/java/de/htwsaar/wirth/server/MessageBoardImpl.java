@@ -156,20 +156,30 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @return
 	 * @throws RemoteException
 	 */
+	// TODO: Methode in login umbenennen
 	public AuthPacket registerClient(LoginPacket login, Notifiable client) throws RemoteException {
 		// Authenticate throws an exception, if the username or password are
 		// wrong
 		// this exception can be handled on clientside
 		AuthPacket auth = SessionManager.authenticate(login);		
 		// TODO: müsste man hier nicht noch allen Client-Childs bescheid sagen, dass ein neuer User da ist ?
-		// also etwa:
-//		for (Notifiable client : clientList) {
-//			client.notifyNewUser();
+		// also etwa:		
+//		for (Notifiable c : clientList) {
+//			c.notifyNewUser(login.getUsername());
 //		}
 		// und dann natürlich auch beim logout wieder weg
 		clientList.add(client);
 		return auth;
 	}
+	
+//	// TODO: logout
+//	public void logout(AuthPacket auth, Notifiable client) {
+//		clientList.remove(client);
+//		for (Notifiable c : clientList) {
+//			c.notifyDeleteUser(auth.getUsername());
+//		}
+//	}
+	
 	
 	/**
 	 * @param auth
@@ -427,4 +437,15 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// hier evtl noch ein limit fuer nachrichten
 		return Services.getInstance().getMessageService().getAll();
 	}
+
+	@Override
+	public void notifyNewUser(String string) throws RemoteException {
+		// TODO: Problem leere Methode			
+	}
+
+	@Override
+	public void notifyDeleteUser(String string) throws RemoteException {
+		// TODO: Problem leere Methode	
+	}
+
 }

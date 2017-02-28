@@ -17,16 +17,17 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 public class Impl extends UnicastRemoteObject implements Notifiable {
 	
     private static final String BIND_KEY = "server";
-	
-	private AuthPacket auth;
+		
 	private MainViewController gui;
 	private MessageBoard parent;
+	private AuthPacket auth;
 	private String username;	// sollte das ein attribut sein ?
 	private String group;	// sollte das ein attribut sein ?
 	private String password; // sollte das ein attribut sein ?
 
 	protected Impl() throws RemoteException {
 		// TODO Auto-generated constructor stub
+		// gui einstellen
 		// parent-stub laden ? oder auch beim login ?
 		// 
 	}
@@ -34,6 +35,10 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 	private static final long serialVersionUID = -7940206816319176143L;
 	
 	public void login(String username, String password, String parentHost, int parentPort) throws RemoteException, NotBoundException {
+		
+		// TODO:
+//		if (parent != null && auth != null)
+//			parent.logout(auth);
 		
 		// beim Server anmelden
 		Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
@@ -102,5 +107,18 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 	public void notifyEdit(Message msg) throws RemoteException {
 		// TODO: s.o.
 //		gui.editMessage(msg);
+	}
+
+	public void notifyNewUser(String username) throws RemoteException {
+		// TODO:
+//		gui.insertUser(username)
+		
+	}
+
+	@Override
+	public void notifyDeleteUser(String username) throws RemoteException {
+		// TODO
+//		gui.removeUser(username);
+		
 	}
 }
