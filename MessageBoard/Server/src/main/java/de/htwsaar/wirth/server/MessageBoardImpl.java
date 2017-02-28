@@ -186,6 +186,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 //		}
 //	}
 	
+	// 
+	
 	
 	/**
 	 * @param auth
@@ -326,7 +328,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		SessionManager.isAuthenticatedByToken(auth);
 	
 		// TODO: hier müsste man entscheiden, ob der Client immer alle Usernames erhält oder
-		// nur die die online sind. in letzterem Fall müsste dann aber auch der status mitgegeben werden.
+		// nur die die online sind. Im ersten Fall müsste dann aber auch der status mitgegeben werden.
 		// sonst ist das Problem rauszufinden welcher user online ist.
 		
 		// hier werden erstmal nur die User zurückgegeben, die online sind		
