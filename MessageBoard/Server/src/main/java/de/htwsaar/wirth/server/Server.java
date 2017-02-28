@@ -1,17 +1,16 @@
 package de.htwsaar.wirth.server;
 
+import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.Scanner;
+
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.UserImpl;
 import de.htwsaar.wirth.remote.model.interfaces.User;
 import de.htwsaar.wirth.server.service.Services;
-
-import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
-import java.security.Provider.Service;
-import java.util.Scanner;
-import java.rmi.registry.LocateRegistry;
 
 /**
  * A Server binds

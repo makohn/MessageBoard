@@ -318,7 +318,6 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyEdit(Message msg) throws RemoteException {
-		//TODO: check if the edit msg, we get notified of, is newer than the one we have in the database
 		if(messageExists(msg)) {
 			Services.getInstance().getMessageService().saveMessage(msg);
 

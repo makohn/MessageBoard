@@ -102,6 +102,7 @@ public class MainViewController implements Initializable {
     public void sendMethod(KeyEvent ke) throws IOException {
     	 if (ke.getCode().equals(KeyCode.ENTER)) {
         	messages.add(messageBox.getText());
+        	//impl.sendMessage(new Message())
         	messageBox.clear();
     	 }
     }
