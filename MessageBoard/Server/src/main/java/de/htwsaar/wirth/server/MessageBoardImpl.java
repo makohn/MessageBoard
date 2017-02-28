@@ -239,6 +239,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			if(!messageExists(msg)) {
 				throw new MessageNotExistsException("The message doesn't exists on this server");
 			}
+//			if ( !oldMsg.getMessage().equals(msg.getMessage()) )
 			notifyEdit(msg);
 		}
 		if(needToSendParent(msg)) {
