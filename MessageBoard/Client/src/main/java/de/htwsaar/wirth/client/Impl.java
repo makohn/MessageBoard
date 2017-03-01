@@ -9,7 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import de.htwsaar.wirth.client.controller.MainViewController;
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
-import de.htwsaar.wirth.remote.ParentServer;
+import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
@@ -51,7 +51,7 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 		// Nachrichten und User holen
 		// TODO: insertMessages(List<Message> messages) für die GUI implementieren etc
 		// gui.insertMessages(parent.getMessages(auth));
-		// gui.insertUsers(parent.getUsers(auth));
+		// gui.insertUsers(parent.getUserStatus(auth));
 	}
 	
 	public void logout() {
@@ -115,14 +115,8 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 //		gui.editMessage(msg);
 	}
 
-	public void notifyNewUser(String username) throws RemoteException {
+	public void notifyUserStatus(String username, Status status) throws RemoteException {
 		// TODO:
-//		gui.insertUser(username)		
-	}
-
-	@Override
-	public void notifyDeleteUser(String username) throws RemoteException {
-		// TODO
-//		gui.removeUser(username);		
+//		gui.changeUserStatus(username, status);		
 	}
 }

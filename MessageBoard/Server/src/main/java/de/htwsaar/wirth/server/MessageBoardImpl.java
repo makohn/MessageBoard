@@ -1,10 +1,19 @@
 package de.htwsaar.wirth.server;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
 import de.htwsaar.wirth.remote.model.MessageImpl;
+import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.UserImpl;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
@@ -17,11 +26,6 @@ import de.htwsaar.wirth.server.util.command.Command;
 import de.htwsaar.wirth.server.util.command.CommandBuilder;
 import de.htwsaar.wirth.server.util.command.ParentCmd;
 import de.htwsaar.wirth.server.util.command.child.ChildCommand;
-
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
@@ -172,11 +176,11 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// TODO: müsste man hier nicht noch allen Client-Childs bescheid sagen, dass ein neuer User da ist ?
 		// also etwa:		
 //		for (Notifiable c : clientList) {
-//			c.notifyNewUser(login.getUsername());
+//			c.notifyUserStatus(login.getUsername(), Status.ONLINE);
 //		}
-		// und dann natürlich auch beim logout wieder weg
+		// und dann natürlich auch beim logout wieder weg s.u.
 		clientList.add(client);
-		userStatus.put(login.getUsername(), Status.ONLINE);
+		userStatus. put(login.getUsername(), Status.ONLINE);
 		return auth;
 	}
 	
@@ -186,13 +190,17 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 //		userStatus.put(auth.getUsername(), Status.SHOW_AS_OFFLINE);
 //		onlineUsers.remove(login.getUsername());
 //		for (Notifiable c : clientList) {
-//			c.notifyUserStatus(auth.getUsername());
+//			c.notifyUserStatus(auth.getUsername(), Status.SHOW_AS_OFFLINE);
 //		}
 //	}
 	
-	// 
-	
-	
+	public void changeUserStatus(AuthPacket auth, Status status) throws RemoteException {
+		SessionManager.isAuthenticatedByToken(auth);
+		for (Notifiable c : clientList) {
+			c.notifyUserStatus(auth.getUsername(), status);
+		}		
+	}
+		
 	/**
 	 * @param auth
 	 * @param newUsername
@@ -209,9 +217,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public void deleteUser(AuthPacket auth, String username) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isGroupLeader(auth);
-//		if (onlineUsers.contains(username))
+//		if (userStatus.get(username) == Status.ONLINE)
 //			throw UserIsOnlineException("The User is still online");
-		// TODO: alternativ auch irgendwie den User rausschmeißen
+		// TODO: alternativ auch irgendwie den User rausschmeißen im moment schwer machbar vlt statt List<Notifiable> clients lieber Map<String, Notifiable> mit username als key 
 		User user = Services.getInstance().getUserService().getUser(username);
 //		if ( user == null )
 //			throw UserNotExistsException("This User does not exist on this server");
@@ -330,14 +338,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		return getMessages();
 	}
 		
-	public Map<String, Status> getUsers(AuthPacket auth) throws RemoteException {
+	public Map<String, Status> getUserStatus(AuthPacket auth) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
-	
-		// TODO: hier müsste man entscheiden, ob der Client immer alle Usernames erhält oder
-		// nur die die online sind. Im ersten Fall müsste dann aber auch der status mitgegeben werden.
-		// sonst ist das Problem rauszufinden welcher user online ist.
-		
-		// hier werden erstmal nur die User zurückgegeben, die online sind		
+		// TODO Ist Status serialisierbar ? und Map ?
 		return userStatus;
 	}
 	
@@ -476,11 +479,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		return Services.getInstance().getMessageService().getAll();
 	}
 
-	public void notifyNewUser(String string) throws RemoteException {
+	public void notifyUserStatus(String string, Status status) throws RemoteException {
 		// TODO: Problem leere Methode, vlt noch extra interfaces ableiten NotifiableClient und NotifiableServer
-	}
-
-	public void notifyDeleteUser(String string) throws RemoteException {
-		// TODO: Problem leere Methode	
 	}
 }

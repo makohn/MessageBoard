@@ -5,10 +5,10 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
-import de.htwsaar.wirth.server.MessageBoardImpl.Status;
 
 public interface MessageBoard extends Remote {
 	
@@ -19,7 +19,7 @@ public interface MessageBoard extends Remote {
 	void editMessage(AuthPacket auth, Message msg) throws RemoteException;
 	void deleteMessage(AuthPacket auth, Message msg) throws RemoteException;
 	List<Message> getMessages(AuthPacket auth) throws RemoteException;
-	Map<String, Status> getUsers(AuthPacket auth) throws RemoteException;
+	Map<String, Status> getUserStatus(AuthPacket auth) throws RemoteException;
 	void deleteUser(AuthPacket auth, String username) throws RemoteException;
 	
 }
