@@ -9,7 +9,9 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 public interface Notifiable extends Remote {
 	
 	void notifyNew(Message msg) throws RemoteException;
+	// TODO: void notifyEdit(String msg, UUID id) throws RemoteException;
 	void notifyEdit(Message msg) throws RemoteException;
+	// TODO: void notifyDelete(UUID id) throws RemoteException;
 	void notifyDelete(Message msg) throws RemoteException;
 	void notifyUserStatus(String username, Status status) throws RemoteException;
 }

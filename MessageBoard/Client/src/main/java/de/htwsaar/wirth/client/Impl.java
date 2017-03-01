@@ -81,20 +81,27 @@ public class Impl extends UnicastRemoteObject implements Notifiable {
 			parent.newMessage(auth, msg);
 	}
 	
+	// TODO: void editMessage(String msg, UUID id) throws RemoteException;
 	public void editMessage(Message msg, String text) throws RemoteException {		
 		if (parent != null) {
+			// parent.editMessage(auth, msg, id);
 			msg.changeMessage(text);
 			parent.editMessage(auth, msg);
 		}
 	}
-	
+
+	// TODO: void publishMessage(UUID id) throws RemoteException
 	public void publishMessage(Message msg) throws RemoteException {
 		if (parent != null)
+			// parent.publish(auth, id);
 			parent.publish(auth, msg);
 	}
 	
+	
+	// TODO: void deleteMessage(UUID id) throws RemoteException;
 	public void deleteMessage(Message msg) throws RemoteException {
 		if (parent != null)
+			// parent.deleteMessage(auth, id);
 			parent.deleteMessage(auth, msg);
 	}
 	

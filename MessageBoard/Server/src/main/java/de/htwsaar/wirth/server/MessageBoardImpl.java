@@ -142,6 +142,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 */
 	private boolean needToSendParent(Message msg){
 		// add condition Database has msg
+		// wäre es nicht besser einfach grundsätzlich hochzuschieben und wenn der parent die nachricht nicht hat ignoriert er es
 		return (msg.isPublished() && !isRoot());
 	}
 
@@ -238,6 +239,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 * @throws RemoteException
 	 */
+	// TODO: void publish(AuthPacket auth, UUID id) throws RemoteException;
 	public void publish(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isGroupLeader(auth);
@@ -278,12 +280,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 * @throws RemoteException
 	 */
+	// TODO: void editMessage(AuthPacket auth, String msg, UUID id) throws RemoteException;
 	public void editMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isAuthor(auth, msg);			
 		synchronized (Message.class) {
 			// TODO: check, if the given message is equal to the msg in the database, except for the modified msgtxt.
-//			Message oldMsg = Services.getInstance().getMessageService().getMessage(msgId);
+//			Message oldMsg = Services.getInstance().getMessageService().getMessage(id);
 //			if ( oldMsg == null)
 //				throw new MessageNotExistsException("The message doesn't exists on this server");
 						
@@ -291,13 +294,14 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 				throw new MessageNotExistsException("The message doesn't exists on this server");
 			}
 //			if ( !oldMsg.getMessage().equals(msg.getMessage()) )
+			//notifyEdit(msg, id);
 			notifyEdit(msg);
 		}
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
 			parentQueue.addCommand(cmd);
 		}
-	}
+	}	
 	
 	/**
 	 * deleteMessage is capsuled in the MessageBoard-Interface. This method can
@@ -309,13 +313,16 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 * @throws RemoteException
 	 */
+	// TODO: void deleteMessage(AuthPacket auth, UUID id) throws RemoteException;
 	public void deleteMessage(AuthPacket auth, Message msg) throws RemoteException {
 		SessionManager.isAuthenticatedByToken(auth);
 		SessionManager.isGroupLeaderOrAuthor(auth, msg);
 		synchronized (Message.class) {
+//			if ( Services.getInstance().getMessageService().getMessage(id) == null )
 			if(!messageExists(msg)) {
 				throw new MessageNotExistsException("The message doesn't exists on this server");
 			}
+			// notifyDelete(id);
 			notifyDelete(msg);
 		}
 		if(needToSendParent(msg)) {
@@ -375,9 +382,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg message to be edited
 	 * @throws RemoteException
 	 */
+	// TODO: void notifyEdit(String msg, UUID id) throws RemoteException;		
 	public void notifyEdit(Message msg) throws RemoteException {
+//		Message message = Services.getInstance().getMessageService().getMessage(id);
+//		if ( message != null )
 		if(messageExists(msg)) {
-			Services.getInstance().getMessageService().saveMessage(msg);
+//			message.changeMessage(msg);
+			Services.getInstance().getMessageService().saveMessage(msg/*message*/);
 
 			// Add a EditMessageCommand to each CommandRunner
 			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.EDIT));
@@ -396,8 +407,11 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg message to be delete
 	 * @throws RemoteException
 	 */
+	// TODO: void notifyDelete(UUID id) throws RemoteException;
 	public void notifyDelete(Message msg) throws RemoteException {
 		if(messageExists(msg)) {
+//		if ( Services.getInstance().getMessageService().getMessage(id) != null )
+//			Services.getInstance().getMessageService().deleteMessage(id);
 			Services.getInstance().getMessageService().deleteMessage(msg);
 
 			// only execute the following, if the delete was successful
@@ -448,7 +462,9 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 * @throws RemoteException
 	 */
+	// TODO: void notifyServerEdit(String msg, UUID id) throws RemoteException
 	public void notifyServerEdit(Message msg) throws RemoteException {
+		// notifyEdit(msg, id);
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
@@ -465,8 +481,10 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 * @throws RemoteException
 	 */
+	// TODO:	void notifyServerDelete(UUID id) throws RemoteException
 	public void notifyServerDelete(Message msg) throws RemoteException {
-		notifyDelete(msg);
+		// notifyDelete(id);
+		notifyDelete(msg);		
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
 			parentQueue.addCommand(cmd);
