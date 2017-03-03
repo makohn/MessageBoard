@@ -12,7 +12,6 @@ import java.util.UUID;
 public interface MessageService {
     public List<Message> getAll();
     public Message getMessage(UUID id);
-    public boolean existsMessage(Message message);
     public void saveMessage(Message message);
     public void saveMessages(List<Message> messages);
     public void deleteMessage(Message message);
