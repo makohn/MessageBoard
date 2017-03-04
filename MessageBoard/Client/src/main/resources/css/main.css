@@ -1,27 +1,7 @@
-.root {
-	-fx-font-family: 'Nunito-Regular';
-}
-
 .button {
 	-fx-background-color: transparent;
 	-fx-border-style: none;	
 	-fx-border-width: 0;	
-}
-
-.editButtonGroup {
-	-fx-opacity: 0;	
-}
-
-.editButtonGroup:hover {
-	-fx-opacity: 1;	
-}
-
-.editButtonLabel {
-	 -fx-text-fill: lightgrey;
-}
-
-.editButtonLabel:hover {
-	 -fx-text-fill: grey;
 }
 
 .searchBoxLabel {
@@ -30,15 +10,6 @@
 
 .searchField {
     -fx-background-radius: 20px;
-}
-
-.combo-box-base {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-    -fx-background-radius: 3px, 3px, 2px, 1px;
-    -fx-border-style: solid;
-    -fx-border-radius: 10px;
-    -fx-border-color: grey;
 }
 
 .menu {
@@ -125,4 +96,8 @@
 
 .menu-list-users .username {
 	-fx-text-fill: white;
+}
+
+.chat-list-view {
+	-fx-background-color: transparent;
 }

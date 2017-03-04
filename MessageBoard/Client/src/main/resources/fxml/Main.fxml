@@ -59,7 +59,7 @@
                <items>
                   <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" prefHeight="467.0" prefWidth="823.0" vbarPolicy="NEVER" vmin="1.0" vvalue="1.0">
                      <content>
-                        <ListView fx:id="chatPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="481.0" prefWidth="805.0" style="-fx-background-color: transparent;" />
+                        <ListView fx:id="chatPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="481.0" prefWidth="805.0" style="-fx-background-color: transparent;" styleClass="chat-list-view" />
                      </content>
                   </ScrollPane>
                   <TextArea fx:id="messageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="100.0" nodeOrientation="LEFT_TO_RIGHT" onKeyPressed="#sendMethod" prefHeight="49.0" prefWidth="821.0" promptText="Enter Message..." scaleShape="false" wrapText="true" SplitPane.resizableWithParent="false">

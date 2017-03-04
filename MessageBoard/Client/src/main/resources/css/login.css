@@ -1,8 +1,3 @@
-
-.root {
-	-fx-font-family: 'Nunito-Regular';
-}
-
 .login-input-field {
 	-fx-background-color: transparent;
 	-fx-border-style: solid;

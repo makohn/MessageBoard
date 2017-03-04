@@ -11,20 +11,20 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 
 
-public class ApplicationManager {
+public class ApplicationDelegate {
 
-	private static ApplicationManager instance;
+	private static ApplicationDelegate instance;
 	private Scene scene;
 	private MaskerPane loadingHud;
 
-	private ApplicationManager() {
+	private ApplicationDelegate() {
 		loadingHud = new MaskerPane();
 		loadingHud.setText("Bitte warten");
 	}
 
-	public static synchronized ApplicationManager getInstance() {
+	public static synchronized ApplicationDelegate getInstance() {
 		if (instance == null) {
-			instance = new ApplicationManager();
+			instance = new ApplicationDelegate();
 		}
 		return instance;
 	}
@@ -38,7 +38,7 @@ public class ApplicationManager {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
 			scene.setRoot((Parent) loader.load());
 			LoginController controller = loader.<LoginController>getController();
-			controller.initManager(ApplicationManager.getInstance());
+			controller.initManager(ApplicationDelegate.getInstance());
 		} catch (IOException ex) {
 			// TODO
 		}
@@ -64,9 +64,5 @@ public class ApplicationManager {
 	
 	public void logout() {
 		showLoginScreen();
-	}
-	
-	public void login() {
-		showMainScreen();
 	}
 }

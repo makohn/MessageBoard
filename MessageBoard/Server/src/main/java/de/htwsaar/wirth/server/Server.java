@@ -1,6 +1,7 @@
 package de.htwsaar.wirth.server;
 
 import de.htwsaar.wirth.remote.ParentServer;
+import de.htwsaar.wirth.remote.util.RemoteConstants;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -12,9 +13,7 @@ import java.rmi.registry.LocateRegistry;
  * A Server binds
  */
 public class Server {
-	
-    private static final String BIND_KEY = "server";
-    
+ 
     private int parentPort;
     private int localPort;
     private String parentHost;
@@ -37,12 +36,12 @@ public class Server {
 
     private void createRegistry() throws RemoteException, AlreadyBoundException {
         Registry registry = LocateRegistry.createRegistry(localPort);
-        registry.bind(BIND_KEY, messageBoard);
+        registry.bind(RemoteConstants.BIND_KEY, messageBoard);
     }
 
     public void bindToParent() throws RemoteException, NotBoundException {
         Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
-        ParentServer parent = (ParentServer) parentRegistry.lookup(BIND_KEY);
+        ParentServer parent = (ParentServer) parentRegistry.lookup(RemoteConstants.BIND_KEY);
         parent.registerServer(messageBoard);
         messageBoard.setParent(parent);
     }

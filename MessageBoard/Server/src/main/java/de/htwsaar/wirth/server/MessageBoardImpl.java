@@ -150,6 +150,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// wrong
 		// this exception can be handled on clientside
 		AuthPacket auth = SessionManager.authenticate(login);
+		System.out.println("Added Client " + login.getUsername());
 		clientList.add(client);
 		return auth;
 	}
@@ -402,6 +403,15 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	}
 
 	public List<Message> getMessages() throws RemoteException {
-		return Services.getInstance().getMessageService().getAll();
+//		return Services.getInstance().getMessageService().getAll();
+///*
+		ArrayList<Message> list = new ArrayList<Message> ();
+		list.add(new MessageImpl("1", "Stefan", "Vorstand"));
+		list.add(new MessageImpl("2", "Stefan", "Vorstand"));
+		list.add(new MessageImpl("3", "Stefan", "Vorstand"));
+		list.add(new MessageImpl("4", "Stefan", "Vorstand"));
+		list.add(new MessageImpl("5", "Stefan", "Vorstand"));
+		return list;
+//*/
 	}
 }

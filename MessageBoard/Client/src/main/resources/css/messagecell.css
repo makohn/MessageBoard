@@ -1,0 +1,15 @@
+.editButtonGroup {
+	-fx-opacity: 0;	
+}
+
+.editButtonGroup:hover {
+	-fx-opacity: 1;	
+}
+
+.editButtonLabel {
+	 -fx-text-fill: lightgrey;
+}
+
+.editButtonLabel:hover {
+	 -fx-text-fill: grey;
+}
