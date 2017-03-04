@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -105,14 +106,39 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		}
 		this.parent = parent;
 		this.parentQueue = new CommandRunner();
+		parentQueue.start();
 		
 		// müsste eigentlich nur beim ersten Start durchgeführt werden
 		syncParent();
 	}
 
 	private void syncParent() throws RemoteException {
-		List<Message> messages = parent.getMessages();
-		Services.getInstance().getMessageService().saveMessages(messages);
+		List<Message> parentMessages = parent.getMessages();
+		List<Message> childMessages = Services.getInstance().getMessageService().getAll();
+		
+		// create a map from the childMsgs
+		Map<UUID, Message> map = new HashMap<>();
+		for(Message childMsg : childMessages) {
+			map.put(childMsg.getID(), childMsg);
+		}
+		
+		// iterate over the parentMessages and check, if the parentMsg is newer than the childMsg
+		for(Message parentMsg : parentMessages) {
+			Message childMsg = map.get(parentMsg.getID());
+			if (childMsg != null) {
+				if(parentMsg.getModifiedAt().after(childMsg.getModifiedAt())) {
+					// save the parentMsg, if it is newer
+					Services.getInstance().getMessageService().saveMessage(parentMsg);
+				} else if (childMsg.getModifiedAt().after(parentMsg.getModifiedAt())) {
+					// otherwise we need to notify the parent, that we have a newer message
+					Command cmd = CommandBuilder.buildParentCommand(parent, childMsg, ParentCmd.EDIT);
+					parentQueue.addCommand(cmd);
+				}
+			} else {
+				// if we don't have a message the parent has, we need to save it
+				Services.getInstance().getMessageService().saveMessage(parentMsg);
+			}
+		}
 	}
 
 	/**
