@@ -11,6 +11,4 @@ public class UserNotExistsException extends RuntimeException {
     public UserNotExistsException(String errorMsg) {
         super(errorMsg);
     }
-
-
 }
