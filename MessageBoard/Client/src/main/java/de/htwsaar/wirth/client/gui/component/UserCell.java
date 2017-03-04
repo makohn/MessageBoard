@@ -1,10 +1,10 @@
 package de.htwsaar.wirth.client.gui.component;
 
-import de.htwsaar.wirth.client.util.UIConstants;
 import de.htwsaar.wirth.client.util.Status;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
@@ -12,13 +12,13 @@ public class UserCell extends ListCell<Pair<String,Status>> {
 	
 	private HBox listEntry;
 	private Text username;
-	private Text status;
+	private StatusIndicator status;
 	
 	// ------------------------------
 	{
 		listEntry = new HBox(5);
 		username = new Text("");
-		status = new Text("");
+		status = new StatusIndicator();
 	}
 	// ------------------------------
 	
@@ -29,27 +29,9 @@ public class UserCell extends ListCell<Pair<String,Status>> {
         if (item != null) {
 
             username.setText(item.getKey());
-            username.setFill(UIConstants.USERNAME_GREY);
+            username.setFill(Color.WHITE);
             
-            switch(item.getValue()) {
-            case ONLINE:
-                status.setText(UIConstants.STATUS_SYMBOL_FILLED);
-            	status.setFill(UIConstants.STATUS_GREEN);
-            	break;
-            case AWAY:
-                status.setText(UIConstants.STATUS_SYMBOL_FILLED);
-            	status.setFill(UIConstants.STATUS_YELLOW);
-            	break;
-            case BUSY:
-                status.setText(UIConstants.STATUS_SYMBOL_FILLED);
-            	status.setFill(UIConstants.STATUS_RED);
-            	break;
-            default:
-            case SHOW_AS_OFFLINE:
-                status.setText(UIConstants.STATUS_SYMBOL_EMPTY);
-            	status.setFill(UIConstants.STATUS_GREEN);
-            	break;
-            }
+            status.setStatus(item.getValue());
 
             listEntry.getChildren().addAll(status, username);
             listEntry.setAlignment(Pos.CENTER_LEFT);

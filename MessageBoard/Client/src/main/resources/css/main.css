@@ -1,3 +1,6 @@
+.root {
+	-fx-font-family: 'Nunito-Regular';
+}
 
 .button {
 	-fx-background-color: transparent;
@@ -38,10 +41,88 @@
     -fx-border-color: grey;
 }
 
+.menu {
+    -fx-background-color: #293338;
+    -fx-text-fill: #f0f0f0;
+    -fx-pref-height: 35px;
+    -fx-min-height: 35px;
+    -fx-padding: 0 0 0 20;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-graphic-text-gap: 10;
+    -fx-background-image: url("../img/menu_minimize.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-radius: 0;
+    -fx-background-position: right center;
+}
+
+.menu-minimized {
+	-fx-pref-height: 0px;
+    -fx-min-height: 0px;
+}
+
+.menu-minimized .list-cell {
+	-fx-pref-height: 0px;
+    -fx-min-height: 0px;
+}
+
+.menu:hover {
+	-fx-background-color: #49b9ff;
+}
+
+.menu-user {
+    -fx-graphic: url("../img/user.png");
+}
+
+.menu-boards {
+    -fx-graphic: url("../img/boards.png");
+}
+
 .reloadMessagesLabel {
 	-fx-text-fill: #2ba6ff;
 }
 
 .reloadMessagesLabel:hover {
 	-fx-underline: true;
+}
+
+.groupList {
+	-fx-background-color: transparent;
+}
+
+.groupList .list-cell {
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+}
+
+.groupList .list-cell:hover {
+	-fx-background-color: rgb(226, 226, 226, 0.2);
+}
+
+.current-group-button {
+	-fx-font-size: 16px;
+}
+
+.current-group-button:hover {
+	-fx-font-family: 'Nunito-Bold';
+}
+
+.user-info-area {
+	-fx-background-color: #293338;
+}
+
+.own-fullname-label {
+	-fx-font-size: 16px;
+	-fx-padding: 0 0 0 20;
+	-fx-text-fill: white;
+}
+
+.own-username-label {
+	-fx-font-size: 12px;
+	-fx-padding: 0 0 0 20;
+	-fx-text-fill: grey;
+}
+
+.menu-list-users .username {
+	-fx-text-fill: white;
 }

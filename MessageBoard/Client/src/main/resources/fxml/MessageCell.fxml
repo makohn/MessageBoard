@@ -10,12 +10,12 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.glyphfont.Glyph?>
 
-<BorderPane prefWidth="486.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.MessageCellController">
+<BorderPane prefWidth="486.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.MessageCellController">
    <bottom>
       <Separator prefWidth="200.0" BorderPane.alignment="CENTER" />
    </bottom>
    <center>
-      <Label fx:id="messageArea" text="Label" wrapText="true" BorderPane.alignment="TOP_LEFT">
+      <Label fx:id="messageArea" text="LabLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.el" wrapText="true" BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
             <Insets left="8.0" />
          </BorderPane.margin>
