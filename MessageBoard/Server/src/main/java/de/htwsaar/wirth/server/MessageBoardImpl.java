@@ -165,18 +165,21 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// Authenticate throws an exception, if the username or password are
 		// wrong
 		// this exception can be handled on clientside
-		AuthPacket auth = SessionManager.authenticate(login);		
-		// TODO: müsste man hier nicht noch allen Client-Childs bescheid sagen, dass ein neuer User da ist ?
-		// also etwa:		
-//		for (Notifiable c : clientList) {
-//			c.notifyNewUser(login.getUsername());
-//		}
+		AuthPacket auth = SessionManager.authenticate(login);
+		System.out.println("Added Client " + login.getUsername()); //Debug, delete in release
+		// TODO: müsste man hier nicht noch allen Client-Childs bescheid sagen,
+		// dass ein neuer User da ist ?
+		// also etwa:
+		// for (Notifiable c : clientList) {
+		// c.notifyNewUser(login.getUsername());
+		// }
 		// und dann natürlich auch beim logout wieder weg
+
 		clientList.add(client);
 		onlineUsers.add(login.getUsername());
 		return auth;
 	}
-	
+
 //	// TODO: logout
 //	public void logout(AuthPacket auth, Notifiable client) {
 //		clientList.remove(client);
@@ -466,6 +469,16 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	public List<Message> getMessages() throws RemoteException {
 		// hier evtl noch ein limit fuer nachrichten
 		return Services.getInstance().getMessageService().getAll();
+		
+		// Testing GUI:
+		// ArrayList<Message> list = new ArrayList<Message> ();
+		// list.add(new MessageImpl("1", "Stefan", "Vorstand"));
+		// list.add(new MessageImpl("2", "Stefan", "Vorstand"));
+		// list.add(new MessageImpl("3", "Stefan", "Vorstand"));
+		// list.add(new MessageImpl("4", "Stefan", "Vorstand"));
+		// list.add(new MessageImpl("5", "Stefan", "Vorstand"));
+		// return list;
+
 	}
 
 	public void notifyNewUser(String string) throws RemoteException {

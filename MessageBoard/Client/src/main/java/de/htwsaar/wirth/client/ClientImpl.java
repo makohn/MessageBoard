@@ -6,26 +6,24 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
-import de.htwsaar.wirth.client.controller.MainViewController;
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
-import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
-public class Impl extends UnicastRemoteObject implements Notifiable {
+public class ClientImpl extends UnicastRemoteObject implements Notifiable {
 	
     private static final String BIND_KEY = "server";
 		
-	private MainViewController gui;
+//	private MainViewController gui;
 	private MessageBoard parent;
 	private AuthPacket auth;
 //	private String username;	// sollte das ein attribut sein ?
 //	private String group;	// sollte das ein attribut sein ?
 //	private String password; // sollte das ein attribut sein ?
 
-	protected Impl() throws RemoteException {
+	protected ClientImpl() throws RemoteException {
 		// TODO Auto-generated constructor stub
 		// gui einstellen
 		// parent-stub laden ? oder auch beim login ?

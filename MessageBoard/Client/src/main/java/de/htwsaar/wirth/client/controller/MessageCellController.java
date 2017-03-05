@@ -1,12 +1,11 @@
 package de.htwsaar.wirth.client.controller;
 import javafx.fxml.FXML;
-import javafx.scene.text.Text;
+import javafx.scene.control.Label;
 
 public class MessageCellController {
-	@FXML private Text messageArea;
+	@FXML private Label messageArea;
 	
     public void setMessage(String msg) {
       messageArea.setText(msg);
-      messageArea.setWrappingWidth(500);
     }
 }

@@ -1,0 +1,26 @@
+.login-input-field {
+	-fx-background-color: transparent;
+	-fx-border-style: solid;
+	-fx-border-width: 0 0 1 0;
+	-fx-border-color: lightgrey;
+}
+
+.login-input-field:focused {
+	-fx-border-width: 0 0 2 0;
+	-fx-border-color: #49b9ff;
+}
+
+.login-port-select .arrow-button {
+	-fx-background-color: transparent;
+}
+
+.login-button {
+	-fx-background-color: #49b9ff;
+	-fx-text-fill: white;
+	-fx-border-style: none;
+	-fx-border-radius: 0;
+}
+
+.login-button:hover {
+	-fx-background-color: #63c3ff;
+}

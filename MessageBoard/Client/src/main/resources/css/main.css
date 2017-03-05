@@ -1,12 +1,7 @@
-
-.buttonSearchCloseIcon {
-    -glyph-size: 15;
-    -glyph-name: CLOSE;
-}
-
-.buttonSearchClose, .buttonSearchUp, .buttonSearchDown {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
+.button {
+	-fx-background-color: transparent;
+	-fx-border-style: none;	
+	-fx-border-width: 0;	
 }
 
 .searchBoxLabel {
@@ -17,16 +12,92 @@
     -fx-background-radius: 20px;
 }
 
-.searchBoxLabelIcon {
-    -glyph-size: 13;
-    -glyph-name: SEARCH;
+.menu {
+    -fx-background-color: #293338;
+    -fx-text-fill: #f0f0f0;
+    -fx-pref-height: 35px;
+    -fx-min-height: 35px;
+    -fx-padding: 0 0 0 20;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-graphic-text-gap: 10;
+    -fx-background-image: url("../img/menu_minimize.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-radius: 0;
+    -fx-background-position: right center;
 }
 
-.combo-box-base {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-    -fx-background-radius: 3px, 3px, 2px, 1px;
-    -fx-border-style: solid;
-    -fx-border-radius: 10px;
-    -fx-border-color: grey;
+.menu-minimized {
+	-fx-pref-height: 0px;
+    -fx-min-height: 0px;
+}
+
+.menu-minimized .list-cell {
+	-fx-pref-height: 0px;
+    -fx-min-height: 0px;
+}
+
+.menu:hover {
+	-fx-background-color: #49b9ff;
+}
+
+.menu-user {
+    -fx-graphic: url("../img/user.png");
+}
+
+.menu-boards {
+    -fx-graphic: url("../img/boards.png");
+}
+
+.reloadMessagesLabel {
+	-fx-text-fill: #2ba6ff;
+}
+
+.reloadMessagesLabel:hover {
+	-fx-underline: true;
+}
+
+.groupList {
+	-fx-background-color: transparent;
+}
+
+.groupList .list-cell {
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+}
+
+.groupList .list-cell:hover {
+	-fx-background-color: rgb(226, 226, 226, 0.2);
+}
+
+.current-group-button {
+	-fx-font-size: 16px;
+}
+
+.current-group-button:hover {
+	-fx-font-family: 'Nunito-Bold';
+}
+
+.user-info-area {
+	-fx-background-color: #293338;
+}
+
+.own-fullname-label {
+	-fx-font-size: 16px;
+	-fx-padding: 0 0 0 20;
+	-fx-text-fill: white;
+}
+
+.own-username-label {
+	-fx-font-size: 12px;
+	-fx-padding: 0 0 0 20;
+	-fx-text-fill: grey;
+}
+
+.menu-list-users .username {
+	-fx-text-fill: white;
+}
+
+.chat-list-view {
+	-fx-background-color: transparent;
 }
