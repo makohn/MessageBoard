@@ -3,10 +3,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
 import de.htwsaar.wirth.client.util.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,7 +39,7 @@ public class MainViewController implements Initializable {
 	private ObservableList<String> groups;
 	private ObservableList<Pair<String,Status>> users;
 	
-//	private ClientImpl client;
+	private ClientImpl client;
 	
 	
 	///*-----------TestData: Remove as soon as real datasets are available-----------------------------
@@ -50,7 +52,8 @@ public class MainViewController implements Initializable {
 	@SuppressWarnings("unchecked") // Arraylist does not like Generics
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		client = ClientImpl.getInstance();
+		
 		messages = FXCollections.observableArrayList();
 		chatPane.setCellFactory(list -> new MessageCell());
 		chatPane.setItems(messages);
@@ -79,7 +82,7 @@ public class MainViewController implements Initializable {
 
     public void sendMethod(KeyEvent ke) throws IOException {
     	 if (ke.getCode().equals(KeyCode.ENTER)) {
-//        	client.sendMessage(messageBox.getText());
+        	client.sendMessage(messageBox.getText());
         	messageBox.clear();
     	 }
     }
@@ -98,6 +101,12 @@ public class MainViewController implements Initializable {
     	} else {
     		groupArea.getChildren().add(groupList);
     	}
+    }
+    
+    public void insertMessage(Message msg) {
+    	Platform.runLater(() -> {
+    		messages.add(msg);
+    	});
     }
 }
 

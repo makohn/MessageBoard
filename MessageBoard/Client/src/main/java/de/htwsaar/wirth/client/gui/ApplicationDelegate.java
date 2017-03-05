@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.controlsfx.control.MaskerPane;
 
 import de.htwsaar.wirth.client.controller.LoginController;
+import de.htwsaar.wirth.client.controller.MainViewController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -44,13 +45,15 @@ public class ApplicationDelegate {
 		}
 	}
 
-	public void showMainScreen(/* String sessionID */) {
+	public MainViewController showMainScreen(/* String sessionID */) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
 			scene.setRoot((Parent) loader.load());
+			return loader.getController();
 		} catch (IOException ex) {
 			// TODO
 		}
+		return null;
 	}
 	
 	public void showLoadingHUD() {

@@ -6,6 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import de.htwsaar.wirth.client.controller.MainViewController;
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
@@ -16,21 +17,39 @@ public class ClientImpl extends UnicastRemoteObject implements Notifiable {
 	
     private static final String BIND_KEY = "server";
 		
-//	private MainViewController gui;
+	private MainViewController gui;
 	private MessageBoard parent;
 	private AuthPacket auth;
 //	private String username;	// sollte das ein attribut sein ?
 //	private String group;	// sollte das ein attribut sein ?
 //	private String password; // sollte das ein attribut sein ?
+	
+	public static ClientImpl sharedInstance;
 
-	protected ClientImpl() throws RemoteException {
+	private ClientImpl() throws RemoteException {
 		// TODO Auto-generated constructor stub
 		// gui einstellen
 		// parent-stub laden ? oder auch beim login ?
 		// 
 	}
+	
+	public static synchronized ClientImpl getInstance() {
+		if(sharedInstance == null) {
+			try {
+				sharedInstance = new ClientImpl();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return sharedInstance;
+	}
 
 	private static final long serialVersionUID = -7940206816319176143L;
+	
+	public void setGui(MainViewController gui) {
+		this.gui = gui;
+	}
 	
 	public void login(String username, String password, String parentHost, int parentPort) throws RemoteException, NotBoundException {
 		
@@ -99,8 +118,7 @@ public class ClientImpl extends UnicastRemoteObject implements Notifiable {
 	// ----------------------- Notifiable ----------------------------------
 
 	public void notifyNew(Message msg) throws RemoteException {
-		// TODO: s.o. bei login
-//		gui.insertMessage(msg);
+		gui.insertMessage(msg);
 	}
 
 	public void notifyDelete(Message msg) throws RemoteException {
