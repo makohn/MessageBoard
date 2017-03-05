@@ -1,5 +1,12 @@
 # MessageBoard
 
+
+```diff
+- _______________________INFO_________________________
+- 'Neustart_Issue' und 'gui' wurden in 'dev' gemerged.
+- ____________________________________________________
+```
+
 master | 
 -------|
 [![Build Status](https://travis-ci.com/makohn/MessageBoard.svg?token=z1kyyNNo3nk7k9bTgxPq&branch=master)](https://travis-ci.com/makohn/MessageBoard)|
