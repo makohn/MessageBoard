@@ -11,6 +11,7 @@ import java.util.Scanner;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.UserImpl;
 import de.htwsaar.wirth.remote.model.interfaces.User;
+import de.htwsaar.wirth.remote.util.HashUtil;
 import de.htwsaar.wirth.remote.util.RemoteConstants;
 import de.htwsaar.wirth.server.service.Services;
 
@@ -36,10 +37,14 @@ public class Server {
     	if (!Services.getInstance().getUserService().existsGroupLeader()) {
     		
     		Scanner s = new Scanner(System.in);
+    		System.out.print("Username of Groupleader: ");
     		String username = s.nextLine();
+    		System.out.print("Password: ");
     		String password = s.nextLine();
     		s.close();
     		
+    		password = HashUtil.hashSha512(password);
+    		    		
     		User groupLeader = new UserImpl(username, "", "", password, true);
     		
     		Services.getInstance().getUserService().saveUser(groupLeader);

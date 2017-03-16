@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
-import de.htwsaar.wirth.client.util.Status;
+import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

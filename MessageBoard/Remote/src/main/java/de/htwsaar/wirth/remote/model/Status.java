@@ -1,5 +1,7 @@
 package de.htwsaar.wirth.remote.model;
 
-public enum Status {
-	ONLINE, AWAY, BUSY, OFFLINE;
+import java.io.Serializable;
+
+public enum Status implements Serializable {
+	ONLINE, SHOW_AS_OFFLINE, AWAY, BUSY
 }

@@ -21,7 +21,7 @@ public interface MessageBoard extends Remote {
 	List<Message> getMessages(AuthPacket auth) throws RemoteException;
 	
 	/* Users and UserStatus */
-	AuthPacket login(LoginPacket login, Notifiable client) throws RemoteException;
+	AuthPacket login(LoginPacket login, NotifiableClient client) throws RemoteException;
 	void logout(AuthPacket auth) throws RemoteException;
 	
 	void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException;

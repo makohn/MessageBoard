@@ -8,13 +8,13 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.UUID;
 
 import de.htwsaar.wirth.remote.MessageBoard;
-import de.htwsaar.wirth.remote.Notifiable;
+import de.htwsaar.wirth.remote.NotifiableClient;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
-public class ClientImpl extends UnicastRemoteObject implements Notifiable {
+public class ClientImpl extends UnicastRemoteObject implements NotifiableClient {
 	
     private static final String BIND_KEY = "server";
 		
@@ -118,5 +118,12 @@ public class ClientImpl extends UnicastRemoteObject implements Notifiable {
 	public void notifyUserStatus(String username, Status status) throws RemoteException {
 		// TODO:
 //		gui.changeUserStatus(username, status);		
+	}
+
+	@Override
+	public void notifyDeleteUser(String username) throws RemoteException {
+		// TODO:
+//		gui.deleteUser(username);
+		
 	}
 }

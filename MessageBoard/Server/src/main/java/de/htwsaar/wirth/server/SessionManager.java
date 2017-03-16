@@ -9,6 +9,7 @@ import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.remote.model.interfaces.User;
+import de.htwsaar.wirth.remote.util.HashUtil;
 import de.htwsaar.wirth.server.service.Services;
 
 public class SessionManager {
@@ -26,15 +27,22 @@ public class SessionManager {
      * @throws AuthenticationException, when the username or password is wrong
      */
     public static AuthPacket authenticate(LoginPacket login) {
-        // TODO: check, if this password equals the password in the database
-        //if(true) {
-            String username = login.getUsername();
-            AuthPacket auth = new AuthPacket(username);
-            sessions.put(username, auth);
+        String givenPassword = login.getPassword();
+    	// hash the given cleartext password
+        givenPassword = HashUtil.hashSha512(givenPassword);
+        
+        // load the user from the database
+    	String givenUsername = login.getUsername();
+    	User user = Services.getInstance().getUserService().getUser(givenUsername);
+    	// check, if the hashValues are equal
+    	if (givenPassword.equals(user.getPassword())) {
+    		// successful login
+            AuthPacket auth = new AuthPacket(givenUsername);
+            sessions.put(givenUsername, auth);
             return auth;
-        //} else {
-        //    throw new AuthenticationException("Wrong Username or Password.");
-        //}
+        } else {
+            throw new AuthenticationException("Wrong Username or Password.");
+        }
     }
 
     /**

@@ -15,7 +15,7 @@ public class UserDao extends AbstractDao<User>{
     }
 
     public User getUser(String username){
-        List<User> list = query("from UserImpl where username = " + username);
+        List<User> list = query("from UserImpl where username = '" + username +"'");
         if(list.size() > 0){
             return list.get(0);
         }

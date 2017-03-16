@@ -1,6 +1,6 @@
 package de.htwsaar.wirth.client.gui.component;
 
-import de.htwsaar.wirth.client.util.Status;
+import de.htwsaar.wirth.remote.model.Status;
 import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
