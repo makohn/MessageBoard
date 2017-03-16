@@ -1,10 +1,26 @@
 package de.htwsaar.wirth.server;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
+import de.htwsaar.wirth.remote.exceptions.NoPermissionException;
+import de.htwsaar.wirth.remote.exceptions.UserNotExistsException;
 import de.htwsaar.wirth.remote.model.MessageImpl;
+import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.UserImpl;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
@@ -18,14 +34,9 @@ import de.htwsaar.wirth.server.util.command.CommandBuilder;
 import de.htwsaar.wirth.server.util.command.ParentCmd;
 import de.htwsaar.wirth.server.util.command.child.ChildCommand;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
-
+	
 	private String groupName;
 
 	/**
@@ -53,10 +64,17 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	/**
 	 * a list of clients
 	 */
-	private List<Notifiable> clientList;
+	private Map<String, Notifiable> clientNotifyMap;
 	
-	// TODO: mein Vorschlag zur Überwachung des online-status
-	private List<String> onlineUsers;
+	/**
+	 * a map to manage the status of each user
+	 */
+	private Map<String, Status> userStatus;
+
+	/**
+	 * a ThreadPool we use for callbacks to clients
+	 */
+	private ExecutorService threadPool;
 
 	private static final long serialVersionUID = -4613549994529764225L;
 
@@ -64,8 +82,15 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		this.groupName = groupName;
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
 		childServerQueueMap = new ConcurrentHashMap<Notifiable, CommandRunner>();
-		clientList = Collections.synchronizedList(new ArrayList<Notifiable>());
-		onlineUsers = Collections.synchronizedList(new ArrayList<String>());
+		
+		clientNotifyMap = new ConcurrentHashMap<String, Notifiable>();
+		userStatus = new ConcurrentHashMap<String, Status>();
+		
+		// set the default userstatus of each user to offline
+		for (User user : Services.getInstance().getUserService().getAll()) {
+			userStatus.put(user.getUsername(), Status.OFFLINE);
+		}
+		threadPool = Executors.newCachedThreadPool();
 	}
 	
 	/**
@@ -81,14 +106,39 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		}
 		this.parent = parent;
 		this.parentQueue = new CommandRunner();
+		parentQueue.start();
 		
 		// müsste eigentlich nur beim ersten Start durchgeführt werden
 		syncParent();
 	}
 
 	private void syncParent() throws RemoteException {
-		List<Message> messages = parent.getMessages();
-		Services.getInstance().getMessageService().saveMessages(messages);
+		List<Message> parentMessages = parent.getMessages();
+		List<Message> childMessages = Services.getInstance().getMessageService().getAll();
+		
+		// create a map from the childMsgs
+		Map<UUID, Message> map = new HashMap<>();
+		for(Message childMsg : childMessages) {
+			map.put(childMsg.getID(), childMsg);
+		}
+		
+		// iterate over the parentMessages and check, if the parentMsg is newer than the childMsg
+		for(Message parentMsg : parentMessages) {
+			Message childMsg = map.get(parentMsg.getID());
+			if (childMsg != null) {
+				if(parentMsg.getModifiedAt().after(childMsg.getModifiedAt())) {
+					// save the parentMsg, if it is newer
+					Services.getInstance().getMessageService().saveMessage(parentMsg);
+				} else if (childMsg.getModifiedAt().after(parentMsg.getModifiedAt())) {
+					// otherwise we need to notify the parent, that we have a newer message
+					Command cmd = CommandBuilder.buildParentCommand(parent, childMsg, ParentCmd.EDIT);
+					parentQueue.addCommand(cmd);
+				}
+			} else {
+				// if we don't have a message the parent has, we need to save it
+				Services.getInstance().getMessageService().saveMessage(parentMsg);
+			}
+		}
 	}
 
 	/**
@@ -104,16 +154,17 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param handler
 	 */
 	private void notifyClients(ClientNotifyHandler handler) {
-		synchronized (clientList) {
-			for (Notifiable client : clientList) {
-				try {
-					handler.handle(client);
-				} catch (RemoteException e) {
-					// Ignore it, if a client cannot be called back
-					e.printStackTrace();
-				}
+		for (Entry<String,Notifiable> entry : clientNotifyMap.entrySet()) {
+				threadPool.execute(() -> {
+					try {
+						handler.handle(entry.getValue());
+					} catch (RemoteException e) {
+						// if we catch a remoteException the callback for this client doesn't work
+						clientNotifyMap.remove(entry.getKey());
+						changeUserStatusAndNotifyClients(entry.getKey(), Status.OFFLINE);
+					}
+				});
 			}
-		}
 	}
 
 	/**
@@ -129,12 +180,18 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			}
 		}
 	}
+	
+	private void changeUserStatusAndNotifyClients(String username, Status status) {
+		userStatus.put(username, status);
+		notifyClients(cl -> cl.notifyUserStatus(username, status));
+	}
 
 	/**
 	 *	needToSend decides whether a message has to send to the parent or not.
 	 */
 	private boolean needToSendParent(Message msg){
-		// add condition Database has msg
+		// FIXME: add condition Database has msg
+		// wäre es nicht besser einfach grundsätzlich hochzuschieben und wenn der parent die nachricht nicht hat ignoriert er es
 		return (msg.isPublished() && !isRoot());
 	}
 
@@ -144,10 +201,6 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	private boolean needToPublish(Message msg){
 		// add condition Database has msg
 		return (!msg.isPublished() && !isRoot());
-	}
-
-	private boolean messageExists(Message msg){
-		return Services.getInstance().getMessageService().existsMessage(msg);
 	}
 	
 	//---------------------------------- MessageBoard Interface ----------------------------------
@@ -160,58 +213,71 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @return
 	 * @throws RemoteException
 	 */
-	// TODO: Methode in login umbenennen
-	public AuthPacket registerClient(LoginPacket login, Notifiable client) throws RemoteException {
-		// Authenticate throws an exception, if the username or password are
-		// wrong
+	public AuthPacket login(LoginPacket login, Notifiable client) throws RemoteException {
+		// Authenticate throws an exception, if the username or password are wrong
 		// this exception can be handled on clientside
-		AuthPacket auth = SessionManager.authenticate(login);
-		System.out.println("Added Client " + login.getUsername()); //Debug, delete in release
-		// TODO: müsste man hier nicht noch allen Client-Childs bescheid sagen,
-		// dass ein neuer User da ist ?
-		// also etwa:
-		// for (Notifiable c : clientList) {
-		// c.notifyNewUser(login.getUsername());
-		// }
-		// und dann natürlich auch beim logout wieder weg
-
-		clientList.add(client);
-		onlineUsers.add(login.getUsername());
+		AuthPacket auth = SessionManager.authenticate(login);		
+		changeUserStatusAndNotifyClients(login.getUsername(), Status.ONLINE);
+		
+		// add the Notifiable of the client to the clientNotifyMap
+		clientNotifyMap.put(login.getUsername(), client);
 		return auth;
 	}
-
-//	// TODO: logout
-//	public void logout(AuthPacket auth, Notifiable client) {
-//		clientList.remove(client);
-//		onlineUsers.remove(login.getUsername());
-//		for (Notifiable c : clientList) {
-//			c.notifyDeleteUser(auth.getUsername());
-//		}
-//	}
 	
+	public void logout(AuthPacket auth) throws RemoteException {
+		SessionManager.verifyAuthPacket(auth);
+		// remove the user from the clientNotifyMap and set his status to offline
+		clientNotifyMap.remove(auth.getUsername());
+		SessionManager.logout(auth.getUsername());
+		
+		changeUserStatusAndNotifyClients(auth.getUsername(), Status.OFFLINE);
+	}
 	
+	public void changeUserStatus(AuthPacket auth, Status status) throws RemoteException {
+		SessionManager.verifyAuthPacket(auth);
+		String username = auth.getUsername();
+		changeUserStatusAndNotifyClients(username, status);
+	}
+		
 	/**
 	 * @param auth
 	 * @param newUsername
 	 * @param newPassword
 	 */
 	public void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isGroupLeader(auth);
+		SessionManager.verifyAuthPacket(auth);
+		if (SessionManager.isGroupLeader(auth)) {
+			throw new NoPermissionException("The user is not a group-leader");
+	    }
 		User user = new UserImpl(newUsername, "", "", newPassword, false);
 		Services.getInstance().getUserService().saveUser(user);
+		
+		// notify the clients of the new offline user
+		changeUserStatusAndNotifyClients(newUsername, Status.OFFLINE);
 	}
 	
 	public void deleteUser(AuthPacket auth, String username) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isGroupLeader(auth);
-//		if (onlineUsers.contains(username))
-//			throw UserIsOnlineException("The User is still online");
-		// TODO: alternativ auch irgendwie den User rausschmeißen
+		SessionManager.verifyAuthPacket(auth);
+		if (SessionManager.isGroupLeader(auth)) {
+			throw new NoPermissionException("The user is not a group-leader");
+		}
+		// check if the user exists
 		User user = Services.getInstance().getUserService().getUser(username);
-//		if ( user == null )
-//			throw UserNotExistsException("This User does not exist on this server");
+		
+		// TODO: die Nutzer müssen über einen gelöschten UserStatus benachrichtigt werden.
+		// Dies ist mit unserem derzeitigen Notifiable Interface nicht möglich :(
+		
+//		if (userStatus.get(username) == Status.ONLINE)
+//			throw UserIsOnlineException("The User is still online");
+		
+		if ( user == null ) {
+			throw new UserNotExistsException("This User does not exist on this server");
+		}
 		Services.getInstance().getUserService().deleteUser(user);
+		
+		SessionManager.logout(username);
+		clientNotifyMap.remove(username);
+		userStatus.remove(username);
 			
 	}
 	
@@ -225,10 +291,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 * @throws RemoteException
 	 */
-	public void publish(AuthPacket auth, Message msg) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isGroupLeader(auth);
-		if(!messageExists(msg)) {
+	public void publish(AuthPacket auth, UUID id) throws RemoteException {
+		SessionManager.verifyAuthPacket(auth);
+		if (SessionManager.isGroupLeader(auth)) {
+			throw new NoPermissionException("The user is not a group-leader");
+		}
+		Message msg = Services.getInstance().getMessageService().getMessage(id);
+		if ( msg == null ) {
 			throw new MessageNotExistsException("The message doesn't exists on this server");
 		}
 		if(needToPublish(msg)) {
@@ -249,7 +318,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void newMessage(AuthPacket auth, String msg) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
+		SessionManager.verifyAuthPacket(auth);
 		Message message = new MessageImpl(msg, auth.getUsername(), groupName);
 		notifyNew(message);
 	}
@@ -262,29 +331,28 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * the User a username and a valid authentication token is required.
 	 *
 	 * @param auth AuthPack given by the login
-	 * @param msg
+	 * @param msgTxt
 	 * @throws RemoteException
 	 */
-	public void editMessage(AuthPacket auth, Message msg) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isAuthor(auth, msg);			
+	public void editMessage(AuthPacket auth, String msgTxt, UUID id) throws RemoteException {
+		SessionManager.verifyAuthPacket(auth);
+		Message oldMsg;
 		synchronized (Message.class) {
-			// TODO: check, if the given message is equal to the msg in the database, except for the modified msgtxt.
-//			Message oldMsg = Services.getInstance().getMessageService().getMessage(msgId);
-//			if ( oldMsg == null)
-//				throw new MessageNotExistsException("The message doesn't exists on this server");
-						
-			if(!messageExists(msg)) {
+			oldMsg = Services.getInstance().getMessageService().getMessage(id);
+			if ( oldMsg == null)
 				throw new MessageNotExistsException("The message doesn't exists on this server");
+			if (SessionManager.isAuthor(auth, oldMsg)) {
+	            throw new NoPermissionException("The user is not the author"); 
 			}
-//			if ( !oldMsg.getMessage().equals(msg.getMessage()) )
-			notifyEdit(msg);
+
+			if ( !oldMsg.getMessage().equals(msgTxt) )
+				notifyEdit(oldMsg);
 		}
-		if(needToSendParent(msg)) {
-			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
+		if(needToSendParent(oldMsg)) {
+			Command cmd = CommandBuilder.buildParentCommand(parent, oldMsg, ParentCmd.EDIT);
 			parentQueue.addCommand(cmd);
 		}
-	}
+	}	
 	
 	/**
 	 * deleteMessage is capsuled in the MessageBoard-Interface. This method can
@@ -296,17 +364,21 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @param msg
 	 * @throws RemoteException
 	 */
-	public void deleteMessage(AuthPacket auth, Message msg) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
-		SessionManager.isGroupLeaderOrAuthor(auth, msg);
+	public void deleteMessage(AuthPacket auth, UUID id) throws RemoteException {
+		SessionManager.verifyAuthPacket(auth);
+		Message msgToDelete;
 		synchronized (Message.class) {
-			if(!messageExists(msg)) {
+			msgToDelete = Services.getInstance().getMessageService().getMessage(id);
+			if (!SessionManager.isAuthor(auth, msgToDelete) && !SessionManager.isGroupLeader(auth)) {
+				throw new NoPermissionException("The user is neither the author nor a groupleader");
+			}
+			if ( Services.getInstance().getMessageService().getMessage(id) == null ) {
 				throw new MessageNotExistsException("The message doesn't exists on this server");
 			}
-			notifyDelete(msg);
+			notifyDelete(msgToDelete);
 		}
-		if(needToSendParent(msg)) {
-			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
+		if(needToSendParent(msgToDelete)) {
+			Command cmd = CommandBuilder.buildParentCommand(parent, msgToDelete, ParentCmd.DELETE);
 			parentQueue.addCommand(cmd);
 		}
 	}
@@ -321,19 +393,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public List<Message> getMessages(AuthPacket auth) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
+		SessionManager.verifyAuthPacket(auth);
 		return getMessages();
 	}
 		
-	public List<String> getUsers(AuthPacket auth) throws RemoteException {
-		SessionManager.isAuthenticatedByToken(auth);
-	
-		// TODO: hier müsste man entscheiden, ob der Client immer alle Usernames erhält oder
-		// nur die die online sind. in letzterem Fall müsste dann aber auch der status mitgegeben werden.
-		// sonst ist das Problem rauszufinden welcher user online ist.
-		
-		// hier werden erstmal nur die User zurückgegeben, die online sind		
-		return onlineUsers;
+	public Map<String, Status> getUserStatus(AuthPacket auth) throws RemoteException {
+		SessionManager.verifyAuthPacket(auth);
+		return userStatus;
 	}
 	
 	//---------------------------------- Notifiable Interface ----------------------------------
@@ -355,7 +421,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
 
 		// Notify each client
-		notifyClients((cl) -> cl.notifyNew(msg));
+		notifyClients(cl -> cl.notifyNew(msg));
 	}
 
 	/**
@@ -366,16 +432,18 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 *
 	 * @param msg message to be edited
 	 * @throws RemoteException
-	 */
+	 */		
 	public void notifyEdit(Message msg) throws RemoteException {
-		if(messageExists(msg)) {
-			Services.getInstance().getMessageService().saveMessage(msg);
+		Message message = Services.getInstance().getMessageService().getMessage(msg.getID());
+		if ( message != null ) {
+			message.changeMessage(msg.getMessage());
+			Services.getInstance().getMessageService().saveMessage(msg/*message*/);
 
 			// Add a EditMessageCommand to each CommandRunner
 			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.EDIT));
 
 			// Notify each client
-			notifyClients((cl) -> cl.notifyEdit(msg));
+			notifyClients(cl -> cl.notifyEdit(msg));
 		}
 	}
 
@@ -389,17 +457,19 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyDelete(Message msg) throws RemoteException {
-		if(messageExists(msg)) {
+		if ( Services.getInstance().getMessageService().getMessage(msg.getID()) != null ) {
 			Services.getInstance().getMessageService().deleteMessage(msg);
-
-			// only execute the following, if the delete was successful
 
 			// Add a DeleteMessageCommand to each CommandRunner
 			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.DELETE));
 
 			// Notify each client
-			notifyClients((cl) -> cl.notifyDelete(msg));
-			}
+			notifyClients(cl -> cl.notifyDelete(msg));
+		}
+	}
+	
+	public void notifyUserStatus(String string, Status status) throws RemoteException {
+		// TODO: Problem leere Methode, vlt noch extra interfaces ableiten NotifiableClient und NotifiableServer
 	}
 	
 	//---------------------------------- ParentServer Interface ----------------------------------
@@ -458,7 +528,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyServerDelete(Message msg) throws RemoteException {
-		notifyDelete(msg);
+		notifyDelete(msg);		
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
 			parentQueue.addCommand(cmd);
@@ -468,6 +538,8 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 	public List<Message> getMessages() throws RemoteException {
 		// hier evtl noch ein limit fuer nachrichten
+		// TODO: wir sollten jeweils methoden mit limitierung und filterung nach gruppe erstellen
+		// entsprechende methoden sollten die jeweiligen Datenbankcalls nutzen
 		return Services.getInstance().getMessageService().getAll();
 		
 		// Testing GUI:
@@ -479,13 +551,5 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// list.add(new MessageImpl("5", "Stefan", "Vorstand"));
 		// return list;
 
-	}
-
-	public void notifyNewUser(String string) throws RemoteException {
-		// TODO: Problem leere Methode, vlt noch extra interfaces ableiten NotifiableClient und NotifiableServer
-	}
-
-	public void notifyDeleteUser(String string) throws RemoteException {
-		// TODO: Problem leere Methode	
 	}
 }

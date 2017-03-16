@@ -5,9 +5,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.UUID;
 
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
+import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
@@ -44,12 +46,12 @@ public class ClientImpl extends UnicastRemoteObject implements Notifiable {
 		
         // User einloggen
 		LoginPacket login = new LoginPacket(username, password);
-		auth = parent.registerClient(login, this);
+		auth = parent.login(login, this);
 		
 		// Nachrichten und User holen
 		// TODO: insertMessages(List<Message> messages) für die GUI implementieren etc
 		// gui.insertMessages(parent.getMessages(auth));
-		// gui.insertUsers(parent.getUsers(auth));
+		// gui.insertUsers(parent.getUserStatus(auth));
 	}
 	
 	public void logout() {
@@ -79,21 +81,21 @@ public class ClientImpl extends UnicastRemoteObject implements Notifiable {
 			parent.newMessage(auth, msg);
 	}
 	
-	public void editMessage(Message msg, String text) throws RemoteException {		
+	public void editMessage(String msg, UUID id) throws RemoteException {		
 		if (parent != null) {
-			msg.changeMessage(text);
-			parent.editMessage(auth, msg);
+			parent.editMessage(auth, msg, id);
 		}
 	}
-	
-	public void publishMessage(Message msg) throws RemoteException {
+
+	public void publishMessage(UUID id) throws RemoteException {
 		if (parent != null)
-			parent.publish(auth, msg);
+			parent.publish(auth, id);
 	}
 	
-	public void deleteMessage(Message msg) throws RemoteException {
+	
+	public void deleteMessage(UUID id) throws RemoteException {
 		if (parent != null)
-			parent.deleteMessage(auth, msg);
+			parent.deleteMessage(auth, id);
 	}
 	
 	// ----------------------- Notifiable ----------------------------------
@@ -113,14 +115,8 @@ public class ClientImpl extends UnicastRemoteObject implements Notifiable {
 //		gui.editMessage(msg);
 	}
 
-	public void notifyNewUser(String username) throws RemoteException {
+	public void notifyUserStatus(String username, Status status) throws RemoteException {
 		// TODO:
-//		gui.insertUser(username)		
-	}
-
-	@Override
-	public void notifyDeleteUser(String username) throws RemoteException {
-		// TODO
-//		gui.removeUser(username);		
+//		gui.changeUserStatus(username, status);		
 	}
 }

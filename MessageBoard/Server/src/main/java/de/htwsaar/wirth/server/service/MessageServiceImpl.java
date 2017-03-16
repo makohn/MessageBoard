@@ -31,16 +31,6 @@ public class MessageServiceImpl implements MessageService {
     }
 
     /**
-     * Überprüft, ob es die übergebene Nachricht bereits in der Datenhaltungsschicht existiert
-     * @return true / false
-     */
-    public boolean existsMessage(Message message) { 
-    	synchronized (Services.class) {
-    		return messageDao.existsMessage(message); 
-    	}
-    }
-
-    /**
      * Speichert eine Message
      * @param message Message-Objekt
      */

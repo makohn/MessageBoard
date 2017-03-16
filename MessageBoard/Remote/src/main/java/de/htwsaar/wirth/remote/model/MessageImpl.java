@@ -44,6 +44,7 @@ public class MessageImpl implements Serializable, Message {
         this.id =  UUID.randomUUID();
         this.msg = msg;
         this.createdAt = new Date();
+        this.modifiedAt = createdAt;
         this.author = author;
         this.group = group;
     }
@@ -75,7 +76,24 @@ public class MessageImpl implements Serializable, Message {
         modifiedAt = new Date();
     }
 
-    @Override
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MessageImpl other = (MessageImpl) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
     public String toString() {
         return "MessageImpl{" +
                 "id=" + id +
