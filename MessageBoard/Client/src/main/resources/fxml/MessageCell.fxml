@@ -26,17 +26,17 @@
          <children>
             <HBox prefHeight="17.0" prefWidth="486.0">
                <children>
-                  <Label text="\@makohn">
+                  <Label fx:id="usernameLabel" text="\@makohn">
                      <HBox.margin>
                         <Insets left="5.0" right="7.0" top="5.0" />
                      </HBox.margin>
                   </Label>
-                  <Label text="# Vorstand" textFill="#49b9ff">
+                  <Label fx:id="groupLabel" text="# Vorstand" textFill="#49b9ff">
                      <HBox.margin>
                         <Insets right="10.0" top="5.0" />
                      </HBox.margin>
                   </Label>
-                  <Label text="Sa 04 Mar - 22:01" textFill="#c6c5c4">
+                  <Label fx:id="dateLabel" text="Sa 04 Mar - 22:01" textFill="#c6c5c4">
                      <HBox.margin>
                         <Insets right="5.0" top="5.0" />
                      </HBox.margin>

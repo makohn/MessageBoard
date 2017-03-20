@@ -163,8 +163,10 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 						handler.handle(entry.getValue());
 					} catch (RemoteException e) {
 						// if we catch a remoteException the callback for this client doesn't work
-						clientNotifyMap.remove(entry.getKey());
-						changeUserStatusAndNotifyClients(entry.getKey(), Status.SHOW_AS_OFFLINE);
+						if (clientNotifyMap.containsValue(entry.getValue())) {
+							clientNotifyMap.remove(entry);
+							changeUserStatusAndNotifyClients(entry.getKey(), Status.SHOW_AS_OFFLINE);
+						}
 					}
 				});
 			}

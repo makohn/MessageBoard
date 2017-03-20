@@ -5,125 +5,139 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import de.htwsaar.wirth.client.controller.MainViewController;
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.NotifiableClient;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.remote.util.RemoteConstants;
+import javafx.application.Platform;
 
 public class ClientImpl extends UnicastRemoteObject implements NotifiableClient {
 	
-    private static final String BIND_KEY = "server";
+    private static ClientImpl instance;
 		
-//	private MainViewController gui;
-	private MessageBoard parent;
+	private volatile MainViewController gui;
+	private MessageBoard msgBoard;
 	private AuthPacket auth;
-//	private String username;	// sollte das ein attribut sein ?
-//	private String group;	// sollte das ein attribut sein ?
-//	private String password; // sollte das ein attribut sein ?
+	private String username;
+	
+	public static ClientImpl getInstance() {
+		if (instance == null) {
+			try {
+				instance = new ClientImpl();
+			} catch (RemoteException e) {}
+		}
+		return instance;
+	}
 
 	protected ClientImpl() throws RemoteException {
-		// TODO Auto-generated constructor stub
-		// gui einstellen
-		// parent-stub laden ? oder auch beim login ?
-		// 
+	}
+	
+	public void setView(MainViewController gui) {
+		this.gui = gui;
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 
 	private static final long serialVersionUID = -7940206816319176143L;
 	
 	public void login(String username, String password, String parentHost, int parentPort) throws RemoteException, NotBoundException {
 		
-		// TODO:
-//		if (parent != null && auth != null)
-//			parent.logout(auth);
+		if (msgBoard != null && auth != null) {
+			msgBoard.logout(auth);
+			msgBoard = null;
+			auth = null;
+			username = null;
+		}
 		
 		// beim Server anmelden
 		Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
-        parent = (MessageBoard) parentRegistry.lookup(BIND_KEY);
+        msgBoard = (MessageBoard) parentRegistry.lookup(RemoteConstants.BIND_KEY);
+        
+        this.username = username;
 		
         // User einloggen
 		LoginPacket login = new LoginPacket(username, password);
-		auth = parent.login(login, this);
-		
-		// Nachrichten und User holen
-		// TODO: insertMessages(List<Message> messages) für die GUI implementieren etc
-		// gui.insertMessages(parent.getMessages(auth));
-		// gui.insertUsers(parent.getUserStatus(auth));
+		auth = msgBoard.login(login, this);
 	}
 	
-	public void logout() {
-		// TODO:
-//		if (parent != null)
-//			parent.logout(auth);
+	public void logout() throws RemoteException {
+		if (msgBoard != null) {
+			msgBoard.logout(auth);
+			msgBoard = null;
+			auth = null;
+		}
+	}
+	
+	public List<Message> getAllMessages() throws RemoteException {
+		return msgBoard.getMessages(auth);
+	}
+	
+	public Map<String, Status> getUserStatus() throws RemoteException {
+		return msgBoard.getUserStatus(auth);
 	}
 	
 	public void addUser(String newUsername, String newPassword) throws RemoteException {
-		// TODO: muss hier nicht noch das Passwort verschlüsselt werden ?
-		// im Moment wird ein Userobjekt beim Server erstellt, der das Passwort dann wieder in Klartext der DB gibt
-		// entweder könnte ja das Passwort nur noch verschlüsselt rausgegeben werden (hab ich das so richtig verstanden, siehe UserImpl)
-		// oder wir könnten gleich hier schon das Passwort hashen, so dass der server den klartext nicht mitkriegt
-		// beim login kriegt er natürlich klartext und muss in selber zerhacken und schauen ob derselbe hash dabei herauskommt.
-		if (parent != null)
-			parent.addUser(auth, newUsername, newPassword);
+		if (msgBoard != null)
+			msgBoard.addUser(auth, newUsername, newPassword);
 	}
 	
-	// TODO: User löschen
 	public void deleteUser(String username) throws RemoteException {
-		if (parent != null)
-			parent.deleteUser(auth, username);
+		if (msgBoard != null)
+			msgBoard.deleteUser(auth, username);
 	}
 	
 	public void sendMessage(String msg) throws RemoteException {
-		if (parent != null)
-			parent.newMessage(auth, msg);
+		if (msgBoard != null)
+			msgBoard.newMessage(auth, msg);
 	}
 	
 	public void editMessage(String msg, UUID id) throws RemoteException {		
-		if (parent != null) {
-			parent.editMessage(auth, msg, id);
+		if (msgBoard != null) {
+			msgBoard.editMessage(auth, msg, id);
 		}
 	}
 
 	public void publishMessage(UUID id) throws RemoteException {
-		if (parent != null)
-			parent.publish(auth, id);
+		if (msgBoard != null)
+			msgBoard.publish(auth, id);
 	}
 	
 	
 	public void deleteMessage(UUID id) throws RemoteException {
-		if (parent != null)
-			parent.deleteMessage(auth, id);
+		if (msgBoard != null)
+			msgBoard.deleteMessage(auth, id);
 	}
 	
 	// ----------------------- Notifiable ----------------------------------
 
 	public void notifyNew(Message msg) throws RemoteException {
-		// TODO: s.o. bei login
-//		gui.insertMessage(msg);
+		Platform.runLater(() -> gui.insertMessage(msg));
 	}
 
 	public void notifyDelete(Message msg) throws RemoteException {
-		// TODO: s.o.
-//		gui.deleteMessage(msg);		
+		Platform.runLater(() -> gui.deleteMessage(msg));		
 	}
 
 	public void notifyEdit(Message msg) throws RemoteException {
-		// TODO: s.o.
-//		gui.editMessage(msg);
+		Platform.runLater(() -> gui.editMessage(msg));
 	}
 
 	public void notifyUserStatus(String username, Status status) throws RemoteException {
-		// TODO:
-//		gui.changeUserStatus(username, status);		
+		Platform.runLater(() -> gui.changeUserStatus(username, status));		
 	}
-
-	@Override
+	
 	public void notifyDeleteUser(String username) throws RemoteException {
-		// TODO:
-//		gui.deleteUser(username);
+		Platform.runLater(() -> gui.deleteUser(username));
 		
 	}
 }

@@ -1,13 +1,18 @@
 package de.htwsaar.wirth.client.controller;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
+import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,6 +32,8 @@ public class MainViewController implements Initializable {
 	@FXML private ListView<Pair<String,Status>> userList;
 	@FXML private TextArea messageBox;
 	@FXML private Label	reloadLabel;
+	@FXML private Label usernameLabel;
+	@FXML private Label fullNameLabel;
 	@FXML private ToggleButton toggleUserList;
 	@FXML private ToggleButton toggleGroupList;
 	@FXML private VBox userArea;
@@ -34,35 +41,46 @@ public class MainViewController implements Initializable {
 	
 	
 	private ObservableList<Message> messages;
+	private ObservableList<Message> sortedWrapperList;
 	private ObservableList<String> groups;
 	private ObservableList<Pair<String,Status>> users;
 	
-//	private ClientImpl client;
-	
-	
-	///*-----------TestData: Remove as soon as real datasets are available-----------------------------
-	private final Pair<String,Status> user1 = new Pair<String,Status>("Folz", Status.AWAY);
-	private final Pair<String,Status> user2 = new Pair<String,Status>("Weber", Status.ONLINE);
-	private final Pair<String,Status> user3 = new Pair<String,Status>("Miede", Status.SHOW_AS_OFFLINE);
-	private final Pair<String,Status> user4 = new Pair<String,Status>("Esch", Status.BUSY);
-	///*----------------------------------------------------------------------------------------------
+	private ClientImpl client;
 	
 	@SuppressWarnings("unchecked") // Arraylist does not like Generics
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		client = ClientImpl.getInstance();
+		client.setView(this);
+		usernameLabel.setText(client.getUsername());
+		// TODO: add fullName here
+		fullNameLabel.setText(client.getUsername());
 
 		messages = FXCollections.observableArrayList();
+		sortedWrapperList = messages.sorted((m1, m2) -> { 
+			return m1.getCreatedAt().compareTo(m2.getCreatedAt());
+		});		
 		chatPane.setCellFactory(list -> new MessageCell());
-		chatPane.setItems(messages);
+		chatPane.setItems(sortedWrapperList);
 
-		users = FXCollections.observableArrayList(user1, user2, user3, user4);
-		userList.setCellFactory(list -> new UserCell());	
+		users = FXCollections.observableArrayList();		
+		userList.setCellFactory(list -> new UserCell());
+		initUserStatus();
 		userList.setItems(users);
 		userList.setPrefHeight(users.size() * 28);
 		
-		groups = FXCollections.observableArrayList("# Vorstand", "# Personal", "# Marketing");
+		groups = FXCollections.observableArrayList("ALL");
+		groups.addListener(new ListChangeListener<String>() {
+			@Override
+			public void onChanged(javafx.collections.ListChangeListener.Change<? extends String> c) {
+				if (groupList != null)
+					groupList.setPrefHeight(groups.size() * 28);
+			}
+		});
 		groupList.setItems(groups);
 		groupList.setPrefHeight(groups.size() * 28);
+		
+		initMessages();
 		
 		/* Added to prevent the enter from adding a new line to inputMessageBox */
         messageBox.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
@@ -76,10 +94,57 @@ public class MainViewController implements Initializable {
             }
         });
 	}
+	
+	private void initMessages() {
+		try {
+			for(Message msg : client.getAllMessages()) {
+				insertMessage(msg);
+			}
+		} catch (RemoteException e) {}
+	}
 
-    public void sendMethod(KeyEvent ke) throws IOException {
+	private void initUserStatus() {
+		try {
+			Map<String, Status> userStatus = client.getUserStatus();
+			for (Entry<String, Status> entry : userStatus.entrySet()) {
+				users.add(new Pair<String, Status> (entry.getKey(), entry.getValue()));
+			}
+		} catch (RemoteException e) {
+		}
+	}
+
+	public void insertMessage(Message msg) {
+		if (!groups.contains(msg.getGroup())) {
+			groups.add(msg.getGroup());
+		}
+		messages.add(msg);
+	}
+	
+	public void editMessage(Message msg) {
+		messages.remove(msg);
+		messages.add(msg);
+	}
+	
+	public void deleteMessage(Message msg) {
+		messages.remove(msg);
+	}
+	
+	public void changeUserStatus(String username, Status status) {
+		users.removeIf((pair) -> {
+			return username.equals(pair.getKey());
+		});
+		users.add(new Pair<String, Status>(username, status));
+	}
+	
+	public void deleteUser(String username) {
+		users.removeIf((pair) -> {
+			return username.equals(pair.getKey());
+		});
+	}
+
+    public void sendMethod(KeyEvent ke) throws RemoteException {
     	 if (ke.getCode().equals(KeyCode.ENTER)) {
-//        	client.sendMessage(messageBox.getText());
+        	client.sendMessage(messageBox.getText());
         	messageBox.clear();
     	 }
     }

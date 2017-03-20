@@ -1,5 +1,7 @@
 package de.htwsaar.wirth.client.gui.component;
 
+import java.text.DateFormat;
+
 import de.htwsaar.wirth.client.controller.MessageCellController;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +29,9 @@ public class MessageCell extends ListCell<Message>{
 	          setGraphic(null);
 	          setText(null);
 	        } else {
+	        	controller.setUsername(msg.getAuthor());
+	        	controller.setGroup(msg.getGroup());
+	        	controller.setDate(DateFormat.getDateTimeInstance().format(msg.getCreatedAt()));
 	        	controller.setMessage(msg.getMessage());
 	            setGraphic(graphic);
 	        }

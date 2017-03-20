@@ -104,10 +104,10 @@
                      <children>
                         <HBox>
                            <children>
-                              <Label styleClass="own-fullname-label" text="Marek Kohn" />
+                              <Label fx:id="fullNameLabel" styleClass="own-fullname-label" text="Marek Kohn" />
                            </children>
                         </HBox>
-                        <Label styleClass="own-username-label" text="\@makohn" />
+                        <Label fx:id="usernameLabel" styleClass="own-username-label" text="\@makohn" />
                      </children>
                   </VBox>
                </children>
