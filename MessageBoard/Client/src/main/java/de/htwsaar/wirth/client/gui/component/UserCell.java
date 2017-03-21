@@ -26,7 +26,7 @@ public class UserCell extends ListCell<Pair<String,Status>> {
 	protected void updateItem(Pair<String, Status> item, boolean empty) {
 		super.updateItem(item, empty);
         setBackground(null);
-        if (item != null) {
+        if (!empty && item != null) {
 
             username.setText(item.getKey());
             username.setFill(Color.WHITE);

@@ -34,15 +34,16 @@ public class SessionManager {
         // load the user from the database
     	String givenUsername = login.getUsername();
     	User user = Services.getInstance().getUserService().getUser(givenUsername);
-    	// check, if the hashValues are equal
-    	if (givenPassword.equals(user.getPassword())) {
-    		// successful login
-            AuthPacket auth = new AuthPacket(givenUsername);
-            sessions.put(givenUsername, auth);
-            return auth;
-        } else {
-            throw new AuthenticationException("Wrong Username or Password.");
-        }
+    	if ( user != null) {
+	    	// check, if the hashValues are equal
+	    	if (givenPassword.equals(user.getPassword())) {
+	    		// successful login
+	            AuthPacket auth = new AuthPacket(givenUsername);
+	            sessions.put(givenUsername, auth);
+	            return auth;
+	        }
+	    }
+    	throw new AuthenticationException("Wrong Username or Password.");
     }
 
     /**

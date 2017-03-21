@@ -1,6 +1,5 @@
 package de.htwsaar.wirth.client;
 
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -18,6 +17,7 @@ import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.remote.util.RemoteConstants;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 
 public class ClientImpl extends UnicastRemoteObject implements NotifiableClient {
 	
@@ -50,72 +50,132 @@ public class ClientImpl extends UnicastRemoteObject implements NotifiableClient 
 
 	private static final long serialVersionUID = -7940206816319176143L;
 	
-	public void login(String username, String password, String parentHost, int parentPort) throws RemoteException, NotBoundException {
+	public Task<Void> login(String username, String password, String parentHost, int parentPort) {
+		this.username = username;
+		ClientImpl thisReference = this;
 		
-		if (msgBoard != null && auth != null) {
-			msgBoard.logout(auth);
-			msgBoard = null;
-			auth = null;
-			username = null;
-		}
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null && auth != null) {
+					Task<Void> logoutTask = logout();
+					logoutTask.run();
+				}
+				
+				// beim Server anmelden
+				Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
+		        msgBoard = (MessageBoard) parentRegistry.lookup(RemoteConstants.BIND_KEY);
+		        
+		        // User einloggen
+				LoginPacket login = new LoginPacket(username, password);
+				auth = msgBoard.login(login, thisReference);
+				return null;
+			}
+		};
+	}
+	
+	public Task<Void> logout() {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null) {
+					msgBoard.logout(auth);
+					msgBoard = null;
+					auth = null;
+				}
+				return null;
+			}
+		};
+	}
+	
+	public Task<List<Message>> getAllMessages() {
+		return new Task<List<Message>>() {
+			@Override
+			protected List<Message> call() throws Exception {
+				return msgBoard.getMessages(auth);
+			}
+		};
+	}
+	
+	public Task<Map<String, Status>> getUserStatus() {
+		return new Task<Map<String, Status>>() {
+			@Override
+			protected Map<String, Status> call() throws Exception {
+				return msgBoard.getUserStatus(auth);
+			}
+		};
+	}
+	
+	public Task<Void> addUser(String newUsername, String newPassword) {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null)
+					msgBoard.addUser(auth, newUsername, newPassword);
+				return null;
+			}
+			
+		};
+	}
+	
+	public Task<Void> deleteUser(String username) {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null)
+					msgBoard.deleteUser(auth, username);
+				return null;
+			}
+			
+		};
+	}
+	
+	public Task<Void> sendMessage(String msg) {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null)
+					msgBoard.newMessage(auth, msg);
+				return null;
+			}
+			
+		};
+	}
+	
+	public Task<Void> editMessage(String msg, UUID id) {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null)
+					msgBoard.editMessage(auth, msg, id);
+				return null;
+			}
+			
+		};
 		
-		// beim Server anmelden
-		Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
-        msgBoard = (MessageBoard) parentRegistry.lookup(RemoteConstants.BIND_KEY);
-        
-        this.username = username;
-		
-        // User einloggen
-		LoginPacket login = new LoginPacket(username, password);
-		auth = msgBoard.login(login, this);
-	}
-	
-	public void logout() throws RemoteException {
-		if (msgBoard != null) {
-			msgBoard.logout(auth);
-			msgBoard = null;
-			auth = null;
-		}
-	}
-	
-	public List<Message> getAllMessages() throws RemoteException {
-		return msgBoard.getMessages(auth);
-	}
-	
-	public Map<String, Status> getUserStatus() throws RemoteException {
-		return msgBoard.getUserStatus(auth);
-	}
-	
-	public void addUser(String newUsername, String newPassword) throws RemoteException {
-		if (msgBoard != null)
-			msgBoard.addUser(auth, newUsername, newPassword);
-	}
-	
-	public void deleteUser(String username) throws RemoteException {
-		if (msgBoard != null)
-			msgBoard.deleteUser(auth, username);
-	}
-	
-	public void sendMessage(String msg) throws RemoteException {
-		if (msgBoard != null)
-			msgBoard.newMessage(auth, msg);
-	}
-	
-	public void editMessage(String msg, UUID id) throws RemoteException {		
-		if (msgBoard != null) {
-			msgBoard.editMessage(auth, msg, id);
-		}
 	}
 
-	public void publishMessage(UUID id) throws RemoteException {
-		if (msgBoard != null)
-			msgBoard.publish(auth, id);
+	public Task<Void> publishMessage(UUID id) {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null)
+					msgBoard.publish(auth, id);
+				return null;
+			}
+		};
 	}
 	
-	
-	public void deleteMessage(UUID id) throws RemoteException {
-		if (msgBoard != null)
-			msgBoard.deleteMessage(auth, id);
+	public Task<Void> deleteMessage(UUID id) {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null)
+					msgBoard.deleteMessage(auth, id);
+				return null;
+			}
+			
+		};
 	}
 	
 	// ----------------------- Notifiable ----------------------------------

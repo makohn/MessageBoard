@@ -1,8 +1,6 @@
 package de.htwsaar.wirth.client.controller;
 
 import java.net.URL;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,15 +31,12 @@ public class LoginController implements Initializable {
 
 	private ClientImpl client;
 	
-    private ExecutorService exec = Executors.newSingleThreadExecutor(r -> {
-        Thread t = new Thread(r);
-        t.setDaemon(true); 
-        return t;
-    });
+    private ExecutorService exec;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		client = ClientImpl.getInstance();
+		exec = Executors.newCachedThreadPool();
 	}
 
 	public void initManager(final ApplicationDelegate delegate) {
@@ -55,21 +50,19 @@ public class LoginController implements Initializable {
 	}
 
 	private void login(ApplicationDelegate delegate) {
-		Task<Void> task = new Task<Void>() {
-		    @Override 
-		    public Void call() throws RemoteException, NotBoundException {
-		    	// TODO: catch NumberFormatException
-		    	client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(cmbPort.getValue()));
-		        return null;
-		    }
-		};
+		// TODO: NumberFormatException fangen
+		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(cmbPort.getValue()));
 		task.setOnSucceeded(e -> {
 			delegate.showMainScreen();
 		});
 		task.setOnFailed(e -> {
-			// TODO:
-			System.out.println(e);
+			onError(e.getSource().getException());
 		});
 		exec.submit(task);
+	}
+	
+	private void onError(Throwable e) {
+		// TODO: show fancy Error Message
+		ApplicationDelegate.getInstance().showLoginScreen();
 	}
 }

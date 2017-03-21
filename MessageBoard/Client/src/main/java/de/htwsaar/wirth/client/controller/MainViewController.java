@@ -1,12 +1,14 @@
 package de.htwsaar.wirth.client.controller;
-import java.io.IOException;
 import java.net.URL;
-import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.ResourceBundle;
 
 import de.htwsaar.wirth.client.ClientImpl;
+import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
 import de.htwsaar.wirth.remote.model.Status;
@@ -14,6 +16,7 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -47,15 +50,21 @@ public class MainViewController implements Initializable {
 	
 	private ClientImpl client;
 	
+    private ExecutorService exec;
+	
 	@SuppressWarnings("unchecked") // Arraylist does not like Generics
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		exec = Executors.newCachedThreadPool();
+		
 		client = ClientImpl.getInstance();
 		client.setView(this);
 		usernameLabel.setText(client.getUsername());
 		// TODO: add fullName here
 		fullNameLabel.setText(client.getUsername());
 
+		// Messages
 		messages = FXCollections.observableArrayList();
 		sortedWrapperList = messages.sorted((m1, m2) -> { 
 			return m1.getCreatedAt().compareTo(m2.getCreatedAt());
@@ -63,16 +72,17 @@ public class MainViewController implements Initializable {
 		chatPane.setCellFactory(list -> new MessageCell());
 		chatPane.setItems(sortedWrapperList);
 
+		// Users
 		users = FXCollections.observableArrayList();		
 		userList.setCellFactory(list -> new UserCell());
-		initUserStatus();
 		userList.setItems(users);
 		userList.setPrefHeight(users.size() * 28);
 		
+		// Groups
 		groups = FXCollections.observableArrayList("ALL");
 		groups.addListener(new ListChangeListener<String>() {
 			@Override
-			public void onChanged(javafx.collections.ListChangeListener.Change<? extends String> c) {
+			public void onChanged(Change<? extends String> c) {
 				if (groupList != null)
 					groupList.setPrefHeight(groups.size() * 28);
 			}
@@ -80,37 +90,59 @@ public class MainViewController implements Initializable {
 		groupList.setItems(groups);
 		groupList.setPrefHeight(groups.size() * 28);
 		
-		initMessages();
+		refreshAllMessages(true);
+		refreshAllUserStatus();
 		
 		/* Added to prevent the enter from adding a new line to inputMessageBox */
         messageBox.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) {
-                try {
-                    sendMethod(ke);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ke.consume();
+            	sendMethod(ke);
+            	ke.consume();
             }
         });
 	}
 	
-	private void initMessages() {
-		try {
-			for(Message msg : client.getAllMessages()) {
+	private void refreshAllMessages(boolean shouldScrollToLast) {
+		Task<List<Message>> messageTask = client.getAllMessages();
+		messageTask.setOnSucceeded((e) -> {
+			List<Message> messageList = messageTask.getValue();
+			messages.clear();
+			for (Message msg : messageList) {
 				insertMessage(msg);
 			}
-		} catch (RemoteException e) {}
+			if (shouldScrollToLast)
+				scrollToLastMessage();
+		});
+		messageTask.setOnFailed((e) -> {
+			onError(e.getSource().getException());
+		});
+		exec.submit(messageTask);
+	}
+	
+	private void onError(Throwable e) {
+		// TODO:
+		Task<Void> logoutTask = ClientImpl.getInstance().logout();
+		exec.submit(logoutTask);
+		ApplicationDelegate.getInstance().showLoginScreen();
 	}
 
-	private void initUserStatus() {
-		try {
-			Map<String, Status> userStatus = client.getUserStatus();
-			for (Entry<String, Status> entry : userStatus.entrySet()) {
+	private void refreshAllUserStatus() {
+		Task<Map<String, Status>> getUserStatusTask = client.getUserStatus();
+		getUserStatusTask.setOnSucceeded((e) -> {
+			Map<String, Status> userStatusMap = getUserStatusTask.getValue();
+			for (Entry<String, Status> entry : userStatusMap.entrySet()) {
 				users.add(new Pair<String, Status> (entry.getKey(), entry.getValue()));
 			}
-		} catch (RemoteException e) {
-		}
+		});
+		getUserStatusTask.setOnFailed((e) -> {
+			onError(e.getSource().getException());
+		});
+		exec.submit(getUserStatusTask);
+	}
+	
+	private void scrollToLastMessage() {
+		if (!chatPane.getItems().isEmpty())
+			chatPane.scrollTo(chatPane.getItems().size() - 1);
 	}
 
 	public void insertMessage(Message msg) {
@@ -142,9 +174,13 @@ public class MainViewController implements Initializable {
 		});
 	}
 
-    public void sendMethod(KeyEvent ke) throws RemoteException {
-    	 if (ke.getCode().equals(KeyCode.ENTER)) {
-        	client.sendMessage(messageBox.getText());
+    public void sendMethod(KeyEvent ke) {
+    	 if (ke.getCode().equals(KeyCode.ENTER) && !messageBox.getText().isEmpty()) {
+        	Task<Void> sendMessageTask = client.sendMessage(messageBox.getText());
+        	sendMessageTask.setOnFailed((e) -> {
+        		onError(e.getSource().getException());
+        	});
+        	exec.submit(sendMessageTask);
         	messageBox.clear();
     	 }
     }
