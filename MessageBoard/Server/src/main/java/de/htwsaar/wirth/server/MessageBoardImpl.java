@@ -356,12 +356,10 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			oldMsg = Services.getInstance().getMessageService().getMessage(id);
 			if ( oldMsg == null)
 				throw new MessageNotExistsException("The message doesn't exists on this server");
-			if (SessionManager.isAuthor(auth, oldMsg)) {
+			if (!SessionManager.isAuthor(auth, oldMsg)) {
 	            throw new NoPermissionException("The user is not the author"); 
 			}
-
-			if ( !oldMsg.getMessage().equals(msgTxt) )
-				notifyEdit(oldMsg);
+			notifyEdit(oldMsg);
 		}
 		if(needToSendParent(oldMsg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, oldMsg, ParentCmd.EDIT);
@@ -452,13 +450,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		Message message = Services.getInstance().getMessageService().getMessage(msg.getID());
 		if ( message != null ) {
 			message.changeMessage(msg.getMessage());
-			Services.getInstance().getMessageService().saveMessage(msg/*message*/);
-
+			Services.getInstance().getMessageService().saveMessage(message/*message*/);
+			
 			// Add a EditMessageCommand to each CommandRunner
-			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.EDIT));
+			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(message, ChildCmd.EDIT));
 
 			// Notify each client
-			notifyClients(cl -> cl.notifyEdit(msg));
+			notifyClients(cl -> cl.notifyEdit(message));
 		}
 	}
 

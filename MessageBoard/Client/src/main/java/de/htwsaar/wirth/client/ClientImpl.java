@@ -22,8 +22,8 @@ import javafx.concurrent.Task;
 public class ClientImpl extends UnicastRemoteObject implements NotifiableClient {
 	
     private static ClientImpl instance;
-		
-	private volatile MainViewController gui;
+    
+	private MainViewController gui;
 	private MessageBoard msgBoard;
 	private AuthPacket auth;
 	private String username;

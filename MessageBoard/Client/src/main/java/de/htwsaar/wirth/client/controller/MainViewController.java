@@ -67,7 +67,7 @@ public class MainViewController implements Initializable {
 		sortedWrapperList = messages.sorted((m1, m2) -> { 
 			return m1.getCreatedAt().compareTo(m2.getCreatedAt());
 		});		
-		chatPane.setCellFactory(list -> new MessageCell());
+		chatPane.setCellFactory(list -> new MessageCell(this));
 		chatPane.setItems(sortedWrapperList);
 
 		// Users
@@ -119,7 +119,7 @@ public class MainViewController implements Initializable {
 		exec.submit(messageTask);
 	}
 	
-	private void onError(Throwable e) {
+	public void onError(Throwable e) {
 		// TODO:
 		Task<Void> logoutTask = ClientImpl.getInstance().logout();
 		exec.submit(logoutTask);
@@ -200,5 +200,9 @@ public class MainViewController implements Initializable {
     		groupArea.getChildren().add(groupList);
     	}
     }
+
+	public ExecutorService getExec() {
+		return exec;
+	}
 }
 

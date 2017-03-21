@@ -37,8 +37,9 @@ public class MessageServiceImpl implements MessageService {
     public void saveMessage(Message message){
     	synchronized (Services.class) {
     		Message oldMsg = Services.getInstance().getMessageService().getMessage(message.getID());
-    		if ( (oldMsg == null) || (oldMsg.getCreatedAt().compareTo(message.getCreatedAt()) < 0))
+    		if ( (oldMsg == null) || (oldMsg.getModifiedAt().compareTo(message.getModifiedAt()) <= 0)) {
     			messageDao.save(message);
+    		}
     	}
     }
 

@@ -18,8 +18,13 @@ public class MessageDao extends AbstractDao<Message> {
     }
     
     public Message getMessage(UUID id) {
-    	// TODO: Nachricht mit der entsprechenden id holen
-    	return null;
+    	List<DatabaseQueryParameter> parameterList = new ArrayList<DatabaseQueryParameter>();
+        parameterList.add(new DatabaseQueryParameter("id", id));
+        List<Message> list = query("from MessageImpl where id = :id", parameterList);
+        if(list.size() > 0){
+        	return list.get(0);
+        }
+        return null;
     }
 
     public boolean existsMessage(Message message) {

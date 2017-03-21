@@ -43,7 +43,7 @@
                   </Label>
                   <HBox alignment="TOP_RIGHT" prefHeight="47.0" prefWidth="138.0" styleClass="editButtonGroup" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button alignment="TOP_LEFT" graphicTextGap="0.0" styleClass="editButton">
+                        <Button fx:id="editButton" alignment="TOP_LEFT" graphicTextGap="0.0" styleClass="editButton">
             	            <graphic>
             	            <Glyph fontFamily="FontAwesome" icon="EDIT" styleClass="editButtonLabel" />
             	            </graphic> 
