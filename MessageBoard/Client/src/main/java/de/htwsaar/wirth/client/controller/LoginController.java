@@ -51,7 +51,8 @@ public class LoginController implements Initializable {
 
 	private void login(ApplicationDelegate delegate) {
 		// TODO: NumberFormatException fangen
-		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(cmbPort.getValue()));
+
+		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), 40001);
 		task.setOnSucceeded(e -> {
 			delegate.showMainScreen();
 		});

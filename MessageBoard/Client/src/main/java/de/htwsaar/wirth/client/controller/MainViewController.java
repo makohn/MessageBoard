@@ -19,10 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -41,6 +38,7 @@ public class MainViewController implements Initializable {
 	@FXML private ToggleButton toggleGroupList;
 	@FXML private VBox userArea;
 	@FXML private VBox groupArea;
+
 	
 	
 	private ObservableList<Message> messages;
@@ -101,6 +99,8 @@ public class MainViewController implements Initializable {
             }
         });
 	}
+
+
 	
 	private void refreshAllMessages(boolean shouldScrollToLast) {
 		Task<List<Message>> messageTask = client.getAllMessages();

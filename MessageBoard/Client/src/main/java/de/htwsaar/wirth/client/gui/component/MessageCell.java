@@ -33,6 +33,7 @@ public class MessageCell extends ListCell<Message>{
 	        	controller.setGroup(msg.getGroup());
 	        	controller.setDate(DateFormat.getDateTimeInstance().format(msg.getCreatedAt()));
 	        	controller.setMessage(msg.getMessage());
+	        	controller.initEventHandler(msg);
 	            setGraphic(graphic);
 	        }
 	   }

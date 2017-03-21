@@ -376,7 +376,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * authentication token is required.
 	 *
 	 * @param auth AuthPack given by the login
-	 * @param msg
+	 * @param id
 	 * @throws RemoteException
 	 */
 	public void deleteMessage(AuthPacket auth, UUID id) throws RemoteException {
