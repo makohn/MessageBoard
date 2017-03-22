@@ -23,6 +23,8 @@ public class MessageCellController {
 	@FXML private Button editButton;
 	@FXML private Button trashButton;
 	
+	private boolean isEditMode = false;
+	
 	private ClientImpl client = ClientImpl.getInstance();
 
 
@@ -33,41 +35,56 @@ public class MessageCellController {
 	
 	private void initEditEventHandler(MainViewController mainView, Message msg) {
 		editButton.setOnAction((actionEvent) -> {
-			// TODO: read editedMsgTxt from User
-			messageArea.setManaged(false);
-			txtMessageEdit.setText(msg.getMessage());
-			txtMessageEdit.setManaged(true);
-			txtMessageEdit.requestFocus();
+			changeIntoEditMode(msg);
+			// Beenden des Edits durch Enter
 			txtMessageEdit.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
 	            if (ke.getCode().equals(KeyCode.ENTER)) {
 	            	editMessage(mainView, msg);
 	            	ke.consume();
 	            }
 	        });
+			// wenn focus verloren wird, wird die Nachricht nicht geändert
 			txtMessageEdit.focusedProperty().addListener(new ChangeListener<Boolean>() {
-
 				@Override
 				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
 					// Focus lost
 					boolean focusLost = oldValue && !newValue;
 					if(focusLost) {
-						editMessage(mainView, msg);
+						changeIntoNormalMode();
 					}
 				}
-				
 			});			
 		});
 	}
 	
 	private void editMessage(MainViewController mainView, Message msg) {
-		String editedMsgTxt = txtMessageEdit.getText();
-		Task<Void> editTask = client.editMessage(editedMsgTxt, msg.getID());
-		editTask.setOnFailed((workerStateEvent) -> {
-			mainView.onError(workerStateEvent.getSource().getException());
-		});
-		mainView.getExec().submit(editTask);
+		if (isEditMode) {
+			String editedMsgTxt = txtMessageEdit.getText();
+			Task<Void> editTask = client.editMessage(editedMsgTxt, msg.getID());
+			editTask.setOnFailed((workerStateEvent) -> {
+				mainView.onError(workerStateEvent.getSource().getException());
+			});
+			mainView.getExec().submit(editTask);
+			changeIntoNormalMode();
+		}
+	}
+	
+	private void changeIntoEditMode(Message msg) {
+		isEditMode = true;
+		messageArea.setManaged(false);
+		messageArea.setVisible(true);
+		txtMessageEdit.setText(msg.getMessage());
+		txtMessageEdit.setManaged(true);
+		txtMessageEdit.setVisible(true);
+		txtMessageEdit.requestFocus();
+	}
+
+	private void changeIntoNormalMode() {
 		messageArea.setManaged(true);
+		messageArea.setVisible(true);
 		txtMessageEdit.setManaged(false);
+		txtMessageEdit.setVisible(false);
+		isEditMode = false;
 	}
 
 	private void initDeleteEventHandler(MainViewController mainView, Message msg) {
