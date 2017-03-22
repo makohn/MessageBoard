@@ -28,6 +28,4 @@ public interface MessageBoard extends Remote {
 	void changeUserStatus(AuthPacket auth, Status status) throws RemoteException;
 	Map<String, Status> getUserStatus(AuthPacket auth) throws RemoteException;
 	void deleteUser(AuthPacket auth, String username) throws RemoteException;
-	
-	
 }

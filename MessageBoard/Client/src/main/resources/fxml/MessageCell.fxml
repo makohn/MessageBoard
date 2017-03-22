@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.glyphfont.Glyph?>
 
+<?import javafx.scene.control.Tooltip?>
 <BorderPane prefWidth="486.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.MessageCellController">
    <bottom>
       <Separator prefWidth="200.0" BorderPane.alignment="CENTER" />
@@ -32,21 +33,33 @@
             <HBox prefHeight="17.0" prefWidth="486.0">
                <children>
                   <Label fx:id="usernameLabel" text="\@makohn">
+                      <tooltip>
+                          <Tooltip text="Author" />
+                      </tooltip>
                      <HBox.margin>
                         <Insets left="5.0" right="7.0" top="5.0" />
                      </HBox.margin>
                   </Label>
                   <Label fx:id="groupLabel" text="# Vorstand" textFill="#49b9ff">
+                      <tooltip>
+                          <Tooltip text="Gruppenname" />
+                      </tooltip>
                      <HBox.margin>
                         <Insets right="10.0" top="5.0" />
                      </HBox.margin>
                   </Label>
                   <Label fx:id="creationDateLabel" text="Sa 04 Mar - 22:01" textFill="#c6c5c4">
+                      <tooltip>
+                          <Tooltip text="Erstelldatum" />
+                      </tooltip>
                      <HBox.margin>
                         <Insets right="5.0" top="5.0" />
                      </HBox.margin>
                   </Label>
                   <Label fx:id="modificationTextLabel" text="geändert am:" textFill="#c6c5c4" visible="false">
+                      <tooltip>
+                          <Tooltip text="Änderungsdatum" />
+                      </tooltip>
                      <HBox.margin>
                         <Insets right="5.0" top="5.0" />
                      </HBox.margin>
@@ -59,16 +72,25 @@
                   <HBox alignment="TOP_RIGHT" prefHeight="47.0" prefWidth="138.0" styleClass="editButtonGroup" HBox.hgrow="ALWAYS">
                      <children>
                      	<Button fx:id="publishButton" alignment="TOP_LEFT" graphicTextGap="0.0">
+                            <tooltip>
+                                <Tooltip text="Nachricht veröffentlichen" />
+                            </tooltip>
                      		<graphic>
                      		<Glyph fontFamily="FontAwesome" icon="UPLOAD" styleClass="editButtonLabel" />
                      		</graphic>
                      	</Button>
                         <Button fx:id="editButton" alignment="TOP_LEFT" graphicTextGap="0.0" styleClass="editButton">
+                            <tooltip>
+                                <Tooltip text="Nachricht bearbeiten" />
+                            </tooltip>
             	            <graphic>
             	            <Glyph fontFamily="FontAwesome" icon="EDIT" styleClass="editButtonLabel" />
             	            </graphic> 
                         </Button>
                         <Button fx:id="trashButton" alignment="TOP_LEFT" graphicTextGap="0.0">
+                            <tooltip>
+                                <Tooltip text="Nachricht löschen" />
+                            </tooltip>
             	            <graphic>
             	            <Glyph fontFamily="FontAwesome" icon="TRASH" styleClass="editButtonLabel" />
             	            </graphic>

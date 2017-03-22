@@ -63,9 +63,9 @@ public class MainViewController implements Initializable {
 
 		// Messages
 		messages = FXCollections.observableArrayList();
-		sortedWrapperList = messages.sorted((m1, m2) -> { 
+		sortedWrapperList = messages.sorted((m1, m2) -> {
 			return m1.getCreatedAt().compareTo(m2.getCreatedAt());
-		});		
+		});
 		chatPane.setCellFactory(list -> new MessageCell(this));
 		chatPane.setItems(sortedWrapperList);
 
