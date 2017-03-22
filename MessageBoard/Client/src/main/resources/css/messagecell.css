@@ -6,10 +6,26 @@
 	-fx-opacity: 1;	
 }
 
+.publishButtonLabel {
+	-fx-text-fill: grey;
+}
+
+.publishButtonLabel:hover {
+	-fx-text-fill: green;
+}
+
 .editButtonLabel {
-	 -fx-text-fill: lightgrey;
+	 -fx-text-fill: grey;
 }
 
 .editButtonLabel:hover {
+	 -fx-text-fill: #FFA71A;
+}
+
+.deleteButtonLabel {
 	 -fx-text-fill: grey;
+}
+
+.deleteButtonLabel:hover {
+	 -fx-text-fill: red;
 }

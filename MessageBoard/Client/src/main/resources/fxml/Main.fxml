@@ -28,7 +28,7 @@
                <left>
                   <HBox prefHeight="93.0" prefWidth="384.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="131.0" styleClass="current-group-button" text="# Vorstand" />
+                        <Button fx:id="groupButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="131.0" styleClass="current-group-button" text="# Vorstand" />
                      </children></HBox>
                </left>
                <right>

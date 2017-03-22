@@ -1,5 +1,7 @@
 package de.htwsaar.wirth.client.controller;
 
+import java.text.DateFormat;
+
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 import javafx.beans.value.ChangeListener;
@@ -22,22 +24,63 @@ public class MessageCellController {
 	@FXML private TextField txtMessageEdit;
 	@FXML private Button publishButton;
 	@FXML private Button editButton;
-	@FXML private Button trashButton;
+	@FXML private Button deleteButton;
+	
+	private Message message;
+	private MainViewController mainView;
 	
 	private boolean isEditMode = false;
 	
 	private ClientImpl client = ClientImpl.getInstance();
 
 
-	public void initEventHandler(MainViewController mainView, Message msg) {
-		initPublishEventHandler(mainView, msg);
-		initEditEventHandler(mainView, msg);
-		initDeleteEventHandler(mainView, msg);
+	public void initCell(MainViewController mainView, Message msg) {
+		this.message = msg;
+		this.mainView = mainView;
+		
+		// init view
+		
+		setUsername(message.getAuthor());
+    	setGroup(message.getGroup());
+    	setCreationDate(DateFormat.getDateTimeInstance().format(message.getCreatedAt()));
+    	
+    	// show modification date, if they are not equal
+    	if (!message.getCreatedAt().equals(message.getModifiedAt())) {
+    		setModificationDate(DateFormat.getDateTimeInstance().format(message.getModifiedAt()));
+    	} else {
+    		disableModificationDate();
+    	}
+    	
+    	setMessageTxt(msg.getMessage());
+    	
+    	// disable or enable Buttons and register EventHandler
+		
+		boolean isAuthor = ClientImpl.getInstance().getUsername().equals(message.getAuthor()) 
+							&& ClientImpl.getInstance().getGroupName().equals(message.getGroup());
+
+		if (!isAuthor) {
+			disableButton(editButton);
+		} else {
+			enableButton(editButton);
+			initEditEventHandler();
+		}
+		if (!ClientImpl.getInstance().isGroupLeader()) {
+			disableButton(publishButton);
+		} else {
+			enableButton(publishButton);
+			initPublishEventHandler();
+		}
+		if (!(ClientImpl.getInstance().isGroupLeader() || isAuthor)) {
+			disableButton(deleteButton);
+		} else {
+			enableButton(deleteButton);
+			initDeleteEventHandler();
+		}
 	}
 	
-	private void initPublishEventHandler(MainViewController mainView, Message msg) {
+	private void initPublishEventHandler() {
 		publishButton.setOnAction((actionEvent) -> {
-			Task<Void> publishTask = client.publishMessage(msg.getID());
+			Task<Void> publishTask = client.publishMessage(message.getID());
 			publishTask.setOnFailed((workerStateEvent) -> {
 				mainView.onError(workerStateEvent.getSource().getException());
 			});
@@ -46,13 +89,13 @@ public class MessageCellController {
 		
 	}
 
-	private void initEditEventHandler(MainViewController mainView, Message msg) {
+	private void initEditEventHandler() {
 		editButton.setOnAction((actionEvent) -> {
-			changeIntoEditMode(msg);
+			changeIntoEditMode();
 			// Beenden des Edits durch Enter
 			txtMessageEdit.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
 	            if (ke.getCode().equals(KeyCode.ENTER)) {
-	            	editMessage(mainView, msg);
+	            	editMessage();
 	            	ke.consume();
 	            }
 	        });
@@ -70,10 +113,20 @@ public class MessageCellController {
 		});
 	}
 	
-	private void editMessage(MainViewController mainView, Message msg) {
+	private void initDeleteEventHandler() {
+		deleteButton.setOnAction((actionEvent) -> {
+			Task<Void> deleteTask = client.deleteMessage(message.getID());
+			deleteTask.setOnFailed((workerStateEvent) -> {
+				mainView.onError(workerStateEvent.getSource().getException());
+			});
+			mainView.getExecutorService().submit(deleteTask);
+		});
+	}
+	
+	private void editMessage() {
 		if (isEditMode) {
 			String editedMsgTxt = txtMessageEdit.getText();
-			Task<Void> editTask = client.editMessage(editedMsgTxt, msg.getID());
+			Task<Void> editTask = client.editMessage(editedMsgTxt, message.getID());
 			editTask.setOnFailed((workerStateEvent) -> {
 				mainView.onError(workerStateEvent.getSource().getException());
 			});
@@ -82,11 +135,11 @@ public class MessageCellController {
 		}
 	}
 	
-	private void changeIntoEditMode(Message msg) {
+	private void changeIntoEditMode() {
 		isEditMode = true;
 		messageArea.setManaged(false);
 		messageArea.setVisible(true);
-		txtMessageEdit.setText(msg.getMessage());
+		txtMessageEdit.setText(message.getMessage());
 		txtMessageEdit.setManaged(true);
 		txtMessageEdit.setVisible(true);
 		txtMessageEdit.requestFocus();
@@ -99,36 +152,41 @@ public class MessageCellController {
 		txtMessageEdit.setVisible(false);
 		isEditMode = false;
 	}
-
-	private void initDeleteEventHandler(MainViewController mainView, Message msg) {
-		trashButton.setOnAction((actionEvent) -> {
-			Task<Void> deleteTask = client.deleteMessage(msg.getID());
-			deleteTask.setOnFailed((workerStateEvent) -> {
-				mainView.onError(workerStateEvent.getSource().getException());
-			});
-			mainView.getExecutorService().submit(deleteTask);
-		});
+	
+	private void enableButton(Button btn) {
+		btn.setManaged(true);
+		btn.setVisible(true);
 	}
 	
-	public void setUsername(String username) {
+	private void disableButton(Button btn) {
+		btn.setVisible(false);
+		btn.setManaged(false);
+	}
+	
+	private void setUsername(String username) {
 		usernameLabel.setText(username);
 	}
 	
-	public void setGroup(String group) {
+	private void setGroup(String group) {
 		groupLabel.setText(group);
 	}
 	
-	public void setCreationDate(String date) {
+	private void setCreationDate(String date) {
 		creationDateLabel.setText(date);
 	}
 	
-	public void setModificationDate(String date) {
+	private void setModificationDate(String date) {
 		modificationDateLabel.setText(date);
 		modificationTextLabel.setVisible(true);
 		modificationDateLabel.setVisible(true);
 	}
 	
-    public void setMessage(String msg) {
-      messageArea.setText(msg);
+	private void setMessageTxt(String msg) {
+    	messageArea.setText(msg);
     }
+
+	private void disableModificationDate() {
+		modificationTextLabel.setVisible(false);
+		modificationDateLabel.setVisible(false);
+	}
 }

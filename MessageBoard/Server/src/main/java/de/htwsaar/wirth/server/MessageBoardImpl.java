@@ -453,11 +453,14 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */		
 	public void notifyEdit(Message msg) throws RemoteException {
-		MessageService msgService = Services.getInstance().getMessageService();
-		boolean isPublishedStatus = msgService.getMessage(msg.getID()).isPublished();
 		Message clonedMessage = new MessageImpl(msg);
-		msg.setPublished(isPublishedStatus);
-		msgService.saveMessage(msg/*message*/);
+		
+		synchronized(Message.class) {
+			MessageService msgService = Services.getInstance().getMessageService();
+			boolean isPublishedStatus = msgService.getMessage(msg.getID()).isPublished();
+			msg.setPublished(isPublishedStatus);
+			msgService.saveMessage(msg/*message*/);
+		}
 		
 		// Add a EditMessageCommand to each CommandRunner
 		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(clonedMessage, ChildCmd.EDIT));

@@ -42,6 +42,10 @@ public class CommandRunner extends Thread {
 				// nicht vollständig ausgeführt
 				// schreibe es zurück in die Queue
 				queue.addFirst(toExecute);
+			} catch (Exception otherExc) {
+				// Die CommandQueue darf nicht durch irgendeine unerwartete Exception beendet werden
+				// Vlt sollte später irgendeine Instanz überwachen, 
+				// ob alle CommandQueues noch laufen und falls nicht diese gegebenenfalls neustarten
 			}
 		}
 	}

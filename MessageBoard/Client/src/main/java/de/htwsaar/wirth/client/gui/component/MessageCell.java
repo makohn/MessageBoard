@@ -13,19 +13,16 @@ public class MessageCell extends ListCell<Message>{
 	private Node graphic;
 	private MessageCellController controller;
 	private MainViewController mainView;
-	
-	 {
-       try {
-           FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MessageCell.fxml"));
-           graphic = loader.load();
-           controller = loader.getController();
-       } catch (Exception exc) {
-           throw new RuntimeException(exc);
-       }
-	 }
 
 	 public MessageCell(MainViewController mainViewController) {
 		 mainView = mainViewController;
+		 try {
+			 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MessageCell.fxml"));
+	         graphic = loader.load();
+	         controller = loader.getController();
+	     } catch (Exception exc) {
+	         throw new RuntimeException(exc);
+	     }
 	}
 
 	@Override
@@ -35,15 +32,7 @@ public class MessageCell extends ListCell<Message>{
 	        	setGraphic(null);
 	        	setText(null);
 	        } else {
-	        	controller.setUsername(msg.getAuthor());
-	        	controller.setGroup(msg.getGroup());
-	        	controller.setCreationDate(DateFormat.getDateTimeInstance().format(msg.getCreatedAt()));
-	        	// show modification date, if they are not equal
-	        	if (!msg.getCreatedAt().equals(msg.getModifiedAt())) {
-	        		controller.setModificationDate(DateFormat.getDateTimeInstance().format(msg.getModifiedAt()));
-	        	}
-	        	controller.setMessage(msg.getMessage());
-	        	controller.initEventHandler(mainView, msg);
+	        	controller.initCell(mainView, msg);
 	            setGraphic(graphic);
 	        }
 	   }

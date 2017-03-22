@@ -27,6 +27,7 @@ import javafx.util.Pair;
 
 public class MainViewController implements Initializable {
 
+	@FXML private Button groupButton;
 	@FXML private ListView<Message> chatPane;
 	@FXML private ListView<String> groupList;
 	@FXML private ListView<Pair<String,Status>> userList;
@@ -38,8 +39,6 @@ public class MainViewController implements Initializable {
 	@FXML private ToggleButton toggleGroupList;
 	@FXML private VBox userArea;
 	@FXML private VBox groupArea;
-
-	
 	
 	private ObservableList<Message> messages;
 	private ObservableList<Message> sortedWrapperList;
@@ -58,6 +57,7 @@ public class MainViewController implements Initializable {
 		client = ClientImpl.getInstance();
 		client.setView(this);
 		
+		groupButton.setText(client.getGroupName());
 		usernameLabel.setText(client.getUsername());
 		fullNameLabel.setText(client.getUsername());
 
@@ -66,6 +66,7 @@ public class MainViewController implements Initializable {
 		sortedWrapperList = messages.sorted((m1, m2) -> {
 			return m1.getCreatedAt().compareTo(m2.getCreatedAt());
 		});
+		chatPane.setSelectionModel(new NoSelectionModel());
 		chatPane.setCellFactory(list -> new MessageCell(this));
 		chatPane.setItems(sortedWrapperList);
 
@@ -123,6 +124,7 @@ public class MainViewController implements Initializable {
 	
 	public void onError(Throwable e) {
 		// TODO:
+		e.printStackTrace();
 		Task<Void> logoutTask = ClientImpl.getInstance().logout();
 		exec.submit(logoutTask);
 		ApplicationDelegate.getInstance().showLoginScreen();

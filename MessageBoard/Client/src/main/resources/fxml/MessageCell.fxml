@@ -22,7 +22,7 @@
 			<Insets left="8.0" />
 		</BorderPane.margin>
 		<children>
-			<Label fx:id="messageArea" text="LabLorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.el" wrapText="true"/>
+			<Label fx:id="messageArea" text="Text" wrapText="true"/>
 			<TextField fx:id="txtMessageEdit" managed="false" visible="false" promptText="Nachricht bearbeiten"/>
 		</children>
      </VBox>
@@ -76,10 +76,10 @@
                                 <Tooltip text="Nachricht veröffentlichen" />
                             </tooltip>
                      		<graphic>
-                     		<Glyph fontFamily="FontAwesome" icon="UPLOAD" styleClass="editButtonLabel" />
+                     		<Glyph fontFamily="FontAwesome" icon="UPLOAD" styleClass="publishButtonLabel" />
                      		</graphic>
                      	</Button>
-                        <Button fx:id="editButton" alignment="TOP_LEFT" graphicTextGap="0.0" styleClass="editButton">
+                        <Button fx:id="editButton" alignment="TOP_LEFT" graphicTextGap="0.0">
                             <tooltip>
                                 <Tooltip text="Nachricht bearbeiten" />
                             </tooltip>
@@ -87,12 +87,12 @@
             	            <Glyph fontFamily="FontAwesome" icon="EDIT" styleClass="editButtonLabel" />
             	            </graphic> 
                         </Button>
-                        <Button fx:id="trashButton" alignment="TOP_LEFT" graphicTextGap="0.0">
+                        <Button fx:id="deleteButton" alignment="TOP_LEFT" graphicTextGap="0.0">
                             <tooltip>
                                 <Tooltip text="Nachricht löschen" />
                             </tooltip>
             	            <graphic>
-            	            <Glyph fontFamily="FontAwesome" icon="TRASH" styleClass="editButtonLabel" />
+            	            <Glyph fontFamily="FontAwesome" icon="TRASH" styleClass="deleteButtonLabel" />
             	            </graphic>
                         </Button>
                      </children>
