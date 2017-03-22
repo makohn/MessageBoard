@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
+import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

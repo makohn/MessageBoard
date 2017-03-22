@@ -51,7 +51,17 @@ public class MessageImpl implements Serializable, Message {
 
     public MessageImpl() {}
 
-    public UUID getID() {
+    public MessageImpl(Message msg) {
+    	this.id = msg.getID();
+    	this.msg = msg.getMessage();
+    	this.createdAt = msg.getCreatedAt();
+    	this.modifiedAt = msg.getModifiedAt();
+    	this.author = msg.getAuthor();
+    	this.group = msg.getGroup();
+    	this.isPublished = msg.isPublished();
+	}
+
+	public UUID getID() {
         return id;
     }
 

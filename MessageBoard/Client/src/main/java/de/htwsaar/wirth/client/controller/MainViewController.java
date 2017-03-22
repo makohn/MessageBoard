@@ -53,13 +53,12 @@ public class MainViewController implements Initializable {
 	@SuppressWarnings("unchecked") // Arraylist does not like Generics
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
 		exec = Executors.newCachedThreadPool();
 		
 		client = ClientImpl.getInstance();
 		client.setView(this);
+		
 		usernameLabel.setText(client.getUsername());
-		// TODO: add fullName here
 		fullNameLabel.setText(client.getUsername());
 
 		// Messages
@@ -78,23 +77,26 @@ public class MainViewController implements Initializable {
 		
 		// Groups
 		groups = FXCollections.observableArrayList("ALL");
-		groups.addListener(new ListChangeListener<String>() {
-			@Override
-			public void onChanged(Change<? extends String> c) {
-				if (groupList != null)
-					groupList.setPrefHeight(groups.size() * 28);
-			}
-		});
+		groups.addListener((ListChangeListener<String>) c -> {
+            if (groupList != null)
+                groupList.setPrefHeight(groups.size() * 28);
+        });
 		groupList.setItems(groups);
 		groupList.setPrefHeight(groups.size() * 28);
 		
 		refreshAllMessages(true);
 		refreshAllUserStatus();
 		
+		initSendMessageButton();
+	}
+
+
+
+	private void initSendMessageButton() {
 		/* Added to prevent the enter from adding a new line to inputMessageBox */
         messageBox.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
             if (ke.getCode().equals(KeyCode.ENTER)) {
-            	sendMethod(ke);
+            	sendMessage();
             	ke.consume();
             }
         });
@@ -146,10 +148,12 @@ public class MainViewController implements Initializable {
 	}
 
 	public void insertMessage(Message msg) {
+		messages.remove(msg);
+		messages.add(msg);
+		
 		if (!groups.contains(msg.getGroup())) {
 			groups.add(msg.getGroup());
 		}
-		messages.add(msg);
 	}
 	
 	public void editMessage(Message msg) {
@@ -174,8 +178,8 @@ public class MainViewController implements Initializable {
 		});
 	}
 
-    public void sendMethod(KeyEvent ke) {
-    	 if (ke.getCode().equals(KeyCode.ENTER) && !messageBox.getText().isEmpty()) {
+    public void sendMessage() {
+    	 if (!messageBox.getText().isEmpty()) {
         	Task<Void> sendMessageTask = client.sendMessage(messageBox.getText());
         	sendMessageTask.setOnFailed((e) -> {
         		onError(e.getSource().getException());
@@ -201,7 +205,7 @@ public class MainViewController implements Initializable {
     	}
     }
 
-	public ExecutorService getExec() {
+	public ExecutorService getExecutorService() {
 		return exec;
 	}
 }

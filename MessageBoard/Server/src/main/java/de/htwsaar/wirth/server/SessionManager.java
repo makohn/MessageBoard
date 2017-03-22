@@ -17,7 +17,13 @@ public class SessionManager {
     /**
      * the session map, which stores a authentification token for each username
      */
-    private static Map<String, AuthPacket> sessions = new ConcurrentHashMap<String, AuthPacket>();
+    private Map<String, AuthPacket> sessions = new ConcurrentHashMap<String, AuthPacket>();
+    
+    private String groupName;
+    
+    public SessionManager(String groupName) {
+    	this.groupName = groupName;
+    }
 
     /**
      * logs a user in and generates a new token for the given username
@@ -26,7 +32,7 @@ public class SessionManager {
      * @return the AuthPacket, which can be used by the client to access the remote methods
      * @throws AuthenticationException, when the username or password is wrong
      */
-    public static AuthPacket authenticate(LoginPacket login) {
+    public AuthPacket authenticate(LoginPacket login) {
         String givenPassword = login.getPassword();
     	// hash the given cleartext password
         givenPassword = HashUtil.hashSha512(givenPassword);
@@ -38,7 +44,7 @@ public class SessionManager {
 	    	// check, if the hashValues are equal
 	    	if (givenPassword.equals(user.getPassword())) {
 	    		// successful login
-	            AuthPacket auth = new AuthPacket(givenUsername);
+	            AuthPacket auth = new AuthPacket(givenUsername, user.isGroupLeader(), groupName);
 	            sessions.put(givenUsername, auth);
 	            return auth;
 	        }
@@ -53,7 +59,7 @@ public class SessionManager {
      * @throws NotLoggedInException, if the there is no such user token
      * @throws AuthenticationException, if the given token does not match the token in the sessionsMap a AuthenticationException gets thrown
      */
-    public static void verifyAuthPacket(AuthPacket auth) {
+    public void verifyAuthPacket(AuthPacket auth) {
     	AuthPacket serverAuthPacket = sessions.get(auth.getUsername());
         if (serverAuthPacket == null) {
             throw new NotLoggedInException("The user "+ auth.getUsername() + " has no token.");
@@ -68,7 +74,7 @@ public class SessionManager {
      * @param auth, the authPacket of the user
      * @return true, if the user is a groupLeader | false otherwise
      */
-    public static boolean isGroupLeader(AuthPacket auth) {
+    public boolean isGroupLeader(AuthPacket auth) {
         User user = Services.getInstance().getUserService().getUser(auth.getUsername());
         return user.isGroupLeader();
     }
@@ -79,8 +85,8 @@ public class SessionManager {
      * @param msg, the message to check against
      * @return true, if the user is the author of the given msg | false otherwise
      */
-    public static boolean isAuthor(AuthPacket auth, Message msg) {
-        return auth.getUsername().equals(msg.getAuthor());
+    public boolean isAuthor(AuthPacket auth, Message msg) {
+        return auth.getUsername().equals(msg.getAuthor()) && groupName.equals(msg.getGroup());
     }
     
     /**
@@ -88,8 +94,12 @@ public class SessionManager {
      * call this to log the user out
      * @param username
      */
-    public static void logout(String username) {
+    public void logout(String username) {
         sessions.remove(username);
     }
+
+	public String getGroupName() {
+		return groupName;
+	}
 
 }

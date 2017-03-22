@@ -20,6 +20,7 @@ public class MessageCellController {
 	@FXML private Label modificationDateLabel;
 	@FXML private Label messageArea;
 	@FXML private TextField txtMessageEdit;
+	@FXML private Button publishButton;
 	@FXML private Button editButton;
 	@FXML private Button trashButton;
 	
@@ -29,10 +30,22 @@ public class MessageCellController {
 
 
 	public void initEventHandler(MainViewController mainView, Message msg) {
+		initPublishEventHandler(mainView, msg);
 		initEditEventHandler(mainView, msg);
 		initDeleteEventHandler(mainView, msg);
 	}
 	
+	private void initPublishEventHandler(MainViewController mainView, Message msg) {
+		publishButton.setOnAction((actionEvent) -> {
+			Task<Void> publishTask = client.publishMessage(msg.getID());
+			publishTask.setOnFailed((workerStateEvent) -> {
+				mainView.onError(workerStateEvent.getSource().getException());
+			});
+			mainView.getExecutorService().submit(publishTask);
+		});
+		
+	}
+
 	private void initEditEventHandler(MainViewController mainView, Message msg) {
 		editButton.setOnAction((actionEvent) -> {
 			changeIntoEditMode(msg);
@@ -64,7 +77,7 @@ public class MessageCellController {
 			editTask.setOnFailed((workerStateEvent) -> {
 				mainView.onError(workerStateEvent.getSource().getException());
 			});
-			mainView.getExec().submit(editTask);
+			mainView.getExecutorService().submit(editTask);
 			changeIntoNormalMode();
 		}
 	}
@@ -93,7 +106,7 @@ public class MessageCellController {
 			deleteTask.setOnFailed((workerStateEvent) -> {
 				mainView.onError(workerStateEvent.getSource().getException());
 			});
-			mainView.getExec().submit(deleteTask);
+			mainView.getExecutorService().submit(deleteTask);
 		});
 	}
 	

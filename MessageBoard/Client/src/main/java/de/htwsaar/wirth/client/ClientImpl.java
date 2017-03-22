@@ -26,9 +26,8 @@ public class ClientImpl extends UnicastRemoteObject implements NotifiableClient 
 	private MainViewController gui;
 	private MessageBoard msgBoard;
 	private AuthPacket auth;
-	private String username;
 	
-	public static ClientImpl getInstance() {
+	public static synchronized ClientImpl getInstance() {
 		if (instance == null) {
 			try {
 				instance = new ClientImpl();
@@ -43,15 +42,10 @@ public class ClientImpl extends UnicastRemoteObject implements NotifiableClient 
 	public void setView(MainViewController gui) {
 		this.gui = gui;
 	}
-	
-	public String getUsername() {
-		return username;
-	}
 
 	private static final long serialVersionUID = -7940206816319176143L;
 	
 	public Task<Void> login(String username, String password, String parentHost, int parentPort) {
-		this.username = username;
 		ClientImpl thisReference = this;
 		
 		return new Task<Void>() {
@@ -199,5 +193,17 @@ public class ClientImpl extends UnicastRemoteObject implements NotifiableClient 
 	public void notifyDeleteUser(String username) throws RemoteException {
 		Platform.runLater(() -> gui.deleteUser(username));
 		
+	}
+	
+	public String getUsername() {
+		return auth.getUsername();
+	}
+	
+	public boolean isGroupLeader() {
+		return auth.isGroupLeader();
+	}
+	
+	public String getGroupName() {
+		return auth.getGroupName();
 	}
 }
