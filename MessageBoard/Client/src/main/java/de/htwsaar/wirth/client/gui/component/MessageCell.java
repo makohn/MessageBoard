@@ -37,7 +37,11 @@ public class MessageCell extends ListCell<Message>{
 	        } else {
 	        	controller.setUsername(msg.getAuthor());
 	        	controller.setGroup(msg.getGroup());
-	        	controller.setDate(DateFormat.getDateTimeInstance().format(msg.getCreatedAt()));
+	        	controller.setCreationDate(DateFormat.getDateTimeInstance().format(msg.getCreatedAt()));
+	        	// show modification date, if they are not equal
+	        	if (!msg.getCreatedAt().equals(msg.getModifiedAt())) {
+	        		controller.setModificationDate(DateFormat.getDateTimeInstance().format(msg.getModifiedAt()));
+	        	}
 	        	controller.setMessage(msg.getMessage());
 	        	controller.initEventHandler(mainView, msg);
 	            setGraphic(graphic);

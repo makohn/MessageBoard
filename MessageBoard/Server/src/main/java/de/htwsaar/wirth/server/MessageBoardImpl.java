@@ -359,6 +359,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 			if (!SessionManager.isAuthor(auth, oldMsg)) {
 	            throw new NoPermissionException("The user is not the author"); 
 			}
+			oldMsg.changeMessage(msgTxt);
 			notifyEdit(oldMsg);
 		}
 		if(needToSendParent(oldMsg)) {
@@ -439,7 +440,7 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 
 	/**
 	 * notifyEdit is capsuled in the Notifyable-Interface. Every time a message
-	 * will be edited on the server trough a admin or client, the
+	 * will be edited on the server through a admin or client, the
 	 * notifyNew-method notifies all components which implements the
 	 * Notify-Interface.
 	 *
@@ -447,17 +448,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */		
 	public void notifyEdit(Message msg) throws RemoteException {
-		Message message = Services.getInstance().getMessageService().getMessage(msg.getID());
-		if ( message != null ) {
-			message.changeMessage(msg.getMessage());
-			Services.getInstance().getMessageService().saveMessage(message/*message*/);
-			
-			// Add a EditMessageCommand to each CommandRunner
-			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(message, ChildCmd.EDIT));
+		Services.getInstance().getMessageService().saveMessage(msg/*message*/);
+		
+		// Add a EditMessageCommand to each CommandRunner
+		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.EDIT));
 
-			// Notify each client
-			notifyClients(cl -> cl.notifyEdit(message));
-		}
+		// Notify each client
+		notifyClients(cl -> cl.notifyEdit(msg));
 	}
 
 	/**
@@ -470,14 +467,16 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyDelete(Message msg) throws RemoteException {
-		if ( Services.getInstance().getMessageService().getMessage(msg.getID()) != null ) {
-			Services.getInstance().getMessageService().deleteMessage(msg);
-
-			// Add a DeleteMessageCommand to each CommandRunner
-			queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.DELETE));
-
-			// Notify each client
-			notifyClients(cl -> cl.notifyDelete(msg));
+		synchronized (Message.class) {
+			if ( Services.getInstance().getMessageService().getMessage(msg.getID()) != null ) {
+				Services.getInstance().getMessageService().deleteMessage(msg);
+	
+				// Add a DeleteMessageCommand to each CommandRunner
+				queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.DELETE));
+	
+				// Notify each client
+				notifyClients(cl -> cl.notifyDelete(msg));
+			}
 		}
 	}
 	
@@ -550,15 +549,5 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		// TODO: wir sollten jeweils methoden mit limitierung und filterung nach gruppe erstellen
 		// entsprechende methoden sollten die jeweiligen Datenbankcalls nutzen
 		return Services.getInstance().getMessageService().getAll();
-		
-		// Testing GUI:
-		// ArrayList<Message> list = new ArrayList<Message> ();
-		// list.add(new MessageImpl("1", "Stefan", "Vorstand"));
-		// list.add(new MessageImpl("2", "Stefan", "Vorstand"));
-		// list.add(new MessageImpl("3", "Stefan", "Vorstand"));
-		// list.add(new MessageImpl("4", "Stefan", "Vorstand"));
-		// list.add(new MessageImpl("5", "Stefan", "Vorstand"));
-		// return list;
-
 	}
 }
