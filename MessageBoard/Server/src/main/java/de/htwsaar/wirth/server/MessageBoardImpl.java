@@ -388,15 +388,15 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		Message msgToDelete;
 		synchronized (Message.class) {
 			msgToDelete = Services.getInstance().getMessageService().getMessage(id);
-			if (!sessionManager.isAuthor(auth, msgToDelete) && !sessionManager.isGroupLeader(auth)) {
-				throw new NoPermissionException("The user is neither the author nor a groupleader");
-			}
 			if ( Services.getInstance().getMessageService().getMessage(id) == null ) {
 				throw new MessageNotExistsException("The message doesn't exists on this server");
 			}
+			if (!sessionManager.isAuthor(auth, msgToDelete) && !sessionManager.isGroupLeader(auth)) {
+				throw new NoPermissionException("The user is neither the author nor a groupleader");
+			}
 			notifyDelete(msgToDelete);
 		}
-		if(needToSendParent(msgToDelete)) {
+		if(!isRoot()) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msgToDelete, ParentCmd.DELETE);
 			parentQueue.addCommand(cmd);
 		}
@@ -537,7 +537,6 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		if(needToSendParent(msg)) {
 			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.EDIT);
 			parentQueue.addCommand(cmd);
-			notifyServerEdit(msg);
 		}
 	}
 
@@ -550,11 +549,15 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 	 * @throws RemoteException
 	 */
 	public void notifyServerDelete(Message msg) throws RemoteException {
-		notifyDelete(msg);		
-		if(needToSendParent(msg)) {
-			Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
-			parentQueue.addCommand(cmd);
-			notifyServerEdit(msg);
+		synchronized (Message.class) {
+			boolean hasMsg = Services.getInstance().getMessageService().getMessage(msg.getID()) != null;
+			if (hasMsg) {
+				notifyDelete(msg);		
+				if(!isRoot()) {
+					Command cmd = CommandBuilder.buildParentCommand(parent, msg, ParentCmd.DELETE);
+					parentQueue.addCommand(cmd);
+				}
+			}
 		}
 	}
 
