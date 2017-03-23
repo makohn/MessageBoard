@@ -227,12 +227,9 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		// Authenticate throws an exception, if the username or password are wrong
 		// this exception can be handled on clientside
 		AuthPacket auth = sessionManager.authenticate(login);
-		System.out.println(new Date());
 		changeUserStatusAndNotifyClients(login.getUsername(), Status.ONLINE);
-		System.out.println(new Date());
 		// add the Notifiable of the client to the clientNotifyMap
 		clientNotifyMap.put(login.getUsername(), client);
-		System.out.println(new Date());
 		return auth;
 	}
 	
