@@ -1,5 +1,6 @@
 package de.htwsaar.wirth.client;
 
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -15,7 +16,6 @@ import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
-import de.htwsaar.wirth.remote.util.RemoteConstants;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
@@ -56,6 +56,10 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 					Task<Void> logoutTask = logout();
 					logoutTask.run();
 				}
+				
+				try {
+					UnicastRemoteObject.unexportObject(thisReference, true);
+				} catch (NoSuchObjectException e) {}
 				
 				UnicastRemoteObject.exportObject(thisReference, port);
 				
