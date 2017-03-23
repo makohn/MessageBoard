@@ -8,42 +8,29 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.LoginController">
-   <children>
-      <VBox alignment="CENTER" prefHeight="432.0" prefWidth="390.0" spacing="20.0">
-         <children>
-            <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-			   <image>
-                  <Image url="@../img/login.png" />
-               </image>
-            </ImageView>
-            <TextField fx:id="txtUsername" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Username" styleClass="login-input-field" />
-            <PasswordField fx:id="txtPassword" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="299.0" promptText="Password" styleClass="login-input-field" />
-            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="81.0" prefWidth="296.0" spacing="20.0" VBox.vgrow="NEVER">
-               <children>
-               <TextField fx:id="txtHostname" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Host" styleClass="login-input-field" />
-                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="109.0" prefWidth="296.0">
-                     <children>
-                        <TextField fx:id="txtPort" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Port" styleClass="login-input-field" />
-                     </children>
-                  </AnchorPane>
-                  <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="109.0" prefWidth="296.0">
-                     <children>
-                        <TextField fx:id="txtGroupName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Gruppenname" styleClass="login-input-field" />
-                     </children>
-                  </AnchorPane>
-               </children>
-            </VBox>
-            <Button fx:id="btnConnect" mnemonicParsing="false" prefHeight="29.0" prefWidth="79.0" styleClass="login-button" text="Connect" />
-         </children>
-      </VBox>
-   </children>
-   <stylesheets>
-      <URL value="@../css/default.css" />
-      <URL value="@../css/login.css" />
-   </stylesheets>
+	<children>
+		<VBox alignment="CENTER" prefHeight="432.0" prefWidth="390.0" spacing="20.0">
+			<children>
+				<ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+					<image>
+						<Image url="@../img/login.png" />
+					</image>
+				</ImageView>
+				<TextField fx:id="txtUsername" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Username" styleClass="login-input-field" />
+				<PasswordField fx:id="txtPassword" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="299.0" promptText="Password" styleClass="login-input-field" />
+				<TextField fx:id="txtGroupName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Gruppenname" styleClass="login-input-field" />
+				<TextField fx:id="txtHostname" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Host" styleClass="login-input-field" />
+				<TextField fx:id="txtPort" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="CallbackPort" styleClass="login-input-field" />
+				<Button fx:id="btnConnect" mnemonicParsing="false" prefHeight="29.0" prefWidth="79.0" styleClass="login-button" text="Connect" />
+			</children>
+		</VBox>
+	</children>
+	<stylesheets>
+		<URL value="@../css/default.css" />
+		<URL value="@../css/login.css" />
+	</stylesheets>
 </StackPane>
