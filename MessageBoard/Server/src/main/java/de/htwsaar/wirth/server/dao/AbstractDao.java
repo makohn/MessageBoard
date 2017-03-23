@@ -69,4 +69,20 @@ public abstract class AbstractDao<T> {
 
         return result;
     }
+
+    @SuppressWarnings("all")
+    public List<T> query(String query, List<DatabaseQueryParameter> parameterList, int limit) {
+        Session session = PersistenceManager.getSession();
+        session.beginTransaction();
+
+        Query queryObj = session.createQuery(query).setMaxResults(limit);
+        for(int i=0; i<parameterList.size();i++){
+            queryObj.setParameter(parameterList.get(i).getKey(), parameterList.get(i).getValue());
+        }
+        List<T> result = queryObj.list();
+        session.getTransaction().commit();
+        session.close();
+
+        return result;
+    }
 }

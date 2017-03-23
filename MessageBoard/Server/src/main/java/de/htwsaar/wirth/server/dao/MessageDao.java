@@ -3,6 +3,7 @@ package de.htwsaar.wirth.server.dao;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,13 @@ public class MessageDao extends AbstractDao<Message> {
         List<DatabaseQueryParameter> parameterList = new ArrayList<DatabaseQueryParameter>();
         parameterList.add(new DatabaseQueryParameter("group", group));
         List<Message> list = query("from MessageImpl where groupName = :group", parameterList);
+        return list;
+    }
+
+    public List<Message> getAllMessagesAfterDate(Date zeit, int limit) {
+        List<DatabaseQueryParameter> parameterList = new ArrayList<DatabaseQueryParameter>();
+        parameterList.add(new DatabaseQueryParameter("zeit", zeit));
+        List<Message> list = query("from MessageImpl where createdAt > :zeit", parameterList, limit);
         return list;
     }
     

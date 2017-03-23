@@ -4,6 +4,7 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 import de.htwsaar.wirth.server.dao.MessageDao;
 import de.htwsaar.wirth.server.service.interfaces.MessageService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +33,17 @@ public class MessageServiceImpl implements MessageService {
 	public List<Message> getAllMessagesByGroup(String group){
 		synchronized (Services.class) {
 			return messageDao.getAllMessagesByGroup(group);
+		}
+	}
+
+	/**
+	 * Gibt eine bestimmte Anzahl von Nachrichten zurück die ab einer bestimmten Zeit erstellt wurden
+	 * @param zeit Bestimmte zeit ab der die Nachrichten geladen werden
+	 * @return Liste mit Message-Objekten
+	 */
+	public List<Message> getAllMessagesAfterDate(Date zeit, int limit){
+		synchronized (Services.class) {
+			return messageDao.getAllMessagesAfterDate(zeit, limit);
 		}
 	}
     
