@@ -56,7 +56,7 @@ public class LoginController implements Initializable {
 	private void login(ApplicationDelegate delegate) {
 		// TODO: NumberFormatException fangen
 		// FIXME: cmbPort wirft NullPointerExceptions bei Mac mit <T> String und bei Windows mit <T> Integer
-		System.out.println(txtPort.getText());
+		System.out.println(txtGroupName.getText());
 		
 		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(txtPort.getText()),txtGroupName.getText());
 		task.setOnSucceeded(e -> {
@@ -70,6 +70,7 @@ public class LoginController implements Initializable {
 	
 	private void onError(Throwable e) {
 		// TODO: show fancy Error Message
+        e.printStackTrace();
 		ApplicationDelegate.getInstance().showLoginScreen();
 	}
 }
