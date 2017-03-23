@@ -41,9 +41,16 @@ public class MessageServiceImpl implements MessageService {
 	 * @param zeit Bestimmte zeit ab der die Nachrichten geladen werden
 	 * @return Liste mit Message-Objekten
 	 */
-	public List<Message> getAllMessagesAfterDate(Date zeit, int limit){
+	public List<Message> getMessagesAfterDate(Date zeit, int limit){
 		synchronized (Services.class) {
-			return messageDao.getAllMessagesAfterDate(zeit, limit);
+			return messageDao.getMessagesAfterDate(zeit, limit);
+		}
+	}
+
+
+	public List<Message> getMessagesByGroupAfterDate(String group, Date zeit, int limit){
+		synchronized (Services.class) {
+			return messageDao.getMessagesByGroupAfterDate(group, zeit, limit);
 		}
 	}
     

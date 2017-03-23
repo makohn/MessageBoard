@@ -13,7 +13,8 @@ import java.util.UUID;
 public interface MessageService {
     public List<Message> getAll();
     public List<Message> getAllMessagesByGroup(String group);
-    public List<Message> getAllMessagesAfterDate(Date zeit, int limit);
+    public List<Message> getMessagesAfterDate(Date zeit, int limit);
+    public List<Message> getMessagesByGroupAfterDate(String group, Date zeit, int limit);
     public Message getMessage(UUID id);
     public void saveMessage(Message message);
     public void saveMessages(List<Message> messages);

@@ -24,13 +24,21 @@ public class MessageDao extends AbstractDao<Message> {
         return list;
     }
 
-    public List<Message> getAllMessagesAfterDate(Date zeit, int limit) {
+    public List<Message> getMessagesAfterDate(Date zeit, int limit) {
         List<DatabaseQueryParameter> parameterList = new ArrayList<DatabaseQueryParameter>();
         parameterList.add(new DatabaseQueryParameter("zeit", zeit));
         List<Message> list = query("from MessageImpl where createdAt > :zeit", parameterList, limit);
         return list;
     }
-    
+
+    public List<Message> getMessagesByGroupAfterDate(String group, Date zeit, int limit) {
+        List<DatabaseQueryParameter> parameterList = new ArrayList<DatabaseQueryParameter>();
+        parameterList.add(new DatabaseQueryParameter("group", group));
+        parameterList.add(new DatabaseQueryParameter("zeit", zeit));
+        List<Message> list = query("from MessageImpl where groupName = :group and createdAt > :zeit", parameterList, limit);
+        return list;
+    }
+
     public Message getMessage(UUID id) {
     	List<DatabaseQueryParameter> parameterList = new ArrayList<DatabaseQueryParameter>();
         parameterList.add(new DatabaseQueryParameter("id", id));
