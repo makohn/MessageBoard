@@ -13,6 +13,7 @@ import de.htwsaar.wirth.remote.model.UserImpl;
 import de.htwsaar.wirth.remote.model.interfaces.User;
 import de.htwsaar.wirth.remote.util.HashUtil;
 import de.htwsaar.wirth.remote.util.RemoteConstants;
+import de.htwsaar.wirth.server.dao.PersistenceManager;
 import de.htwsaar.wirth.server.service.Services;
 
 /**
@@ -27,6 +28,7 @@ public class Server {
     
 
     public Server(String groupName, int localPort) throws RemoteException, AlreadyBoundException {
+        PersistenceManager.setDatabaseNameSuffix(groupName);
         this.localPort = localPort;
         messageBoard = new MessageBoardImpl(groupName);
         createRegistry();
