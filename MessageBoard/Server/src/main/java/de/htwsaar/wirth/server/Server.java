@@ -6,13 +6,13 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.util.Scanner;
 
 import de.htwsaar.wirth.remote.ParentServer;
 import de.htwsaar.wirth.remote.model.UserImpl;
 import de.htwsaar.wirth.remote.model.interfaces.User;
 import de.htwsaar.wirth.remote.util.HashUtil;
-import de.htwsaar.wirth.remote.util.RemoteConstants;
 import de.htwsaar.wirth.server.dao.PersistenceManager;
 import de.htwsaar.wirth.server.service.Services;
 
@@ -21,7 +21,7 @@ import de.htwsaar.wirth.server.service.Services;
  */
 public class Server {
  
-    private int parentPort;
+    private String parentGroupName;
     private String groupName;
     private String parentHost;
     private MessageBoardImpl messageBoard;
@@ -53,23 +53,28 @@ public class Server {
     	}
 	}
 
-	public Server(String groupName, int localPort, String parentHost, int parentPort) throws RemoteException, NotBoundException, AlreadyBoundException {
+	public Server(String groupName, int localPort, String parentHost, String parentGroupName) throws RemoteException, NotBoundException, AlreadyBoundException {
         this(groupName, localPort);
         this.parentHost = parentHost;
-        this.parentPort = parentPort;
+        this.parentGroupName = parentGroupName;
         bindToParent();
     }
 
 
     private void createRegistry() throws RemoteException, AlreadyBoundException {
-        Registry registry = LocateRegistry.getRegistry(1099);
-        
-        registry.bind(groupName, messageBoard);
+    	Registry registry;
+    	try {
+    		registry = LocateRegistry.createRegistry(1099);
+            registry.bind(groupName, messageBoard);
+    	} catch (ExportException e) {
+    		registry = LocateRegistry.getRegistry();
+            registry.bind(groupName, messageBoard);
+    	}
     }
 
     public void bindToParent() throws RemoteException, NotBoundException {
-        Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
-        ParentServer parent = (ParentServer) parentRegistry.lookup(RemoteConstants.BIND_KEY);
+        Registry parentRegistry = LocateRegistry.getRegistry(parentHost);
+        ParentServer parent = (ParentServer) parentRegistry.lookup(parentGroupName);
         parent.registerServer(messageBoard);
         messageBoard.setParent(parent);
     }

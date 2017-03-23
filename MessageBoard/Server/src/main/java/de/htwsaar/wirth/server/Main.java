@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 public class Main {
 
 	private static final String USAGE = "Usage:\n"
-			+ "to start as child-server:\t server groupName localPort parentHostname parentPort\n"
+			+ "to start as child-server:\t server groupName localPort parentHostname parentGroupName\n"
 			+ "to start as a root-server:\t server groupName localPort";
 
 	private static final String ALREADY_IN_USE = "The specified port is already in use.";
@@ -18,7 +18,7 @@ public class Main {
 		String groupName;
 		int localPort;
 		String parentHostname = null;
-		int parentPort = 0;
+		String parentGroupName = null;
 		boolean startAsRoot = false;
 		boolean isValid = true;
 
@@ -41,7 +41,7 @@ public class Main {
 		localPort = Integer.parseInt(args[1]);
 		if (!startAsRoot) {
 			parentHostname = args[2];
-			parentPort = Integer.parseInt(args[3]);
+			parentGroupName = args[3];
 		}
 
 		// start server
@@ -55,8 +55,8 @@ public class Main {
 			}
 		} else {
 			try {
-				new Server(groupName, localPort, parentHostname, parentPort);
-				System.out.println("Server is connected to "+parentHostname+" : "+parentPort);
+				new Server(groupName, localPort, parentHostname, parentGroupName);
+				System.out.println("Server is connected to "+parentHostname+" in Group "+parentGroupName);
 
 
 			} catch (RemoteException e) {

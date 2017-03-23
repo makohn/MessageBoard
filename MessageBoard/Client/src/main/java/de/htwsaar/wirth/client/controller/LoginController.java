@@ -1,21 +1,18 @@
 package de.htwsaar.wirth.client.controller;
 
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
-import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 public class LoginController implements Initializable {
@@ -55,8 +52,6 @@ public class LoginController implements Initializable {
 
 	private void login(ApplicationDelegate delegate) {
 		// TODO: NumberFormatException fangen
-		// FIXME: cmbPort wirft NullPointerExceptions bei Mac mit <T> String und bei Windows mit <T> Integer
-		System.out.println(txtGroupName.getText());
 		
 		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(txtPort.getText()),txtGroupName.getText());
 		task.setOnSucceeded(e -> {

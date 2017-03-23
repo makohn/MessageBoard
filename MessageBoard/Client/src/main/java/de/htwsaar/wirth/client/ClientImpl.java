@@ -60,7 +60,7 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 				UnicastRemoteObject.exportObject(thisReference, port);
 				
 				// beim Server anmelden
-				Registry parentRegistry = LocateRegistry.getRegistry(parentHost, 1099);
+				Registry parentRegistry = LocateRegistry.getRegistry(parentHost);
 		        msgBoard = (MessageBoard) parentRegistry.lookup(groupName);
 		        
 		        // User einloggen
