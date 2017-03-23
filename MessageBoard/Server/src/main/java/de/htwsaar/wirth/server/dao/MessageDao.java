@@ -8,13 +8,19 @@ import java.util.UUID;
 
 /**
  * Created by stefanschloesser1 on 03.02.17.
- * Edited by Marius on 08.02.17
- * Edited by oliverseibert on 12.02.17
+ * Edited by oliverseibert on 23.03.17
  */
 public class MessageDao extends AbstractDao<Message> {
 
     public List<Message> getAll() {
         return query("from MessageImpl");
+    }
+
+    public List<Message> getAllMessagesByGroup(String group) {
+        List<DatabaseQueryParameter> parameterList = new ArrayList<DatabaseQueryParameter>();
+        parameterList.add(new DatabaseQueryParameter("group", group));
+        List<Message> list = query("from MessageImpl where groupName = :group", parameterList);
+        return list;
     }
     
     public Message getMessage(UUID id) {

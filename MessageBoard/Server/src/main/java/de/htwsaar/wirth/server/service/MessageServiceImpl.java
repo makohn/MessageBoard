@@ -23,6 +23,17 @@ public class MessageServiceImpl implements MessageService {
     		return messageDao.getAll();
     	}
     }
+
+	/**
+	 * Gibt alle Messages einer Gruppe zurück
+	 * @param group Name der Gruppe
+	 * @return Liste mit Message-Objekten
+	 */
+	public List<Message> getAllMessagesByGroup(String group){
+		synchronized (Services.class) {
+			return messageDao.getAllMessagesByGroup(group);
+		}
+	}
     
     public Message getMessage(UUID id) {
     	synchronized (Services.class) {

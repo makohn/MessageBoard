@@ -11,6 +11,7 @@ import java.util.UUID;
  */
 public interface MessageService {
     public List<Message> getAll();
+    public List<Message> getAllMessagesByGroup(String group);
     public Message getMessage(UUID id);
     public void saveMessage(Message message);
     public void saveMessages(List<Message> messages);
