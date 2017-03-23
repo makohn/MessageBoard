@@ -63,7 +63,7 @@ public class Server {
 
     private void createRegistry() throws RemoteException, AlreadyBoundException {
 //        Registry registry = LocateRegistry.createRegistry(localPort);
-        Registry registry = LocateRegistry.createRegistry(1099);
+        Registry registry = LocateRegistry.getRegistry(1099);
         
         registry.bind(RemoteConstants.BIND_KEY, messageBoard);
     }

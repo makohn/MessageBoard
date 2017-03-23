@@ -42,14 +42,11 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 	public void setView(MainViewController gui) {
 		this.gui = gui;
 	}
-	
-	public void setPort(int port) throws RemoteException {
-		UnicastRemoteObject.exportObject(this, port);	
-	}
 
 	private static final long serialVersionUID = -7940206816319176143L;
 	
-	public Task<Void> login(String username, String password, String parentHost/*, int parentPort*/) {
+	public Task<Void> login(String username, String password, String parentHost, int port) {
+		
 		ClientImpl thisReference = this;
 		
 		return new Task<Void>() {
@@ -59,6 +56,8 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 					Task<Void> logoutTask = logout();
 					logoutTask.run();
 				}
+				
+				UnicastRemoteObject.exportObject(thisReference, port);
 				
 				// beim Server anmelden
 				Registry parentRegistry = LocateRegistry.getRegistry(parentHost, 1099);

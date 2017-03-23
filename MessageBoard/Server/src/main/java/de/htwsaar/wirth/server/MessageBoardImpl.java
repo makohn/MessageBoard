@@ -85,7 +85,7 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 
 	private static final long serialVersionUID = -4613549994529764225L;
 
-	public MessageBoardImpl(String groupName) throws RemoteException {
+	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
 		
 		sessionManager = new SessionManager(groupName);
 		
@@ -100,11 +100,7 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 			userStatus.put(user.getUsername(), Status.SHOW_AS_OFFLINE);
 		}
 		threadPool = Executors.newCachedThreadPool();
-	}
-	
-	
-	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
-		this(groupName);
+		
 		UnicastRemoteObject.exportObject(this, localPort);
 	}
 	
