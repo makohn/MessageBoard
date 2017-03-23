@@ -25,3 +25,6 @@
 .deleteButtonLabel:hover {
 	 -fx-text-fill: red;
 }
+.messageCell:hover > HBox{
+	-fx-opacity: 1;
+}
