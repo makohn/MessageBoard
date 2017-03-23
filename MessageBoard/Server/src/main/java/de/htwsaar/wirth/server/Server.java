@@ -72,5 +72,4 @@ public class Server {
         parent.registerServer(messageBoard);
         messageBoard.setParent(parent);
     }
-
 }

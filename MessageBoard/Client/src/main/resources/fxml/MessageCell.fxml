@@ -30,7 +30,7 @@
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="17.0" prefWidth="486.0">
+            <HBox styleClass="messageCell" prefHeight="17.0" prefWidth="486.0">
                <children>
                   <Label fx:id="usernameLabel" text="\@makohn">
                       <tooltip>
