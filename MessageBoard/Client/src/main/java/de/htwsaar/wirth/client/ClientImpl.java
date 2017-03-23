@@ -26,7 +26,6 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 	private MainViewController gui;
 	private MessageBoard msgBoard;
 	private AuthPacket auth;
-	private int n = 0;
 	
 	public static synchronized ClientImpl getInstance() {
 		if (instance == null) {
@@ -44,6 +43,7 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 		this.gui = gui;
 	}
 
+	@SuppressWarnings("unused") //TODO
 	private static final long serialVersionUID = -7940206816319176143L;
 	
 	public Task<Void> login(String username, String password, String parentHost, int port,String groupName) {
@@ -178,6 +178,17 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 				return null;
 			}
 			
+		};
+	}
+	
+	public Task<Void> changeUserStatus(Status status) {
+		return new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				if (msgBoard != null)
+					msgBoard.changeUserStatus(auth, status);
+				return null;
+			}
 		};
 	}
 	

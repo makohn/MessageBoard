@@ -3,23 +3,31 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.ResourceBundle;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
+import de.htwsaar.wirth.client.util.UIConstants;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -35,6 +43,8 @@ public class MainViewController implements Initializable {
 	@FXML private Label	reloadLabel;
 	@FXML private Label usernameLabel;
 	@FXML private Label fullNameLabel;
+	@FXML private ComboBox<Status> cmbStatus;
+	@FXML private Label lblOwnStatus;
 	@FXML private ToggleButton toggleUserList;
 	@FXML private ToggleButton toggleGroupList;
 	@FXML private VBox userArea;
@@ -49,9 +59,9 @@ public class MainViewController implements Initializable {
 	
     private ExecutorService exec;
 	
-	@SuppressWarnings("unchecked") // Arraylist does not like Generics
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
 		exec = Executors.newCachedThreadPool();
 		
 		client = ClientImpl.getInstance();
@@ -84,6 +94,21 @@ public class MainViewController implements Initializable {
         });
 		groupList.setItems(groups);
 		groupList.setPrefHeight(groups.size() * 28);
+		
+		// Status
+		cmbStatus.setItems(FXCollections.observableArrayList(Status.values()));
+		lblOwnStatus.setText(UIConstants.STATUS_SYMBOL_FILLED);
+		cmbStatus.valueProperty().addListener(new ChangeListener<Status>() {
+			@Override
+			public void changed(ObservableValue<? extends Status> observable, Status oldValue, Status newValue) {
+				lblOwnStatus.setTextFill(newValue.getColor());
+				Task<Void> changeStatusTask = client.changeUserStatus(newValue);
+				changeStatusTask.setOnFailed(e -> {
+					onError(e.getSource().getException());
+				});
+				exec.submit(changeStatusTask);
+			}
+	    });
 		
 		refreshAllMessages(true);
 		refreshAllUserStatus();

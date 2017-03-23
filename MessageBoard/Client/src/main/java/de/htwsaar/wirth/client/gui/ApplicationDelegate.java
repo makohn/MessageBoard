@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.controlsfx.control.MaskerPane;
 
 import de.htwsaar.wirth.client.controller.LoginController;
-import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

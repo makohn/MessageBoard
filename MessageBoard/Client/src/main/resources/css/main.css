@@ -101,3 +101,12 @@
 .chat-list-view {
 	-fx-background-color: transparent;
 }
+
+.combo-status {
+	-fx-background-color: transparent;
+    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
+}
+
+.combo-status .arrow {
+    -fx-background-color: white;
+}
