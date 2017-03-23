@@ -1,6 +1,7 @@
 package de.htwsaar.wirth.client.controller;
 
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,7 +55,18 @@ public class LoginController implements Initializable {
 		// TODO: NumberFormatException fangen
 		// FIXME: cmbPort wirft NullPointerExceptions bei Mac mit <T> String und bei Windows mit <T> Integer
 		System.out.println(txtPort.getText());
-		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(txtPort.getText()));
+		
+		try {
+			client.setPort(Integer.parseInt(txtPort.getText()));
+		} catch (NumberFormatException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText()/*, Integer.parseInt(txtPort.getText())*/);
 		task.setOnSucceeded(e -> {
 			delegate.showMainScreen();
 		});

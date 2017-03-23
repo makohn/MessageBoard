@@ -30,7 +30,7 @@ public class Server {
     public Server(String groupName, int localPort) throws RemoteException, AlreadyBoundException {
         PersistenceManager.setDatabaseNameSuffix(groupName);
         this.localPort = localPort;
-        messageBoard = new MessageBoardImpl(groupName);
+        messageBoard = new MessageBoardImpl(groupName, localPort);
         createRegistry();
         checkGroupLeader();
     }
@@ -62,7 +62,9 @@ public class Server {
 
 
     private void createRegistry() throws RemoteException, AlreadyBoundException {
-        Registry registry = LocateRegistry.createRegistry(localPort);
+//        Registry registry = LocateRegistry.createRegistry(localPort);
+        Registry registry = LocateRegistry.createRegistry(1099);
+        
         registry.bind(RemoteConstants.BIND_KEY, messageBoard);
     }
 

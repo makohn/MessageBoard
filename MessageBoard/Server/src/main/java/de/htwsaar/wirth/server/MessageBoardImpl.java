@@ -39,7 +39,7 @@ import de.htwsaar.wirth.server.util.command.ParentCmd;
 import de.htwsaar.wirth.server.util.command.child.ChildCommand;
 
 
-public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable, MessageBoard, ParentServer {
+public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifiable, MessageBoard, ParentServer {
 	
 	/**
 	 * the sessionManager for the MessageBoard
@@ -102,6 +102,13 @@ public class MessageBoardImpl extends UnicastRemoteObject implements Notifiable,
 		threadPool = Executors.newCachedThreadPool();
 	}
 	
+	
+	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
+		this(groupName);
+		UnicastRemoteObject.exportObject(this, localPort);
+	}
+	
+
 	/**
 	 * addParent will only be called by the server.class to bind the parent to
 	 * this server.

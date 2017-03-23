@@ -19,7 +19,7 @@ import de.htwsaar.wirth.remote.util.RemoteConstants;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
-public class ClientImpl extends UnicastRemoteObject implements NotifiableClient {
+public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableClient {
 	
     private static ClientImpl instance;
     
@@ -42,10 +42,14 @@ public class ClientImpl extends UnicastRemoteObject implements NotifiableClient 
 	public void setView(MainViewController gui) {
 		this.gui = gui;
 	}
+	
+	public void setPort(int port) throws RemoteException {
+		UnicastRemoteObject.exportObject(this, port);	
+	}
 
 	private static final long serialVersionUID = -7940206816319176143L;
 	
-	public Task<Void> login(String username, String password, String parentHost, int parentPort) {
+	public Task<Void> login(String username, String password, String parentHost/*, int parentPort*/) {
 		ClientImpl thisReference = this;
 		
 		return new Task<Void>() {
@@ -57,8 +61,8 @@ public class ClientImpl extends UnicastRemoteObject implements NotifiableClient 
 				}
 				
 				// beim Server anmelden
-				Registry parentRegistry = LocateRegistry.getRegistry(parentHost, parentPort);
-		        msgBoard = (MessageBoard) parentRegistry.lookup(RemoteConstants.BIND_KEY);
+				Registry parentRegistry = LocateRegistry.getRegistry(parentHost, 1099);
+		        msgBoard = (MessageBoard) parentRegistry.lookup(RemoteConstants.BIND_KEY);	        
 		        
 		        // User einloggen
 				LoginPacket login = new LoginPacket(username, password);
@@ -206,4 +210,6 @@ public class ClientImpl extends UnicastRemoteObject implements NotifiableClient 
 	public String getGroupName() {
 		return auth.getGroupName();
 	}
+
+	
 }
