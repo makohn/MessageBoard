@@ -26,7 +26,7 @@ public class LoginController implements Initializable {
 	@FXML
 	private TextField txtHostname;
 	@FXML
-	private ComboBox<String> cmbPort;
+	private TextField txtPort;
 	@FXML
 	private Button btnConnect;
 
@@ -53,7 +53,8 @@ public class LoginController implements Initializable {
 	private void login(ApplicationDelegate delegate) {
 		// TODO: NumberFormatException fangen
 		// FIXME: cmbPort wirft NullPointerExceptions bei Mac mit <T> String und bei Windows mit <T> Integer
-		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(cmbPort.getValue()));
+		System.out.println(txtPort.getText());
+		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(txtPort.getText()));
 		task.setOnSucceeded(e -> {
 			delegate.showMainScreen();
 		});

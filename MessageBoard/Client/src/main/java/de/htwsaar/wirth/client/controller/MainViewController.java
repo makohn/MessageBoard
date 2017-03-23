@@ -168,16 +168,12 @@ public class MainViewController implements Initializable {
 	}
 	
 	public void changeUserStatus(String username, Status status) {
-		users.removeIf((pair) -> {
-			return username.equals(pair.getKey());
-		});
+		users.removeIf((pair) -> username.equals(pair.getKey()));
 		users.add(new Pair<String, Status>(username, status));
 	}
 	
 	public void deleteUser(String username) {
-		users.removeIf((pair) -> {
-			return username.equals(pair.getKey());
-		});
+		users.removeIf((pair) -> username.equals(pair.getKey()));
 	}
 
     public void sendMessage() {
