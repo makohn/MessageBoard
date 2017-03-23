@@ -22,14 +22,14 @@ import de.htwsaar.wirth.server.service.Services;
 public class Server {
  
     private int parentPort;
-    private int localPort;
+    private String groupName;
     private String parentHost;
     private MessageBoardImpl messageBoard;
     
 
     public Server(String groupName, int localPort) throws RemoteException, AlreadyBoundException {
         PersistenceManager.setDatabaseNameSuffix(groupName);
-        this.localPort = localPort;
+        this.groupName = groupName;
         messageBoard = new MessageBoardImpl(groupName, localPort);
         createRegistry();
         checkGroupLeader();
@@ -62,10 +62,9 @@ public class Server {
 
 
     private void createRegistry() throws RemoteException, AlreadyBoundException {
-//        Registry registry = LocateRegistry.createRegistry(localPort);
         Registry registry = LocateRegistry.getRegistry(1099);
         
-        registry.bind(RemoteConstants.BIND_KEY, messageBoard);
+        registry.bind(groupName, messageBoard);
     }
 
     public void bindToParent() throws RemoteException, NotBoundException {
