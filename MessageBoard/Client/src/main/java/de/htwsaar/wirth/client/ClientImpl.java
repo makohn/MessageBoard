@@ -42,9 +42,6 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 	public void setView(MainViewController gui) {
 		this.gui = gui;
 	}
-
-	@SuppressWarnings("unused") //TODO
-	private static final long serialVersionUID = -7940206816319176143L;
 	
 	public Task<Void> login(String username, String password, String parentHost, int port,String groupName) {
 		

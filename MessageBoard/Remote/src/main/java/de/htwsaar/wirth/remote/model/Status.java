@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 
 public enum Status implements Serializable {
 	ONLINE("Online", Color.LIGHTGREEN), 
-	SHOW_AS_OFFLINE("Offline",Color.RED), 
+	OFFLINE("Offline",Color.RED), 
 	AWAY("Abwesend", Color.YELLOW), 
 	BUSY("Beschäftigt", Color.ORANGE);
 	

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
@@ -17,8 +18,8 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -49,6 +50,7 @@ public class MainViewController implements Initializable {
 	@FXML private ToggleButton toggleGroupList;
 	@FXML private VBox userArea;
 	@FXML private VBox groupArea;
+	@FXML private Button btnAllFilter;
 	
 	private ObservableList<Message> messages;
 	private ObservableList<Message> sortedWrapperList;
@@ -58,7 +60,7 @@ public class MainViewController implements Initializable {
 	private ClientImpl client;
 	
     private ExecutorService exec;
-	
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
@@ -84,16 +86,10 @@ public class MainViewController implements Initializable {
 		users = FXCollections.observableArrayList();		
 		userList.setCellFactory(list -> new UserCell());
 		userList.setItems(users);
-		userList.setPrefHeight(users.size() * 28);
 		
 		// Groups
-		groups = FXCollections.observableArrayList("ALL");
-		groups.addListener((ListChangeListener<String>) c -> {
-            if (groupList != null)
-                groupList.setPrefHeight(groups.size() * 28);
-        });
+		groups = FXCollections.observableArrayList();
 		groupList.setItems(groups);
-		groupList.setPrefHeight(groups.size() * 28);
 		
 		// Status
 		cmbStatus.setItems(FXCollections.observableArrayList(Status.values()));
@@ -114,9 +110,9 @@ public class MainViewController implements Initializable {
 		refreshAllUserStatus();
 		
 		initSendMessageButton();
+		initAllFilterButton();
+		initGroupFilter();
 	}
-
-
 
 	private void initSendMessageButton() {
 		/* Added to prevent the enter from adding a new line to inputMessageBox */
@@ -127,9 +123,25 @@ public class MainViewController implements Initializable {
             }
         });
 	}
-
-
 	
+	private void initAllFilterButton() {
+		btnAllFilter.setOnAction(e -> {
+			chatPane.setItems(sortedWrapperList);
+		});
+	}
+	
+	private void initGroupFilter() {
+		groupList.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
+			Predicate<Message> filter = new Predicate<Message>() {
+				@Override
+				public boolean test(Message t) {
+					return newVal.equals(t.getGroup());
+				}
+			};
+			chatPane.setItems(new FilteredList<Message>(sortedWrapperList, filter));
+		});
+	}
+
 	private void refreshAllMessages(boolean shouldScrollToLast) {
 		Task<List<Message>> messageTask = client.getAllMessages();
 		messageTask.setOnSucceeded((e) -> {
@@ -148,7 +160,7 @@ public class MainViewController implements Initializable {
 	}
 	
 	public void onError(Throwable e) {
-		// TODO:
+		// TODO: Fehlerbehandlung (Dialog)
 		e.printStackTrace();
 		Task<Void> logoutTask = ClientImpl.getInstance().logout();
 		exec.submit(logoutTask);
@@ -212,22 +224,6 @@ public class MainViewController implements Initializable {
     	 }
     }
     
-    public void hideUserList() {
-    	if(toggleUserList.isSelected()) {
-    		userArea.getChildren().remove(userList);
-    	} else {
-    		userArea.getChildren().add(userList);
-    	}
-    }
-    
-    public void hideGroupList() {
-    	if(toggleGroupList.isSelected()) {
-    		groupArea.getChildren().remove(groupList);
-    	} else {
-    		groupArea.getChildren().add(groupList);
-    	}
-    }
-
 	public ExecutorService getExecutorService() {
 		return exec;
 	}

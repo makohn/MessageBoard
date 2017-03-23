@@ -21,9 +21,6 @@
     -fx-font-size: 13px;
     -fx-cursor: hand;
     -fx-graphic-text-gap: 10;
-    -fx-background-image: url("../img/menu_minimize.png");
-    -fx-background-repeat: no-repeat;
-    -fx-background-radius: 0;
     -fx-background-position: right center;
 }
 
@@ -55,6 +52,15 @@
 
 .reloadMessagesLabel:hover {
 	-fx-underline: true;
+}
+
+.allLabel {
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+}
+
+.allLabel:hover {
+	-fx-background-color: rgb(226, 226, 226, 0.2);
 }
 
 .groupList {

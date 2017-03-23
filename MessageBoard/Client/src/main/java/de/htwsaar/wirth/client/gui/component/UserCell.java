@@ -14,20 +14,17 @@ public class UserCell extends ListCell<Pair<String,Status>> {
 	private Text username;
 	private StatusIndicator status;
 	
-	// ------------------------------
-	{
-		listEntry = new HBox(5);
-		username = new Text("");
-		status = new StatusIndicator();
-	}
-	// ------------------------------
-	
 	@Override
 	protected void updateItem(Pair<String, Status> item, boolean empty) {
 		super.updateItem(item, empty);
         setBackground(null);
-        if (!empty && item != null) {
 
+        if (!empty && item != null) {
+        	
+    		listEntry = new HBox(5);
+    		username = new Text("");
+    		status = new StatusIndicator();
+    		
             username.setText(item.getKey());
             username.setFill(Color.WHITE);
             

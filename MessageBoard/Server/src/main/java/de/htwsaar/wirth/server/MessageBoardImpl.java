@@ -78,8 +78,6 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	 */
 	private ExecutorService threadPool;
 
-	private static final long serialVersionUID = -4613549994529764225L;
-
 	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
 		
 		sessionManager = new SessionManager(groupName);
@@ -92,7 +90,7 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		
 		// set the default userstatus of each user to offline
 		for (User user : Services.getInstance().getUserService().getAll()) {
-			userStatus.put(user.getUsername(), Status.SHOW_AS_OFFLINE);
+			userStatus.put(user.getUsername(), Status.OFFLINE);
 		}
 		threadPool = Executors.newCachedThreadPool();
 		
@@ -239,7 +237,7 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		clientNotifyMap.remove(auth.getUsername());
 		sessionManager.logout(auth.getUsername());
 		
-		changeUserStatusAndNotifyClients(auth.getUsername(), Status.SHOW_AS_OFFLINE);
+		changeUserStatusAndNotifyClients(auth.getUsername(), Status.OFFLINE);
 	}
 	
 	public void changeUserStatus(AuthPacket auth, Status status) throws RemoteException {
@@ -271,7 +269,7 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 				Services.getInstance().getUserService().saveUser(user);
 				
 				// notify the clients of the new offline user
-				changeUserStatusAndNotifyClients(newUsername, Status.SHOW_AS_OFFLINE);
+				changeUserStatusAndNotifyClients(newUsername, Status.OFFLINE);
 			} else {
 				throw new UserAlreadyExistsException();
 			}

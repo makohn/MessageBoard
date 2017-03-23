@@ -9,7 +9,7 @@ public class StatusIndicator extends Text {
 	public static final String DEFAULT_USERNAME_STYLE = "username";
 	
 	public StatusIndicator() {
-		this(Status.SHOW_AS_OFFLINE);
+		this(Status.OFFLINE);
 	}
 	
 	public StatusIndicator(Status status) {
@@ -31,7 +31,7 @@ public class StatusIndicator extends Text {
         	super.setFill(UIConstants.STATUS_RED);
         	break;
         default:
-        case SHOW_AS_OFFLINE:
+        case OFFLINE:
         	super.setText(UIConstants.STATUS_SYMBOL_EMPTY);
         	super.setFill(UIConstants.STATUS_GREEN);
         	break;

@@ -1,7 +1,5 @@
 package de.htwsaar.wirth.client.gui.component;
 
-import java.text.DateFormat;
-
 import de.htwsaar.wirth.client.controller.MainViewController;
 import de.htwsaar.wirth.client.controller.MessageCellController;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
