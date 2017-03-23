@@ -2,10 +2,6 @@
 	-fx-opacity: 0;	
 }
 
-.editButtonGroup:hover {
-	-fx-opacity: 1;	
-}
-
 .publishButtonLabel {
 	-fx-text-fill: grey;
 }

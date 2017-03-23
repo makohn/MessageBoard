@@ -11,3 +11,6 @@
 .root {
 	-fx-font-family: 'Nunito-Regular';
 }
+.messageCell:hover > HBox{
+	-fx-opacity: 1;
+}
