@@ -45,7 +45,7 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 
 	private static final long serialVersionUID = -7940206816319176143L;
 	
-	public Task<Void> login(String username, String password, String parentHost, int port) {
+	public Task<Void> login(String username, String password, String parentHost, int port,String groupName) {
 		
 		ClientImpl thisReference = this;
 		
@@ -61,7 +61,7 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 				
 				// beim Server anmelden
 				Registry parentRegistry = LocateRegistry.getRegistry(parentHost, 1099);
-		        msgBoard = (MessageBoard) parentRegistry.lookup(RemoteConstants.BIND_KEY);	        
+		        msgBoard = (MessageBoard) parentRegistry.lookup(groupName);
 		        
 		        // User einloggen
 				LoginPacket login = new LoginPacket(username, password);

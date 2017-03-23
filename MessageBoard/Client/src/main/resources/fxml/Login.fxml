@@ -27,9 +27,12 @@
             <children>
                <TextField fx:id="txtHostname" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Host" styleClass="login-input-field" />
                <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="109.0" prefWidth="296.0">
-               <children>
+                     <children>
                   <TextField fx:id="txtPort" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Port" styleClass="login-input-field" />
                      </children>
+                  <children>
+                     <TextField fx:id="txtGroupName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Port" styleClass="login-input-field" />
+                  </children>
                   </AnchorPane>
                </children>
             </VBox>

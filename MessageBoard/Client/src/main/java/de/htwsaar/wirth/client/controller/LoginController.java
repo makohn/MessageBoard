@@ -29,6 +29,8 @@ public class LoginController implements Initializable {
 	@FXML
 	private TextField txtPort;
 	@FXML
+	private TextField txtGroupName;
+	@FXML
 	private Button btnConnect;
 
 	private ClientImpl client;
@@ -56,7 +58,7 @@ public class LoginController implements Initializable {
 		// FIXME: cmbPort wirft NullPointerExceptions bei Mac mit <T> String und bei Windows mit <T> Integer
 		System.out.println(txtPort.getText());
 		
-		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(txtPort.getText()));
+		Task<Void> task = client.login(txtUsername.getText(), txtPassword.getText(),txtHostname.getText(), Integer.parseInt(txtPort.getText()),txtGroupName.getText());
 		task.setOnSucceeded(e -> {
 			delegate.showMainScreen();
 		});
