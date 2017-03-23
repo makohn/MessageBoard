@@ -26,6 +26,7 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 	private MainViewController gui;
 	private MessageBoard msgBoard;
 	private AuthPacket auth;
+	private int n = 0;
 	
 	public static synchronized ClientImpl getInstance() {
 		if (instance == null) {
@@ -66,6 +67,7 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 				// beim Server anmelden
 				Registry parentRegistry = LocateRegistry.getRegistry(parentHost);
 		        msgBoard = (MessageBoard) parentRegistry.lookup(groupName);
+
 		        
 		        // User einloggen
 				LoginPacket login = new LoginPacket(username, password);

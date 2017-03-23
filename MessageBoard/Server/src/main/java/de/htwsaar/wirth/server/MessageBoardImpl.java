@@ -2,13 +2,8 @@ package de.htwsaar.wirth.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -171,10 +166,11 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 					try {
 						handler.handle(entry.getValue());
 					} catch (RemoteException e) {
+						e.printStackTrace();
 						// if we catch a remoteException the callback for this client doesn't work
 						if (clientNotifyMap.containsValue(entry.getValue())) {
 							clientNotifyMap.remove(entry);
-							changeUserStatusAndNotifyClients(entry.getKey(), Status.SHOW_AS_OFFLINE);
+							//changeUserStatusAndNotifyClients(entry.getKey(), Status.SHOW_AS_OFFLINE);
 						}
 					}
 				});
@@ -230,11 +226,13 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	public AuthPacket login(LoginPacket login, NotifiableClient client) throws RemoteException {
 		// Authenticate throws an exception, if the username or password are wrong
 		// this exception can be handled on clientside
-		AuthPacket auth = sessionManager.authenticate(login);		
+		AuthPacket auth = sessionManager.authenticate(login);
+		System.out.println(new Date());
 		changeUserStatusAndNotifyClients(login.getUsername(), Status.ONLINE);
-		
+		System.out.println(new Date());
 		// add the Notifiable of the client to the clientNotifyMap
 		clientNotifyMap.put(login.getUsername(), client);
+		System.out.println(new Date());
 		return auth;
 	}
 	
