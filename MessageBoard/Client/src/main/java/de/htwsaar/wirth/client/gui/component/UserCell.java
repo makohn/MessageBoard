@@ -3,8 +3,7 @@ package de.htwsaar.wirth.client.gui.component;
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.controller.MainViewController;
 import de.htwsaar.wirth.remote.model.Status;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -13,8 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 
 import java.util.Optional;
 
@@ -73,7 +70,8 @@ public class UserCell extends ListCell<Pair<String,Status>> {
                 alert.setContentText("Wollen Sie diesen Benutzer dauerhaft löschen?");
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK){
-                    mainView.deleteUser(item.getKey());
+                    Task<Void> deleteTask = ClientImpl.getInstance().deleteUser(item.getKey());
+                    mainView.getExecutorService().submit(deleteTask);
                 }
 
             });

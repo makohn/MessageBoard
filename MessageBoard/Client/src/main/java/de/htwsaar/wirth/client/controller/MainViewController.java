@@ -342,7 +342,10 @@ public class MainViewController implements Initializable {
 	
 	public void deleteUser(String username) {
 		users.removeIf((pair) -> username.equals(pair.getKey()));
-	}
+        for (Pair<String,Status> user: users) {
+            System.out.println(user.getKey());
+        }
+    }
 
     public void addUser(String username, String password) {
         Task<Void> addUserTask = client.addUser(username, password);
@@ -360,6 +363,7 @@ public class MainViewController implements Initializable {
         	messageBox.clear();
     	 }
     }
+
 
     public ExecutorService getExecutorService() {
         return exec;
