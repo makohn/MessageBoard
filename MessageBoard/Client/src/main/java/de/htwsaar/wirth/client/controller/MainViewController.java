@@ -85,13 +85,19 @@ public class MainViewController implements Initializable {
 		chatPane.setItems(filteredAndSortedList);
 
 		// Users
-		users = FXCollections.observableArrayList();		
+		users = FXCollections.observableArrayList();
+		ObservableList<Pair<String, Status>> sortedUserList = users.sorted((p1, p2) -> {
+			return p1.getKey().compareTo(p2.getKey());
+		});
 		userList.setCellFactory(list -> new UserCell());
-		userList.setItems(users);
+		userList.setItems(sortedUserList);
 		
 		// Groups
 		groups = FXCollections.observableArrayList();
-		groupList.setItems(groups);
+		ObservableList<String> sortedGroupList = groups.sorted((g1, g2) -> {
+			return g1.compareTo(g2);
+		});
+		groupList.setItems(sortedGroupList);
 		
 		// Status
 		cmbStatus.setItems(FXCollections.observableArrayList(Status.values()));
@@ -144,6 +150,9 @@ public class MainViewController implements Initializable {
 			}
 			filteredAndSortedList.setPredicate(msg -> newVal.equals(msg.getGroup()));
 		});
+	}
+	
+	private void initRefreshButton() {
 	}
 
 	private void refreshAllMessages(boolean shouldScrollToLast) {
