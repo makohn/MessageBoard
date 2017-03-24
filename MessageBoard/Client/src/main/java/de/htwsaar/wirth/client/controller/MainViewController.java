@@ -6,6 +6,10 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
+
+import org.controlsfx.control.textfield.CustomTextField;
+
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
@@ -35,6 +39,7 @@ import javafx.util.Pair;
 public class MainViewController implements Initializable {
 
 	@FXML private Button groupButton;
+	@FXML private CustomTextField txtSearch;
 	@FXML private ListView<Message> chatPane;
 	@FXML private ListView<String> groupList;
 	@FXML private ListView<Pair<String,Status>> userList;
@@ -57,6 +62,8 @@ public class MainViewController implements Initializable {
 	private FilteredList<Message> filteredAndSortedList;
 	private ObservableList<String> groups;
 	private ObservableList<Pair<String,Status>> users;
+	
+	private Predicate<Message> groupFilter;
 	
 	private ClientImpl client;
 	
@@ -122,6 +129,27 @@ public class MainViewController implements Initializable {
 		initGroupFilter();
 		initRefreshButton();
 		initLogoutButton();
+		initSearchField();
+	}
+	
+	private void initSearchField() {
+		txtSearch.setOnAction((actionEvent) -> {
+			// wenn das SearchField nicht leer ist
+			if(txtSearch.getText().trim().isEmpty()) {
+				filteredAndSortedList.setPredicate(groupFilter);
+			} else {
+				// erstelle einen searchFilter
+				Predicate<Message> searchFilter = msg -> msg.getMessage().contains(txtSearch.getText()) || msg.getAuthor().contains(txtSearch.getText());
+				if (groupFilter != null) {
+					// wenn ein GruppenFilter existiert verunde beide Filter
+					Predicate<Message> searchAndGroupFilter = msg-> searchFilter.test(msg) && groupFilter.test(msg);
+					filteredAndSortedList.setPredicate(searchAndGroupFilter);
+				} else {
+					// ansonsten aktiviere nur den SearchFilter
+					filteredAndSortedList.setPredicate(searchFilter);
+				}
+			}
+		});
 	}
 
 	private void initSendMessageButton() {
@@ -137,6 +165,7 @@ public class MainViewController implements Initializable {
 	private void initAllFilterButton() {
 		btnAllFilter.setOnAction(e -> {
 			// setPredicate(null), entfernt jegliche Filterung
+			groupFilter = null;
 			filteredAndSortedList.setPredicate(null);
 			// entferne die Selektierung, damit wir das Selektieren eines bereits vorher selektierten Items
 			// mitbekommen
@@ -150,7 +179,8 @@ public class MainViewController implements Initializable {
 			if (newVal == null) {
 				return;
 			}
-			filteredAndSortedList.setPredicate(msg -> newVal.equals(msg.getGroup()));
+			groupFilter = msg -> newVal.equals(msg.getGroup());
+			filteredAndSortedList.setPredicate(groupFilter);
 		});
 	}
 	

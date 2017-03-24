@@ -37,7 +37,7 @@
                         <Insets right="20.0" top="3.0" />
                      </BorderPane.margin>
                      <children>
-      				<CustomTextField prefHeight="30.0" prefWidth="200.0" promptText="Search..." styleClass="searchField">
+      				<CustomTextField fx:id="txtSearch" prefHeight="30.0" prefWidth="200.0" promptText="Search..." styleClass="searchField">
       								<right>
       							    <Label>
       									<graphic>
