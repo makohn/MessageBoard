@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
-import de.htwsaar.wirth.client.util.LoginCacheService;
+import de.htwsaar.wirth.client.util.PreferenceService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,7 +35,7 @@ public class LoginController implements Initializable {
 
     private ExecutorService exec;
 
-    private LoginCacheService logService;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,11 +47,11 @@ public class LoginController implements Initializable {
 
     private void initTextFields()
     {
-        logService = new LoginCacheService();
-        txtUsername.setText(logService.getUsername());
-        txtHostname.setText(logService.getHostName());
-        txtPort.setText(logService.getPort());
-        txtGroupName.setText(logService.getGroupName());
+
+        txtUsername.setText(PreferenceService.getInstance().getUsername());
+        txtHostname.setText(PreferenceService.getInstance().getHostName());
+        txtPort.setText(PreferenceService.getInstance().getPort());
+        txtGroupName.setText(PreferenceService.getInstance().getGroupeName());
     }
 
     public void initManager(final ApplicationDelegate delegate) {
@@ -66,7 +66,7 @@ public class LoginController implements Initializable {
 
 	private void login(ApplicationDelegate delegate) {
 		// TODO: NumberFormatException fangen
-		 logService.saveData(txtUsername.getText(),txtHostname.getText(),txtPort.getText(),txtGroupName.getText());
+        PreferenceService.getInstance().setPreference(txtUsername.getText(),txtHostname.getText(),txtPort.getText(),txtGroupName.getText());
 		Task<Void> task = client.login(	txtUsername.getText(), 
 										txtPassword.getText(),
 										txtHostname.getText(), 
