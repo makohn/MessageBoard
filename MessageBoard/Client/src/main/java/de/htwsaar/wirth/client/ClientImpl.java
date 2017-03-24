@@ -152,7 +152,6 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 			}
 			
 		};
-		
 	}
 
 	public Task<Void> publishMessage(UUID id) {
@@ -209,7 +208,6 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 	
 	public void notifyDeleteUser(String username) throws RemoteException {
 		Platform.runLater(() -> gui.deleteUser(username));
-		
 	}
 	
 	public String getUsername() {

@@ -252,6 +252,9 @@ public class MainViewController implements Initializable {
 			alert.setHeaderText(ExceptionUtil.AUTHENTIFICATION_ERROR.getDefaultText());
 			alert.setContentText(ExceptionUtil.AUTHENTIFICATION_ERROR.toString());
 			alert.showAndWait();
+			Task<Void> logoutTask = ClientImpl.getInstance().logout();
+			exec.submit(logoutTask);
+			ApplicationDelegate.getInstance().showLoginScreen();
 		}catch (Throwable unknown){
 			unknown.printStackTrace();
 			Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -259,10 +262,10 @@ public class MainViewController implements Initializable {
 			alert.setHeaderText(ExceptionUtil.UNKNOWN_ERROR_MESSAGEBOARD.getDefaultText());
 			alert.setContentText(ExceptionUtil.UNKNOWN_ERROR_MESSAGEBOARD.toString());
 			alert.showAndWait();
+			Task<Void> logoutTask = ClientImpl.getInstance().logout();
+			exec.submit(logoutTask);
+			ApplicationDelegate.getInstance().showLoginScreen();
 		}
-		Task<Void> logoutTask = ClientImpl.getInstance().logout();
-		exec.submit(logoutTask);
-		ApplicationDelegate.getInstance().showLoginScreen();
 	}
 
 	private void refreshAllUserStatus() {
