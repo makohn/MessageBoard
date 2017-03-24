@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
 public class LoginController implements Initializable {
@@ -36,6 +37,8 @@ public class LoginController implements Initializable {
     private TextField txtPort;
     @FXML
     private TextField txtGroupName;
+    @FXML
+    private CheckBox checkPort;
     @FXML
     private Button btnConnect;
 
@@ -59,6 +62,8 @@ public class LoginController implements Initializable {
         txtHostname.setText(PreferenceService.getInstance().getHostName());
         txtPort.setText(PreferenceService.getInstance().getPort());
         txtGroupName.setText(PreferenceService.getInstance().getGroupeName());
+        checkPort.setSelected(PreferenceService.getInstance().isCallbackPortSelected());
+        txtPort.disableProperty().bind(checkPort.selectedProperty().not());
     }
 
     public void initManager(final ApplicationDelegate delegate) {
@@ -73,13 +78,20 @@ public class LoginController implements Initializable {
 
 	private void login(ApplicationDelegate delegate) {
         int port;
-		try {
-		    port = Integer.parseInt(txtPort.getText());
-		} catch(NumberFormatException e){
-		    onError(e);
-		    return;
+		if (!checkPort.isSelected()) {
+        	port = 0;
+        	txtPort.clear();
+        } else {
+        	try {
+    		    port = Integer.parseInt(txtPort.getText());
+    		} catch(NumberFormatException e){
+    		    onError(e);
+    		    return;
+            }
         }
-        PreferenceService.getInstance().setPreference(txtUsername.getText(),txtHostname.getText(),txtPort.getText(),txtGroupName.getText());
+		
+        PreferenceService.getInstance().setPreference(txtUsername.getText(), txtHostname.getText(), 
+        								checkPort.isSelected(), txtPort.getText(), txtGroupName.getText());
 		Task<Void> task = client.login(	txtUsername.getText(), 
 										txtPassword.getText(),
 										txtHostname.getText(), 

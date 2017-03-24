@@ -60,7 +60,6 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 				} catch (NoSuchObjectException e) {}
 				
 				UnicastRemoteObject.exportObject(thisReference, port);
-				
 				// beim Server anmelden
 				Registry parentRegistry = LocateRegistry.getRegistry(parentHost);
 		        msgBoard = (MessageBoard) parentRegistry.lookup(groupName);

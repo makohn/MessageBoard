@@ -10,6 +10,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.CheckBox?>
 
 <StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.LoginController">
 	<children>
@@ -24,7 +26,12 @@
 				<PasswordField fx:id="txtPassword" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="299.0" promptText="Password" styleClass="login-input-field" />
 				<TextField fx:id="txtGroupName" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Gruppenname" styleClass="login-input-field" />
 				<TextField fx:id="txtHostname" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="Host" styleClass="login-input-field" />
-				<TextField fx:id="txtPort" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0" promptText="CallbackPort" styleClass="login-input-field" />
+				<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="295.0">
+					<children>
+						<CheckBox fx:id="checkPort" text="eigener CallbackPort:" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="155.0" />
+						<TextField fx:id="txtPort" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="140.0" promptText="CallbackPort" styleClass="login-input-field" />	
+					</children>
+				</HBox>
 				<Button fx:id="btnConnect" mnemonicParsing="false" prefHeight="29.0" prefWidth="79.0" styleClass="login-button" text="Connect" />
 			</children>
 		</VBox>
