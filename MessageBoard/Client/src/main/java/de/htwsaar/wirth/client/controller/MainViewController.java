@@ -102,8 +102,6 @@ public class MainViewController implements Initializable {
 		// Status
 		cmbStatus.setItems(FXCollections.observableArrayList(Status.values()));
 		lblOwnStatus.setText(UIConstants.STATUS_SYMBOL_FILLED);
-		cmbStatus.getSelectionModel().select(Status.ONLINE);
-		lblOwnStatus.setTextFill(Status.ONLINE.getColor());
 		cmbStatus.valueProperty().addListener(new ChangeListener<Status>() {
 			@Override
 			public void changed(ObservableValue<? extends Status> observable, Status oldValue, Status newValue) {
@@ -116,6 +114,7 @@ public class MainViewController implements Initializable {
 			}
 	    });
 
+		cmbStatus.getSelectionModel().select(Status.ONLINE);
 		refreshAllMessages(true);
 		refreshAllUserStatus();
 		initSendMessageButton();
