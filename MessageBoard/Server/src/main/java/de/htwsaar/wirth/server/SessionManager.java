@@ -45,7 +45,7 @@ public class SessionManager {
 	    	if (givenPassword.equals(user.getPassword())) {
 	    		// successful login
 	            AuthPacket auth = new AuthPacket(givenUsername, user.isGroupLeader(), groupName);
-                    sessions.put(givenUsername, auth);
+                sessions.put(givenUsername, auth);
                 return auth;
 	        }
 	    }

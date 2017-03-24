@@ -8,17 +8,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
-import de.htwsaar.wirth.remote.exceptions.*;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
+import de.htwsaar.wirth.client.util.ExceptionUtil;
 import de.htwsaar.wirth.client.util.UIConstants;
+import de.htwsaar.wirth.remote.exceptions.AuthenticationException;
+import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
+import de.htwsaar.wirth.remote.exceptions.NoPermissionException;
+import de.htwsaar.wirth.remote.exceptions.UserAlreadyExistsException;
+import de.htwsaar.wirth.remote.exceptions.UserNotExistsException;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
-import de.htwsaar.wirth.client.util.ExceptionUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,7 +31,13 @@ import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -164,20 +174,18 @@ public class MainViewController implements Initializable {
 			// setPredicate(null), entfernt jegliche Filterung
 			groupFilter = null;
 			filteredAndSortedList.setPredicate(null);
-			// entferne die Selektierung, damit wir das Selektieren eines bereits vorher selektierten Items
-			// mitbekommen
-			groupList.getSelectionModel().clearSelection();
+			// entferne den Suchtext aus dem Suchfeld, da nun eine Gruppenfilterung ausgewählt wurde
+			txtSearch.clear();
 		});
 	}
 	
 	private void initGroupFilter() {
-		groupList.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
-			// ignoriere deselektieren
-			if (newVal == null) {
-				return;
-			}
-			groupFilter = msg -> newVal.equals(msg.getGroup());
+		groupList.setOnMouseClicked((mouseEvent) -> {
+			String clickedGroup = groupList.getSelectionModel().getSelectedItem();
+			groupFilter = msg -> clickedGroup.equals(msg.getGroup());
 			filteredAndSortedList.setPredicate(groupFilter);
+			// entferne den Suchtext aus dem Suchfeld, da nun eine Gruppenfilterung ausgewählt wurde
+			txtSearch.clear();
 		});
 	}
 	
