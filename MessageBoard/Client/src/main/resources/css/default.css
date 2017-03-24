@@ -11,3 +11,26 @@
 .root {
 	-fx-font-family: 'Nunito-Regular';
 }
+
+/* Default scrollbar layout */
+.scroll-bar {
+	-fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button,
+.scroll-bar .track {
+
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow{
+    -fx-shape: " ";
+    -fx-padding:0.1em;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: derive(black,90%);
+	-fx-background-insets: 2, 0, 0;
+	-fx-background-radius: 2em;
+}

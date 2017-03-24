@@ -92,9 +92,9 @@
       </VBox>
    </center>
    <left>
-      <VBox fx:id="sidePane" maxHeight="1.7976931348623157E308" style="-fx-background-color: #253035;" BorderPane.alignment="CENTER">
+      <VBox fx:id="sidePane" maxHeight="1.7976931348623157E308" style="-fx-background-color: #253035;">
          <children>
-            <VBox fx:id="groupArea" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <VBox fx:id="groupArea" style="-fx-background-color: transparent;">
                <children>
                   <Label alignment="CENTER_LEFT" mnemonicParsing="false" prefWidth="217.0" text="Boards">
                      <styleClass>
@@ -102,7 +102,7 @@
                         <String fx:value="menu-boards" />
                      </styleClass>
                   </Label>
-                  <Button fx:id="btnAllFilter" prefWidth="217.0" styleClass="allLabel" text="ALL">
+                  <Button fx:id="btnAllFilter" alignment="BASELINE_LEFT" prefWidth="217.0" styleClass="allLabel" text="ALL">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -110,10 +110,14 @@
                         <Insets left="10.0" />
                      </padding>
                   </Button>
-                  <ListView fx:id="groupList" focusTraversable="false" maxHeight="1.7976931348623157E308" prefWidth="217.0" style="-fx-background-color: transparent;" styleClass="groupList" />
+                  <ListView fx:id="groupList" focusTraversable="false" maxHeight="1.7976931348623157E308" prefWidth="217.0" style="-fx-background-color: transparent;">
+                     <styleClass>
+                        <String fx:value="groupList" />
+                        <String fx:value="sidebar-listview" />
+                     </styleClass></ListView>
                </children>
             </VBox>
-            <VBox fx:id="userArea" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <VBox fx:id="userArea" maxHeight="1.7976931348623157E308" prefHeight="464.0" prefWidth="217.0">
                <children>
                   <Label alignment="CENTER_LEFT" mnemonicParsing="false" prefWidth="217.0" text="User">
                      <styleClass>
@@ -121,8 +125,11 @@
                         <String fx:value="menu-user" />
                      </styleClass>
                   </Label>
-                  <ListView fx:id="userList" focusTraversable="false" minHeight="0.0" prefHeight="323.0" prefWidth="217.0" style="-fx-background-color: transparent;" styleClass="menu-list-users">
-            </ListView>
+                  <ListView fx:id="userList" focusTraversable="false" maxHeight="1.7976931348623157E308" prefWidth="217.0" style="-fx-background-color: transparent;">
+                     <styleClass>
+                        <String fx:value="menu-list-users" />
+                        <String fx:value="sidebar-listview" />
+                     </styleClass></ListView>
                </children>
             </VBox>
             <AnchorPane VBox.vgrow="NEVER">
