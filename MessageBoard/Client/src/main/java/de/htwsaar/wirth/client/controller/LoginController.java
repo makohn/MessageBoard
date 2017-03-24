@@ -4,6 +4,7 @@ import java.net.URL;
 import java.rmi.ConnectException;
 import java.rmi.ConnectIOException;
 import java.rmi.NotBoundException;
+import java.rmi.UnknownHostException;
 import java.rmi.server.ExportException;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -118,14 +119,21 @@ public class LoginController implements Initializable {
         alert.setContentText(ExceptionUtil.UNKNOWN_GROUPNAME.toString());
         alert.showAndWait();
 
-        }catch(ConnectException | ConnectIOException hostException){
+        }catch(UnknownHostException hostException){
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle(ExceptionUtil.UNKNOWN_HOST.getLocation());
             alert.setHeaderText(ExceptionUtil.UNKNOWN_HOST.getDefaultText());
             alert.setContentText(ExceptionUtil.UNKNOWN_HOST.toString());
             alert.showAndWait();
 
-        }catch(ExportException portAlreadyInUse){
+        }catch(ConnectException | ConnectIOException  connectionException){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle(ExceptionUtil.CONNECTION_ERROR.getLocation());
+            alert.setHeaderText(ExceptionUtil.CONNECTION_ERROR.getDefaultText());
+            alert.setContentText(ExceptionUtil.CONNECTION_ERROR.toString());
+            alert.showAndWait();
+
+        } catch(ExportException portAlreadyInUse){
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle(ExceptionUtil.PORT_IN_USE.getLocation());
             alert.setHeaderText(ExceptionUtil.PORT_IN_USE.getDefaultText());
