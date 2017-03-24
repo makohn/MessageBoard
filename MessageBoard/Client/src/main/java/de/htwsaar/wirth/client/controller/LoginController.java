@@ -47,7 +47,6 @@ public class LoginController implements Initializable {
 
     private void initTextFields()
     {
-
         txtUsername.setText(PreferenceService.getInstance().getUsername());
         txtHostname.setText(PreferenceService.getInstance().getHostName());
         txtPort.setText(PreferenceService.getInstance().getPort());
