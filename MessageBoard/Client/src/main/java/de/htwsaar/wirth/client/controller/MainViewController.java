@@ -3,26 +3,24 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
+import de.htwsaar.wirth.client.gui.component.NewUserDialog;
+import de.htwsaar.wirth.remote.exceptions.*;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
-import de.htwsaar.wirth.client.util.ExceptionUtil;
 import de.htwsaar.wirth.client.util.UIConstants;
-import de.htwsaar.wirth.remote.exceptions.AuthenticationException;
-import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
-import de.htwsaar.wirth.remote.exceptions.NoPermissionException;
-import de.htwsaar.wirth.remote.exceptions.UserAlreadyExistsException;
-import de.htwsaar.wirth.remote.exceptions.UserNotExistsException;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.client.util.ExceptionUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -31,13 +29,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -45,35 +37,54 @@ import javafx.util.Pair;
 
 public class MainViewController implements Initializable {
 
-	@FXML private Button groupButton;
-	@FXML private CustomTextField txtSearch;
-	@FXML private ListView<Message> chatPane;
-	@FXML private ListView<String> groupList;
-	@FXML private ListView<Pair<String,Status>> userList;
-	@FXML private TextArea messageBox;
-	@FXML private Label	reloadLabel;
-	@FXML private Label usernameLabel;
-	@FXML private Label fullNameLabel;
-	@FXML private ComboBox<Status> cmbStatus;
-	@FXML private Label lblOwnStatus;
-	@FXML private ToggleButton toggleUserList;
-	@FXML private ToggleButton toggleGroupList;
-	@FXML private VBox userArea;
-	@FXML private VBox groupArea;
-	@FXML private Button btnAllFilter;
-	@FXML private Button btnAddUser;
-	@FXML private Button btnRefresh;
-	@FXML private Button btnLogout;
-	
-	private ObservableList<Message> messages;
-	private FilteredList<Message> filteredAndSortedList;
-	private ObservableList<String> groups;
-	private ObservableList<Pair<String,Status>> users;
-	
-	private Predicate<Message> groupFilter;
-	
-	private ClientImpl client;
-	
+    @FXML
+    private Button groupButton;
+    @FXML
+    private CustomTextField txtSearch;
+    @FXML
+    private ListView<Message> chatPane;
+    @FXML
+    private ListView<String> groupList;
+    @FXML
+    private ListView<Pair<String, Status>> userList;
+    @FXML
+    private TextArea messageBox;
+    @FXML
+    private Label reloadLabel;
+    @FXML
+    private Label usernameLabel;
+    @FXML
+    private Label fullNameLabel;
+    @FXML
+    private ComboBox<Status> cmbStatus;
+    @FXML
+    private Label lblOwnStatus;
+    @FXML
+    private ToggleButton toggleUserList;
+    @FXML
+    private ToggleButton toggleGroupList;
+    @FXML
+    private VBox userArea;
+    @FXML
+    private VBox groupArea;
+    @FXML
+    private Button btnAllFilter;
+    @FXML
+    private Button btnAddUser;
+    @FXML
+    private Button btnRefresh;
+    @FXML
+    private Button btnLogout;
+
+    private ObservableList<Message> messages;
+    private FilteredList<Message> filteredAndSortedList;
+    private ObservableList<String> groups;
+    private ObservableList<Pair<String, Status>> users;
+
+    private Predicate<Message> groupFilter;
+
+    private ClientImpl client;
+
     private ExecutorService exec;
     
 	@Override
@@ -137,6 +148,7 @@ public class MainViewController implements Initializable {
 		initRefreshButton();
 		initLogoutButton();
 		initSearchField();
+        initAddUserButton();
 	}
 	
 	private void initSearchField() {
@@ -178,7 +190,7 @@ public class MainViewController implements Initializable {
 			txtSearch.clear();
 		});
 	}
-	
+
 	private void initGroupFilter() {
 		groupList.setOnMouseClicked((mouseEvent) -> {
 			String clickedGroup = groupList.getSelectionModel().getSelectedItem();
@@ -195,7 +207,16 @@ public class MainViewController implements Initializable {
 			refreshAllUserStatus();
 		});
 	}
-	
+    private void initAddUserButton() {
+        btnAddUser.setOnAction((actionEv) -> {
+            Dialog<Pair<String, String>> dialog = new NewUserDialog();
+            Optional<Pair<String, String>> result = dialog.showAndWait();
+            result.ifPresent(usernamePassword -> {
+                addUser(usernamePassword.getKey(), usernamePassword.getValue());
+                refreshAllUserStatus();
+            });
+        });
+    }
 	private void initLogoutButton() {
 		btnLogout.setOnAction((actionEv) -> {
 			ApplicationDelegate.getInstance().showLoadingHUD();
@@ -323,6 +344,12 @@ public class MainViewController implements Initializable {
 		users.removeIf((pair) -> username.equals(pair.getKey()));
 	}
 
+    public void addUser(String username, String password) {
+        Task<Void> addUserTask = client.addUser(username, password);
+        addUserTask.setOnFailed((e) -> onError(e.getSource().getException()));
+        exec.submit(addUserTask);
+    }
+
     public void sendMessage() {
     	 if (!messageBox.getText().isEmpty()) {
         	Task<Void> sendMessageTask = client.sendMessage(messageBox.getText());
@@ -333,9 +360,10 @@ public class MainViewController implements Initializable {
         	messageBox.clear();
     	 }
     }
-    
-	public ExecutorService getExecutorService() {
-		return exec;
-	}
+
+    public ExecutorService getExecutorService() {
+        return exec;
+    }
+
 }
 
