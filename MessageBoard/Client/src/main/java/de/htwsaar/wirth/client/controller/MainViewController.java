@@ -274,7 +274,7 @@ public class MainViewController implements Initializable {
             alert.setHeaderText(ExceptionUtil.MESSAGE_NOT_EXISTS.getDefaultText());
             alert.setContentText(ExceptionUtil.MESSAGE_NOT_EXISTS.toString());
             alert.showAndWait();
-        } catch (AuthenticationException session) {
+        } catch (AuthenticationException |  NotLoggedInException session) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle(ExceptionUtil.AUTHENTIFICATION_ERROR.getLocation());
             alert.setHeaderText(ExceptionUtil.AUTHENTIFICATION_ERROR.getDefaultText());
