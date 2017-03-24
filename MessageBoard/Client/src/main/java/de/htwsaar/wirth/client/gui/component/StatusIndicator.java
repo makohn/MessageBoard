@@ -28,12 +28,12 @@ public class StatusIndicator extends Text {
         	break;
         case BUSY:
         	super.setText(UIConstants.STATUS_SYMBOL_FILLED);
-        	super.setFill(UIConstants.STATUS_RED);
+        	super.setFill(UIConstants.STATUS_ORANGE);
         	break;
         default:
         case OFFLINE:
         	super.setText(UIConstants.STATUS_SYMBOL_EMPTY);
-        	super.setFill(UIConstants.STATUS_GREEN);
+        	super.setFill(UIConstants.STATUS_RED);
         	break;
         }
 	}
