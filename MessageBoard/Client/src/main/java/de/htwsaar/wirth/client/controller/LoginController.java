@@ -14,7 +14,8 @@ import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.util.PreferenceService;
 import de.htwsaar.wirth.remote.exceptions.AuthenticationException;
-import de.htwsaar.wirth.remote.util.ExceptionUtil;
+import de.htwsaar.wirth.client.util.ExceptionUtil;
+import de.htwsaar.wirth.remote.exceptions.UserAlreadyLoggedInException;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -113,11 +114,11 @@ public class LoginController implements Initializable {
             alert.showAndWait();
 
         } catch(NotBoundException groupNameException){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(ExceptionUtil.UNKNOWN_GROUPNAME.getLocation());
-        alert.setHeaderText(ExceptionUtil.UNKNOWN_GROUPNAME.getDefaultText());
-        alert.setContentText(ExceptionUtil.UNKNOWN_GROUPNAME.toString());
-        alert.showAndWait();
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle(ExceptionUtil.UNKNOWN_GROUPNAME.getLocation());
+            alert.setHeaderText(ExceptionUtil.UNKNOWN_GROUPNAME.getDefaultText());
+            alert.setContentText(ExceptionUtil.UNKNOWN_GROUPNAME.toString());
+            alert.showAndWait();
 
         }catch(UnknownHostException hostException){
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -138,6 +139,13 @@ public class LoginController implements Initializable {
             alert.setTitle(ExceptionUtil.PORT_IN_USE.getLocation());
             alert.setHeaderText(ExceptionUtil.PORT_IN_USE.getDefaultText());
             alert.setContentText(ExceptionUtil.PORT_IN_USE.toString());
+            alert.showAndWait();
+
+        }catch(UserAlreadyLoggedInException userAlredyLoggedIn){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle(ExceptionUtil.ALLREADY_LOGGED_IN.getLocation());
+            alert.setHeaderText(ExceptionUtil.ALLREADY_LOGGED_IN.getDefaultText());
+            alert.setContentText(ExceptionUtil.ALLREADY_LOGGED_IN.toString());
             alert.showAndWait();
 
         }catch (Throwable ex){

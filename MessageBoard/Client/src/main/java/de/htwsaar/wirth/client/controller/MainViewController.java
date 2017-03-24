@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
+import de.htwsaar.wirth.remote.exceptions.*;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import de.htwsaar.wirth.client.ClientImpl;
@@ -15,13 +16,9 @@ import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
 import de.htwsaar.wirth.client.util.UIConstants;
-import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
-import de.htwsaar.wirth.remote.exceptions.NoPermissionException;
-import de.htwsaar.wirth.remote.exceptions.UserAlreadyExistsException;
-import de.htwsaar.wirth.remote.exceptions.UserNotExistsException;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
-import de.htwsaar.wirth.remote.util.ExceptionUtil;
+import de.htwsaar.wirth.client.util.ExceptionUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -249,7 +246,14 @@ public class MainViewController implements Initializable {
 			alert.setHeaderText(ExceptionUtil.MESSAGE_NOT_EXISTS.getDefaultText());
 			alert.setContentText(ExceptionUtil.MESSAGE_NOT_EXISTS.toString());
 			alert.showAndWait();
-		}catch (Throwable ex){
+		}catch(AuthenticationException session){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle(ExceptionUtil.AUTHENTIFICATION_ERROR.getLocation());
+			alert.setHeaderText(ExceptionUtil.AUTHENTIFICATION_ERROR.getDefaultText());
+			alert.setContentText(ExceptionUtil.AUTHENTIFICATION_ERROR.toString());
+			alert.showAndWait();
+		}catch (Throwable unknown){
+			unknown.printStackTrace();
 			Alert alert = new Alert(Alert.AlertType.ERROR);
 			alert.setTitle(ExceptionUtil.UNKNOWN_ERROR_MESSAGEBOARD.getLocation());
 			alert.setHeaderText(ExceptionUtil.UNKNOWN_ERROR_MESSAGEBOARD.getDefaultText());

@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import de.htwsaar.wirth.remote.exceptions.AuthenticationException;
 import de.htwsaar.wirth.remote.exceptions.NotLoggedInException;
+import de.htwsaar.wirth.remote.exceptions.UserAlreadyLoggedInException;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
@@ -45,8 +46,13 @@ public class SessionManager {
 	    	if (givenPassword.equals(user.getPassword())) {
 	    		// successful login
 	            AuthPacket auth = new AuthPacket(givenUsername, user.isGroupLeader(), groupName);
-	            sessions.put(givenUsername, auth);
-	            return auth;
+	            if (sessions.get(givenUsername) == null){
+                    sessions.put(givenUsername, auth);
+
+                }else{
+	                throw new UserAlreadyLoggedInException("User already logged in");
+                }
+                return auth;
 	        }
 	    }
     	throw new AuthenticationException("Wrong Username or Password.");
