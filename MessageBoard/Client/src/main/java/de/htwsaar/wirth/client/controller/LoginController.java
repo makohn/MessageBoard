@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
+import de.htwsaar.wirth.client.util.LoginCacheService;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -34,24 +35,24 @@ public class LoginController implements Initializable {
 
     private ExecutorService exec;
 
-//    private LoginCacheService logService;
+    private LoginCacheService logService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         client = ClientImpl.getInstance();
         exec = Executors.newCachedThreadPool();
-//        initTextFields();
+        initTextFields();
 
     }
 
-//    private void initTextFields()
-//    {
-//        logService = new LoginCacheService();
-//        txtUsername.setText(logService.getUsername());
-//        txtHostname.setText(logService.getHostName());
-//        txtPort.setText(logService.getPort());
-//        txtGroupName.setText(logService.getGroupName());
-//    }
+    private void initTextFields()
+    {
+        logService = new LoginCacheService();
+        txtUsername.setText(logService.getUsername());
+        txtHostname.setText(logService.getHostName());
+        txtPort.setText(logService.getPort());
+        txtGroupName.setText(logService.getGroupName());
+    }
 
     public void initManager(final ApplicationDelegate delegate) {
         btnConnect.setOnAction(new EventHandler<ActionEvent>() {
@@ -65,7 +66,7 @@ public class LoginController implements Initializable {
 
 	private void login(ApplicationDelegate delegate) {
 		// TODO: NumberFormatException fangen
-		// logService.saveData(txtUsername.getText(),txtHostname.getText(),txtPort.getText(),txtGroupName.getText());
+		 logService.saveData(txtUsername.getText(),txtHostname.getText(),txtPort.getText(),txtGroupName.getText());
 		Task<Void> task = client.login(	txtUsername.getText(), 
 										txtPassword.getText(),
 										txtHostname.getText(), 

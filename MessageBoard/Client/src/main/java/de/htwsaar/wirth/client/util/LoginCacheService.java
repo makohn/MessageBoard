@@ -18,15 +18,20 @@ public class LoginCacheService {
 
 
     private void initData() {
+        try{
         File file = new File(FILE);
+        if(!file.exists() && !file.isDirectory())
+        {
+            file.createNewFile();
+        }
         if (file != null) {
-            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                this.username =  br.readLine();
-                this.hostName =  br.readLine();
-                this.port =  br.readLine();
+            BufferedReader br = new BufferedReader(new FileReader(file));
+                this.username = br.readLine();
+                this.hostName = br.readLine();
+                this.port = br.readLine();
                 this.GroupName = br.readLine();
-            } catch (FileNotFoundException x) {} catch (IOException e) {}}
-    }
+            } } catch (FileNotFoundException x) {x.printStackTrace();} catch (IOException e) {e.printStackTrace();}}
+
 
     public void saveData(String username,String hostname,String port,String groupName) {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
