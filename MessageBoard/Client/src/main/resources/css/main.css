@@ -116,3 +116,27 @@
 .combo-status .arrow {
     -fx-background-color: white;
 }
+
+.btnAddUser {
+	-fx-text-fill: grey;
+}
+
+.btnAddUser:hover {
+	-fx-text-fill: green;
+}
+
+.btnRefresh {
+	-fx-text-fill: grey;
+}
+
+.btnRefresh:hover {
+	-fx-text-fill: #2046c1;
+}
+
+.btnLogout {
+	-fx-text-fill: grey;
+}
+
+.btnLogout:hover {
+	-fx-text-fill: red;
+}

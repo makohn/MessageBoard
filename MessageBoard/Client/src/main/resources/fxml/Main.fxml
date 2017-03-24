@@ -46,19 +46,19 @@
       								</Label>
       							    </right>
       					</CustomTextField>
-                        <Button mnemonicParsing="false">
+                        <Button fx:id="btnAddUser" mnemonicParsing="false">
                          	<graphic>
-                     		<Glyph fontFamily="FontAwesome" icon="USER_PLUS" styleClass="publishButtonLabel" />
+                     		<Glyph fontFamily="FontAwesome" icon="USER_PLUS" styleClass="btnAddUser" />
                      		</graphic>
                         </Button>
-                        <Button mnemonicParsing="false">
+                        <Button fx:id="btnRefresh" mnemonicParsing="false">
                          	<graphic>
-                     		<Glyph fontFamily="FontAwesome" icon="REFRESH" styleClass="publishButtonLabel" />
+                     		<Glyph fontFamily="FontAwesome" icon="REFRESH" styleClass="btnRefresh" />
                      		</graphic>
                         </Button>
- 						<Button mnemonicParsing="false">
+ 						<Button fx:id="btnLogout" mnemonicParsing="false">
                          	<graphic>
-                     		<Glyph fontFamily="FontAwesome" icon="SIGN_OUT" styleClass="publishButtonLabel" />
+                     		<Glyph fontFamily="FontAwesome" icon="SIGN_OUT" styleClass="btnLogout" />
                      		</graphic>
                         </Button>
                      </children>

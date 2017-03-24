@@ -52,6 +52,9 @@ public class MainViewController implements Initializable {
 	@FXML private VBox userArea;
 	@FXML private VBox groupArea;
 	@FXML private Button btnAllFilter;
+	@FXML private Button btnAddUser;
+	@FXML private Button btnRefresh;
+	@FXML private Button btnLogout;
 	
 	private ObservableList<Message> messages;
 	private FilteredList<Message> filteredAndSortedList;
@@ -121,6 +124,8 @@ public class MainViewController implements Initializable {
 		initSendMessageButton();
 		initAllFilterButton();
 		initGroupFilter();
+		initRefreshButton();
+		initLogoutButton();
 	}
 
 	private void initSendMessageButton() {
@@ -154,6 +159,24 @@ public class MainViewController implements Initializable {
 	}
 	
 	private void initRefreshButton() {
+		btnRefresh.setOnAction((actionEv) -> {
+			refreshAllMessages(false);
+			refreshAllUserStatus();
+		});
+	}
+	
+	private void initLogoutButton() {
+		btnLogout.setOnAction((actionEv) -> {
+			ApplicationDelegate.getInstance().showLoadingHUD();
+			Task<Void> logoutTask = client.logout();
+			logoutTask.setOnSucceeded((e) -> {
+				ApplicationDelegate.getInstance().logout();
+			});
+			logoutTask.setOnFailed((e) -> {
+				onError(e.getSource().getException());
+			});
+			exec.submit(logoutTask);
+		});
 	}
 
 	private void refreshAllMessages(boolean shouldScrollToLast) {
