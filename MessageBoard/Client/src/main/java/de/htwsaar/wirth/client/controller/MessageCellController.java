@@ -55,8 +55,8 @@ public class MessageCellController {
     	
     	// disable or enable Buttons and register EventHandler
 		
-		boolean isAuthor = ClientImpl.getInstance().getUsername().equals(message.getAuthor()) 
-							&& ClientImpl.getInstance().getGroupName().equals(message.getGroup());
+		boolean isAuthor =client.getUsername().equals(message.getAuthor()) 
+							&& client.getGroupName().equals(message.getGroup());
 
 		if (!isAuthor) {
 			disableButton(editButton);
@@ -64,13 +64,16 @@ public class MessageCellController {
 			enableButton(editButton);
 			initEditEventHandler();
 		}
-		if (!ClientImpl.getInstance().isGroupLeader()) {
+		
+		boolean shouldShowPublished = client.isGroupLeader() && !message.isPublished();
+		
+		if (!shouldShowPublished) {
 			disableButton(publishButton);
 		} else {
 			enableButton(publishButton);
 			initPublishEventHandler();
 		}
-		if (!(ClientImpl.getInstance().isGroupLeader() || isAuthor)) {
+		if (!(client.isGroupLeader() || isAuthor)) {
 			disableButton(deleteButton);
 		} else {
 			enableButton(deleteButton);
