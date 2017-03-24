@@ -23,6 +23,7 @@ public class UserCell extends ListCell<Pair<String,Status>> {
 	private MainViewController mainView;
 	private Button delete = new Button();
     private Image image = new Image(getClass().getResourceAsStream("/img/Trash.png"));
+    private Image imageHovered = new Image(getClass().getResourceAsStream("/img/TrashHovered.png"));
 
     public UserCell (MainViewController mainView)
     {
@@ -35,10 +36,11 @@ public class UserCell extends ListCell<Pair<String,Status>> {
 
         if (!empty && item != null) {
     		listEntry = new HBox(5);
+    		listEntry.setPrefHeight(10);
     		username = new Text("");
     		status = new StatusIndicator();
             if(ClientImpl.getInstance().isGroupLeader()){
-                initDeletButton(item);
+                initDeleteButton(item.getKey());
             }
             username.setText(item.getKey());
             username.setFill(Color.WHITE);
@@ -51,32 +53,41 @@ public class UserCell extends ListCell<Pair<String,Status>> {
             setGraphic(listEntry);
         }
     }
-    private void initDeletButton(Pair<String, Status> item)
-    {
+    private void initDeleteButton(String username) {
+        if (!ClientImpl.getInstance().getUsername().equals(username)) {
             delete.setGraphic(new ImageView(image));
             delete.setVisible(false);
             delete.setManaged(false);
-            this.setOnMouseEntered((e)->{
+            this.setOnMouseEntered((e) -> {
                 delete.setVisible(true);
                 delete.setManaged(true);
             });
-            this.setOnMouseExited((e)->{
+            this.setOnMouseExited((e) -> {
                 delete.setVisible(false);
                 delete.setManaged(false);
             });
-            delete.setOnMouseClicked((e)-> {
+            delete.setOnMouseEntered((e) -> {
+                delete.setGraphic(new ImageView(imageHovered));
+            });
+            delete.setOnMouseExited((e) -> {
+                delete.setGraphic(new ImageView(image));
+            });
+
+            delete.setOnMouseClicked((e) -> {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Benutzer Löschen");
-                alert.setContentText("Wollen Sie diesen Benutzer dauerhaft löschen?");
+                alert.setContentText("Möchten Sie diesen Benutzer dauerhaft löschen?");
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK){
-                    Task<Void> deleteTask = ClientImpl.getInstance().deleteUser(item.getKey());
+                if (result.get() == ButtonType.OK) {
+                    Task<Void> deleteTask = ClientImpl.getInstance().deleteUser(username);
                     mainView.getExecutorService().submit(deleteTask);
                 }
 
             });
-
-
+        }
     }
+
+
+
 	
 }
