@@ -2,6 +2,7 @@ package de.htwsaar.wirth.client.controller;
 
 import java.net.URL;
 import java.rmi.ConnectException;
+import java.rmi.ConnectIOException;
 import java.rmi.NotBoundException;
 import java.rmi.server.ExportException;
 import java.util.ResourceBundle;
@@ -12,6 +13,7 @@ import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.util.PreferenceService;
 import de.htwsaar.wirth.remote.exceptions.AuthenticationException;
+import de.htwsaar.wirth.remote.util.ExceptionUtil;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -97,45 +99,45 @@ public class LoginController implements Initializable {
             throw e;
         } catch(NumberFormatException numberFormat){
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Login");
-            alert.setHeaderText("UPS! Es ist ein Fehler aufgetreten");
-            alert.setContentText("Bitte geben Sie für den Port eine Zahl ein z.B. 40010");
+            alert.setTitle(ExceptionUtil.PORT_FORMAT.getLocation());
+            alert.setHeaderText(ExceptionUtil.PORT_FORMAT.getDefaultText());
+            alert.setContentText(ExceptionUtil.PORT_FORMAT.toString());
             alert.showAndWait();
 
         } catch(AuthenticationException authEx){
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Login");
-            alert.setHeaderText("UPS! Es ist ein Fehler aufgetreten");
-            alert.setContentText("Der Username oder das Passwort ist falsch");
+            alert.setTitle(ExceptionUtil.WRONG_USER_OR_PSW.getLocation());
+            alert.setHeaderText(ExceptionUtil.WRONG_USER_OR_PSW.getDefaultText());
+            alert.setContentText(ExceptionUtil.WRONG_USER_OR_PSW.toString());
             alert.showAndWait();
 
         } catch(NotBoundException groupNameException){
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Login");
-        alert.setHeaderText("UPS! Es ist ein Fehler aufgetreten");
-        alert.setContentText("Der eingegebene Gruppenname existiert nicht");
+        alert.setTitle(ExceptionUtil.UNKNOWN_GROUPNAME.getLocation());
+        alert.setHeaderText(ExceptionUtil.UNKNOWN_GROUPNAME.getDefaultText());
+        alert.setContentText(ExceptionUtil.UNKNOWN_GROUPNAME.toString());
         alert.showAndWait();
 
-        }catch(ConnectException hostException){
+        }catch(ConnectException | ConnectIOException hostException){
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Login");
-            alert.setHeaderText("UPS! Es ist ein Fehler aufgetreten");
-            alert.setContentText("Der Hostname wurde nicht gefunden. Der Hostname kann eine IP-Adresse sein oder ein Domainname, wird das Feld leer gelassen wird automatisch der Localhost angesprochen.");
+            alert.setTitle(ExceptionUtil.UNKNOWN_HOST.getLocation());
+            alert.setHeaderText(ExceptionUtil.UNKNOWN_HOST.getDefaultText());
+            alert.setContentText(ExceptionUtil.UNKNOWN_HOST.toString());
             alert.showAndWait();
 
         }catch(ExportException portAlreadyInUse){
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Login");
-            alert.setHeaderText("UPS! Es ist ein Fehler aufgetreten");
-            alert.setContentText("Der eingegebene Port wird bereits verwendet. Stellen Sie sicher, dass der eingebene Port nicht schon von einem anderen Programm benutzt wird");
+            alert.setTitle(ExceptionUtil.PORT_IN_USE.getLocation());
+            alert.setHeaderText(ExceptionUtil.PORT_IN_USE.getDefaultText());
+            alert.setContentText(ExceptionUtil.PORT_IN_USE.toString());
             alert.showAndWait();
 
         }catch (Throwable ex){
-
+            ex.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Fehler");
-            alert.setHeaderText("UPS! Es ist ein unbekannter Fehler aufgetreten");
-            alert.setContentText("Bitte versuchen Sie es erneut");
+            alert.setTitle(ExceptionUtil.UNKNOWN_ERROR_LOGIN.getLocation());
+            alert.setHeaderText(ExceptionUtil.UNKNOWN_ERROR_LOGIN.getDefaultText());
+            alert.setContentText(ExceptionUtil.UNKNOWN_ERROR_LOGIN.toString());
             alert.showAndWait();
         }
 

@@ -15,8 +15,13 @@ import de.htwsaar.wirth.client.gui.ApplicationDelegate;
 import de.htwsaar.wirth.client.gui.component.MessageCell;
 import de.htwsaar.wirth.client.gui.component.UserCell;
 import de.htwsaar.wirth.client.util.UIConstants;
+import de.htwsaar.wirth.remote.exceptions.MessageNotExistsException;
+import de.htwsaar.wirth.remote.exceptions.NoPermissionException;
+import de.htwsaar.wirth.remote.exceptions.UserAlreadyExistsException;
+import de.htwsaar.wirth.remote.exceptions.UserNotExistsException;
 import de.htwsaar.wirth.remote.model.Status;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
+import de.htwsaar.wirth.remote.util.ExceptionUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -25,12 +30,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -223,8 +223,39 @@ public class MainViewController implements Initializable {
 	}
 
 	public void onError(Throwable e) {
-		// TODO: Fehlerbehandlung (Dialog)
-		e.printStackTrace();
+		try{
+			throw e;
+		} catch(UserAlreadyExistsException userAlreadyExist){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle(ExceptionUtil.USER_ALREADY_EXISTS.getLocation());
+			alert.setHeaderText(ExceptionUtil.USER_ALREADY_EXISTS.getDefaultText());
+			alert.setContentText(ExceptionUtil.USER_ALREADY_EXISTS.toString());
+			alert.showAndWait();
+		} catch(NoPermissionException noPermission){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle(ExceptionUtil.NO_PERMISSION.getLocation());
+			alert.setHeaderText(ExceptionUtil.NO_PERMISSION.getDefaultText());
+			alert.setContentText(ExceptionUtil.NO_PERMISSION.toString());
+			alert.showAndWait();
+		} catch(UserNotExistsException noUserExist){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle(ExceptionUtil.UNKNOWN_USER.getLocation());
+			alert.setHeaderText(ExceptionUtil.UNKNOWN_USER.getDefaultText());
+			alert.setContentText(ExceptionUtil.UNKNOWN_USER.toString());
+			alert.showAndWait();
+		}catch(MessageNotExistsException messageNotExist){
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setTitle(ExceptionUtil.MESSAGE_NOT_EXISTS.getLocation());
+			alert.setHeaderText(ExceptionUtil.MESSAGE_NOT_EXISTS.getDefaultText());
+			alert.setContentText(ExceptionUtil.MESSAGE_NOT_EXISTS.toString());
+			alert.showAndWait();
+		}catch (Throwable ex){
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle(ExceptionUtil.UNKNOWN_ERROR_MESSAGEBOARD.getLocation());
+			alert.setHeaderText(ExceptionUtil.UNKNOWN_ERROR_MESSAGEBOARD.getDefaultText());
+			alert.setContentText(ExceptionUtil.UNKNOWN_ERROR_MESSAGEBOARD.toString());
+			alert.showAndWait();
+		}
 		Task<Void> logoutTask = ClientImpl.getInstance().logout();
 		exec.submit(logoutTask);
 		ApplicationDelegate.getInstance().showLoginScreen();

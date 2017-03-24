@@ -253,7 +253,7 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	 * @throws RemoteException
 	 * @throws UserAlreadyExistsException, if the username is already in use
 	 */
-	public void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException {
+	public void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException{
 		sessionManager.verifyAuthPacket(auth);
 		if (!sessionManager.isGroupLeader(auth)) {
 			throw new NoPermissionException("The user is not a group-leader");
