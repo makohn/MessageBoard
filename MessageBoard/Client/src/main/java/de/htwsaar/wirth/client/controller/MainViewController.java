@@ -3,6 +3,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,7 +54,7 @@ public class MainViewController implements Initializable {
 	@FXML private Button btnAllFilter;
 	
 	private ObservableList<Message> messages;
-	private ObservableList<Message> sortedWrapperList;
+	private FilteredList<Message> filteredAndSortedList;
 	private ObservableList<String> groups;
 	private ObservableList<Pair<String,Status>> users;
 	
@@ -75,12 +76,13 @@ public class MainViewController implements Initializable {
 
 		// Messages
 		messages = FXCollections.observableArrayList();
-		sortedWrapperList = messages.sorted((m1, m2) -> {
+		ObservableList<Message> sortedWrapperList = messages.sorted((m1, m2) -> {
 			return m1.getCreatedAt().compareTo(m2.getCreatedAt());
 		});
+		filteredAndSortedList = new FilteredList<Message>(sortedWrapperList);
 		chatPane.setSelectionModel(new NoSelectionModel());
 		chatPane.setCellFactory(list -> new MessageCell(this));
-		chatPane.setItems(sortedWrapperList);
+		chatPane.setItems(filteredAndSortedList);
 
 		// Users
 		users = FXCollections.observableArrayList();		
@@ -126,19 +128,21 @@ public class MainViewController implements Initializable {
 	
 	private void initAllFilterButton() {
 		btnAllFilter.setOnAction(e -> {
-			chatPane.setItems(sortedWrapperList);
+			// setPredicate(null), entfernt jegliche Filterung
+			filteredAndSortedList.setPredicate(null);
+			// entferne die Selektierung, damit wir das Selektieren eines bereits vorher selektierten Items
+			// mitbekommen
+			groupList.getSelectionModel().clearSelection();
 		});
 	}
 	
 	private void initGroupFilter() {
 		groupList.getSelectionModel().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
-			Predicate<Message> filter = new Predicate<Message>() {
-				@Override
-				public boolean test(Message t) {
-					return newVal.equals(t.getGroup());
-				}
-			};
-			chatPane.setItems(new FilteredList<Message>(sortedWrapperList, filter));
+			// ignoriere deselektieren
+			if (newVal == null) {
+				return;
+			}
+			filteredAndSortedList.setPredicate(msg -> newVal.equals(msg.getGroup()));
 		});
 	}
 
@@ -171,6 +175,7 @@ public class MainViewController implements Initializable {
 		Task<Map<String, Status>> getUserStatusTask = client.getUserStatus();
 		getUserStatusTask.setOnSucceeded((e) -> {
 			Map<String, Status> userStatusMap = getUserStatusTask.getValue();
+			users.clear();
 			for (Entry<String, Status> entry : userStatusMap.entrySet()) {
 				users.add(new Pair<String, Status> (entry.getKey(), entry.getValue()));
 			}
