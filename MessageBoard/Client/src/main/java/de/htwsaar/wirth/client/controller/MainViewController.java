@@ -96,6 +96,8 @@ public class MainViewController implements Initializable {
 		// Status
 		cmbStatus.setItems(FXCollections.observableArrayList(Status.values()));
 		lblOwnStatus.setText(UIConstants.STATUS_SYMBOL_FILLED);
+		cmbStatus.getSelectionModel().select(Status.ONLINE);
+		lblOwnStatus.setTextFill(Status.ONLINE.getColor());
 		cmbStatus.valueProperty().addListener(new ChangeListener<Status>() {
 			@Override
 			public void changed(ObservableValue<? extends Status> observable, Status oldValue, Status newValue) {
@@ -107,10 +109,9 @@ public class MainViewController implements Initializable {
 				exec.submit(changeStatusTask);
 			}
 	    });
-		
+
 		refreshAllMessages(true);
 		refreshAllUserStatus();
-		
 		initSendMessageButton();
 		initAllFilterButton();
 		initGroupFilter();
@@ -162,7 +163,7 @@ public class MainViewController implements Initializable {
 		});
 		exec.submit(messageTask);
 	}
-	
+
 	public void onError(Throwable e) {
 		// TODO: Fehlerbehandlung (Dialog)
 		e.printStackTrace();
