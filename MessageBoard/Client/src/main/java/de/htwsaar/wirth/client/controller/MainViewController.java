@@ -114,7 +114,7 @@ public class MainViewController implements Initializable {
 		ObservableList<Pair<String, Status>> sortedUserList = users.sorted((p1, p2) -> {
 			return p1.getKey().compareTo(p2.getKey());
 		});
-		userList.setCellFactory(list -> new UserCell());
+		userList.setCellFactory(list -> new UserCell(this));
 		userList.setItems(sortedUserList);
 		
 		// Groups

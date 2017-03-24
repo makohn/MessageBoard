@@ -7,15 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 
-/**
- * Created by stefanschloesser1 on 24.03.17.
- */
+
 public class NewUserDialog extends Dialog<Pair<String, String>> {
 
     public NewUserDialog(){
 
         this.setTitle("Benutzer hinzufügen");
-        this.setContentText("Please enter your name:");
         ButtonType okButton = ButtonType.OK;
         this.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
         GridPane grid = new GridPane();
