@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 
 public class MessageCellController {
 	@FXML private Label usernameLabel;
@@ -26,18 +27,20 @@ public class MessageCellController {
 	@FXML private Button editButton;
 	@FXML private Button deleteButton;
 	
+	private final static int PADDING = 10;
+	private final static String TEXT_CLASS = ".text";
+	
 	private Message message;
 	private MainViewController mainView;
 	
 	private boolean isEditMode = false;
 	
 	private ClientImpl client = ClientImpl.getInstance();
-
+	
 
 	public void initCell(MainViewController mainView, Message msg) {
 		this.message = msg;
 		this.mainView = mainView;
-		
 		// init view
 		
 		setUsername(message.getAuthor());
@@ -150,6 +153,9 @@ public class MessageCellController {
 		txtMessageEdit.setManaged(true);
 		txtMessageEdit.setVisible(true);
 		txtMessageEdit.requestFocus();
+		txtMessageEdit.setWrapText(true);
+		txtMessageEdit.setPrefHeight( ((Text) messageArea.lookup(TEXT_CLASS))
+				.boundsInParentProperty().get().getMaxY() + PADDING);
 	}
 
 	private void changeIntoNormalMode() {

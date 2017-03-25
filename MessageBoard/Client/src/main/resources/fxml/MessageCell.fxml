@@ -4,15 +4,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.glyphfont.Glyph?>
 
-<?import javafx.scene.control.Tooltip?>
-<BorderPane styleClass="messageCell" prefWidth="486.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.MessageCellController">
+<BorderPane prefWidth="486.0" styleClass="messageCell" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.MessageCellController">
    <bottom>
       <Separator prefWidth="200.0" BorderPane.alignment="CENTER" />
    </bottom>
@@ -22,8 +22,8 @@
 			<Insets left="8.0" />
 		</BorderPane.margin>
 		<children>
-			<Label fx:id="messageArea" text="Text" wrapText="true"/>
-			<TextArea fx:id="txtMessageEdit" managed="false" visible="false"/>
+			<Label fx:id="messageArea" text="Text" wrapText="true" />
+			<TextArea fx:id="txtMessageEdit" managed="false" visible="false" VBox.vgrow="ALWAYS" />
 		</children>
      </VBox>
    </center>
