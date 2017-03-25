@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
-	private static final int DEFAULT_STAGE_WIDTH  = 900;
+	private static final int DEFAULT_STAGE_WIDTH  = 1000;
 	private static final int DEFAULT_STAGE_HEIGHT = 700;
 	
 	private ApplicationDelegate delegate;

@@ -10,11 +10,13 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.controlsfx.control.ToggleSwitch;
+
 import de.htwsaar.wirth.client.ClientImpl;
 import de.htwsaar.wirth.client.gui.ApplicationDelegate;
+import de.htwsaar.wirth.client.util.ExceptionUtil;
 import de.htwsaar.wirth.client.util.PreferenceService;
 import de.htwsaar.wirth.remote.exceptions.AuthenticationException;
-import de.htwsaar.wirth.client.util.ExceptionUtil;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,7 +24,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
 /**
@@ -41,7 +42,7 @@ public class LoginController implements Initializable {
     @FXML
     private TextField txtGroupName;
     @FXML
-    private CheckBox checkPort;
+    private ToggleSwitch togglePort;
     @FXML
     private Button btnConnect;
 
@@ -67,8 +68,8 @@ public class LoginController implements Initializable {
         txtHostname.setText(PreferenceService.getInstance().getHostName());
         txtPort.setText(PreferenceService.getInstance().getPort());
         txtGroupName.setText(PreferenceService.getInstance().getGroupeName());
-        checkPort.setSelected(PreferenceService.getInstance().isCallbackPortSelected());
-        txtPort.disableProperty().bind(checkPort.selectedProperty().not());
+        togglePort.setSelected(PreferenceService.getInstance().isCallbackPortSelected());
+        txtPort.disableProperty().bind(togglePort.selectedProperty().not());
     }
 
     /**
@@ -93,7 +94,7 @@ public class LoginController implements Initializable {
      */
 	private void login(ApplicationDelegate delegate) {
         int port;
-		if (!checkPort.isSelected()) {
+		if (!togglePort.isSelected()) {
         	port = 0;
         	txtPort.clear();
         } else {
@@ -106,7 +107,7 @@ public class LoginController implements Initializable {
         }
 		
         PreferenceService.getInstance().setPreference(txtUsername.getText(), txtHostname.getText(), 
-        								checkPort.isSelected(), txtPort.getText(), txtGroupName.getText());
+        								togglePort.isSelected(), txtPort.getText(), txtGroupName.getText());
 		Task<Void> task = client.login(	txtUsername.getText(), 
 										txtPassword.getText(),
 										txtHostname.getText(), 
