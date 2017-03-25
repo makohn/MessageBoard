@@ -25,6 +25,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 
+/**
+ * The LoginController initialize the UI-Elements and controls the actions on the Login-Screen
+ */
 public class LoginController implements Initializable {
 
     @FXML
@@ -47,7 +50,6 @@ public class LoginController implements Initializable {
     private ExecutorService exec;
 
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         client = ClientImpl.getInstance();
@@ -56,6 +58,9 @@ public class LoginController implements Initializable {
 
     }
 
+    /**
+     * Initializes the input elements with the values which were used by the last login.
+     */
     private void initTextFields()
     {
         txtUsername.setText(PreferenceService.getInstance().getUsername());
@@ -66,6 +71,10 @@ public class LoginController implements Initializable {
         txtPort.disableProperty().bind(checkPort.selectedProperty().not());
     }
 
+    /**
+     * Sets a click event on the Connect-Button to delegate to the Main-View
+     * @param delegate
+     */
     public void initManager(final ApplicationDelegate delegate) {
         btnConnect.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -76,6 +85,12 @@ public class LoginController implements Initializable {
         });
     }
 
+    /**
+     * Uses the user-inputs to establish a connection to the Server.
+     * OnSuccess : user is logged in and delegated to the Main-View.
+     * OnError : thrown exceptions will be continued to the onError-Method
+     * @param delegate
+     */
 	private void login(ApplicationDelegate delegate) {
         int port;
 		if (!checkPort.isSelected()) {
@@ -105,7 +120,12 @@ public class LoginController implements Initializable {
 		});
 		exec.submit(task);
 	}
-	
+
+    /**
+     * Specifies the thrown exceptions from the LoginController and
+     * creates an individual Alert-message for each
+     * @param e
+     */
 	private void onError(Throwable e) {
         ApplicationDelegate.getInstance().showLoginScreen();
         try{

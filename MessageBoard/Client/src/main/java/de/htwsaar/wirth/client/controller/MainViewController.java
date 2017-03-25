@@ -148,6 +148,9 @@ public class MainViewController implements Initializable {
         initAddUserButton();
     }
 
+    /**
+     * Sets a action event on the Search-Field and binds a Search-Filter to the search-field
+     */
     private void initSearchField() {
         txtSearch.setOnAction((actionEvent) -> {
             // wenn das SearchField nicht leer ist
@@ -168,6 +171,9 @@ public class MainViewController implements Initializable {
         });
     }
 
+    /**
+     * Sets a Returnkey-event on the Message-textfield to send the message to the server.
+     */
     private void initSendMessageButton() {
         /* Added to prevent the enter from adding a new line to inputMessageBox */
         messageBox.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
@@ -178,6 +184,9 @@ public class MainViewController implements Initializable {
         });
     }
 
+    /**
+     * Sets a action event on the Showall-Button to clear the filter.
+     */
     private void initAllFilterButton() {
         btnAllFilter.setOnAction(e -> {
             // setPredicate(null), entfernt jegliche Filterung
@@ -188,6 +197,9 @@ public class MainViewController implements Initializable {
         });
     }
 
+    /**
+     * Sets a action event on the Group-Buttons to filter the list of messages by a specified group.
+     */
     private void initGroupFilter() {
         groupList.setOnMouseClicked((mouseEvent) -> {
             String clickedGroup = groupList.getSelectionModel().getSelectedItem();
@@ -198,6 +210,9 @@ public class MainViewController implements Initializable {
         });
     }
 
+    /**
+     *  Sets a action event on the Refresh-Button to force the serve to send all messages and user statuses
+     */
     private void initRefreshButton() {
         btnRefresh.setOnAction((actionEv) -> {
             refreshAllMessages(false);
@@ -205,6 +220,9 @@ public class MainViewController implements Initializable {
         });
     }
 
+    /**
+     * Sets a action event on the Adduser-Button which opens a dialog to crreate a new user.
+     */
     private void initAddUserButton() {
         btnAddUser.setOnAction((actionEv) -> {
             Dialog<Pair<String, String>> dialog = new NewUserDialog();
@@ -216,6 +234,9 @@ public class MainViewController implements Initializable {
         });
     }
 
+    /**
+     * Sets a action event on the Logout-Button which log out the user and delegate to the Login-Screen
+     */
     private void initLogoutButton() {
         btnLogout.setOnAction((actionEv) -> {
             ApplicationDelegate.getInstance().showLoadingHUD();
@@ -230,6 +251,10 @@ public class MainViewController implements Initializable {
         });
     }
 
+    /**
+     * Forces the server to send all messages. All messages in the UI will be replaced by the incoming messages.
+     * @param shouldScrollToLast
+     */
     private void refreshAllMessages(boolean shouldScrollToLast) {
         Task<List<Message>> messageTask = client.getAllMessages();
         messageTask.setOnSucceeded((e) -> {
@@ -247,6 +272,101 @@ public class MainViewController implements Initializable {
         exec.submit(messageTask);
     }
 
+    /**
+     * Forces the server to send all user statuses. All user statuses in the UI will be replaced by the incoming statuses.
+     * @param shouldScrollToLast
+     */
+    private void refreshAllUserStatus() {
+        Task<Map<String, Status>> getUserStatusTask = client.getUserStatus();
+        getUserStatusTask.setOnSucceeded((e) -> {
+            Map<String, Status> userStatusMap = getUserStatusTask.getValue();
+            users.clear();
+            for (Entry<String, Status> entry : userStatusMap.entrySet()) {
+                users.add(new Pair<String, Status>(entry.getKey(), entry.getValue()));
+            }
+        });
+        getUserStatusTask.setOnFailed((e) -> {
+            onError(e.getSource().getException());
+        });
+        exec.submit(getUserStatusTask);
+    }
+
+    /**
+     * Reload the UI-Userlist.
+     */
+    private void refreshUserList() {
+        ObservableList<Pair<String, Status>> sortedUserList = users.sorted(Comparator.comparing(Pair::getKey));
+        userList.setCellFactory(list -> new UserCell(this));
+        userList.setItems(sortedUserList);
+    }
+
+    /**
+     * Scroll to the last message in the list
+     */
+    private void scrollToLastMessage() {
+        if (!chatPane.getItems().isEmpty())
+            chatPane.scrollTo(chatPane.getItems().size() - 1);
+    }
+
+    /**
+     * Insert a Message in the messagelist
+     * @param msg
+     */
+    public void insertMessage(Message msg) {
+        messages.remove(msg);
+        messages.add(msg);
+
+        if (!groups.contains(msg.getGroup())) {
+            groups.add(msg.getGroup());
+        }
+    }
+
+    /**
+     * Update a Message in the messagelist
+     * @param msg
+     */
+    public void editMessage(Message msg) {
+        messages.remove(msg);
+        messages.add(msg);
+    }
+
+
+    public void deleteMessage(Message msg) {
+        messages.remove(msg);
+    }
+
+    public void changeUserStatus(String username, Status status) {
+        users.removeIf((pair) -> username.equals(pair.getKey()));
+        users.add(new Pair<String, Status>(username, status));
+    }
+
+    public void deleteUser(String username) {
+        users.removeIf((pair) -> username.equals(pair.getKey()));
+        refreshUserList();
+    }
+
+    public void addUser(String username, String password) {
+        Task<Void> addUserTask = client.addUser(username, password);
+        addUserTask.setOnFailed((e) -> onError(e.getSource().getException()));
+        exec.submit(addUserTask);
+    }
+
+    public void sendMessage() {
+        if (!messageBox.getText().isEmpty()) {
+            Task<Void> sendMessageTask = client.sendMessage(messageBox.getText());
+            sendMessageTask.setOnFailed((e) -> {
+                onError(e.getSource().getException());
+            });
+            exec.submit(sendMessageTask);
+            messageBox.clear();
+        }
+    }
+
+    /**
+     * Specifies the thrown exceptions from the MainViewController and
+     * creates an individual Alert-message for each
+     * @param e
+     */
     public void onError(Throwable e) {
         try {
             throw e;
@@ -295,78 +415,6 @@ public class MainViewController implements Initializable {
             ApplicationDelegate.getInstance().showLoginScreen();
         }
     }
-
-    private void refreshAllUserStatus() {
-        Task<Map<String, Status>> getUserStatusTask = client.getUserStatus();
-        getUserStatusTask.setOnSucceeded((e) -> {
-            Map<String, Status> userStatusMap = getUserStatusTask.getValue();
-            users.clear();
-            for (Entry<String, Status> entry : userStatusMap.entrySet()) {
-                users.add(new Pair<String, Status>(entry.getKey(), entry.getValue()));
-            }
-        });
-        getUserStatusTask.setOnFailed((e) -> {
-            onError(e.getSource().getException());
-        });
-        exec.submit(getUserStatusTask);
-    }
-
-    private void refreshUserList() {
-        ObservableList<Pair<String, Status>> sortedUserList = users.sorted(Comparator.comparing(Pair::getKey));
-        userList.setCellFactory(list -> new UserCell(this));
-        userList.setItems(sortedUserList);
-    }
-
-    private void scrollToLastMessage() {
-        if (!chatPane.getItems().isEmpty())
-            chatPane.scrollTo(chatPane.getItems().size() - 1);
-    }
-
-    public void insertMessage(Message msg) {
-        messages.remove(msg);
-        messages.add(msg);
-
-        if (!groups.contains(msg.getGroup())) {
-            groups.add(msg.getGroup());
-        }
-    }
-
-    public void editMessage(Message msg) {
-        messages.remove(msg);
-        messages.add(msg);
-    }
-
-    public void deleteMessage(Message msg) {
-        messages.remove(msg);
-    }
-
-    public void changeUserStatus(String username, Status status) {
-        users.removeIf((pair) -> username.equals(pair.getKey()));
-        users.add(new Pair<String, Status>(username, status));
-    }
-
-    public void deleteUser(String username) {
-        users.removeIf((pair) -> username.equals(pair.getKey()));
-        refreshUserList();
-    }
-
-    public void addUser(String username, String password) {
-        Task<Void> addUserTask = client.addUser(username, password);
-        addUserTask.setOnFailed((e) -> onError(e.getSource().getException()));
-        exec.submit(addUserTask);
-    }
-
-    public void sendMessage() {
-        if (!messageBox.getText().isEmpty()) {
-            Task<Void> sendMessageTask = client.sendMessage(messageBox.getText());
-            sendMessageTask.setOnFailed((e) -> {
-                onError(e.getSource().getException());
-            });
-            exec.submit(sendMessageTask);
-            messageBox.clear();
-        }
-    }
-
 
     public ExecutorService getExecutorService() {
         return exec;
