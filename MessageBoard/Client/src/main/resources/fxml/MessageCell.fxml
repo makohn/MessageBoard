@@ -4,7 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -23,7 +23,7 @@
 		</BorderPane.margin>
 		<children>
 			<Label fx:id="messageArea" text="Text" wrapText="true"/>
-			<TextField fx:id="txtMessageEdit" managed="false" visible="false" promptText="Nachricht bearbeiten"/>
+			<TextArea fx:id="txtMessageEdit" managed="false" visible="false"/>
 		</children>
      </VBox>
    </center>

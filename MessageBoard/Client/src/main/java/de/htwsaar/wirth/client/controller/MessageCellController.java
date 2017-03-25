@@ -10,7 +10,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -21,7 +21,7 @@ public class MessageCellController {
 	@FXML private Label modificationTextLabel;
 	@FXML private Label modificationDateLabel;
 	@FXML private Label messageArea;
-	@FXML private TextField txtMessageEdit;
+	@FXML private TextArea txtMessageEdit;
 	@FXML private Button publishButton;
 	@FXML private Button editButton;
 	@FXML private Button deleteButton;
