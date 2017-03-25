@@ -177,7 +177,11 @@ public class MainViewController implements Initializable {
     private void initSendMessageButton() {
         /* Added to prevent the enter from adding a new line to inputMessageBox */
         messageBox.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
-            if (ke.getCode().equals(KeyCode.ENTER)) {
+        	boolean isEnterPressed = ke.getCode().equals(KeyCode.ENTER);
+        	if (ke.isShiftDown() && isEnterPressed) {
+        		messageBox.appendText("\n");
+        		ke.consume();
+        	} else if (isEnterPressed) {
                 sendMessage();
                 ke.consume();
             }

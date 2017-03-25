@@ -9,10 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.control.Label;
 
 public class MessageCellController {
 	@FXML private Label usernameLabel;
@@ -97,7 +97,11 @@ public class MessageCellController {
 			changeIntoEditMode();
 			// Beenden des Edits durch Enter
 			txtMessageEdit.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
-	            if (ke.getCode().equals(KeyCode.ENTER)) {
+	            boolean isEnterPressed = ke.getCode().equals(KeyCode.ENTER);
+				if (ke.isShiftDown() && isEnterPressed) {
+					txtMessageEdit.appendText("\n");
+					ke.consume();
+				} else if (isEnterPressed) {
 	            	editMessage();
 	            	ke.consume();
 	            }
