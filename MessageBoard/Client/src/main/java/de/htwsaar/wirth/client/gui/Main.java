@@ -1,9 +1,10 @@
 package de.htwsaar.wirth.client.gui;
 
 /**
- * Created by makohn on 12.02.17.
+ * Main entry point to the UI.
+ * @author mkohn
+ *
  */
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
