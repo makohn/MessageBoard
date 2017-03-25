@@ -1,7 +1,5 @@
 package de.htwsaar.wirth.client.util;
 
-import javafx.scene.paint.Color;
-
 import java.io.Serializable;
 
 public enum ExceptionUtil implements Serializable {
