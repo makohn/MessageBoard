@@ -156,6 +156,10 @@ public class MessageCellController {
 		txtMessageEdit.setWrapText(true);
 		txtMessageEdit.setPrefHeight( ((Text) messageArea.lookup(TEXT_CLASS))
 				.boundsInParentProperty().get().getMaxY() + PADDING);
+//		((Text) txtMessageEdit.lookup(TEXT_CLASS)).textProperty().addListener(b -> {
+//			txtMessageEdit.setPrefHeight(((Text) txtMessageEdit.lookup(TEXT_CLASS))
+//			.boundsInParentProperty().get().getMaxY());
+//		});
 	}
 
 	private void changeIntoNormalMode() {
