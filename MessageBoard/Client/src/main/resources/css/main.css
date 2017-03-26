@@ -140,3 +140,16 @@
 .btnLogout:hover {
 	-fx-text-fill: red;
 }
+
+.btnDeleteUser {
+	-fx-label-padding: 0 5 4 0;
+}
+
+.btnDeleteUser .glyph-font {
+	-fx-text-fill: white;
+}
+
+.btnDeleteUser:hover .glyph-font {
+	-fx-text-fill: red;
+}
+
