@@ -127,6 +127,8 @@ public class MainViewController implements Initializable {
         cmbStatus.valueProperty().addListener(new ChangeListener<Status>() {
             @Override
             public void changed(ObservableValue<? extends Status> observable, Status oldValue, Status newValue) {
+                lblOwnStatus.setText(newValue.equals(Status.OFFLINE) ? UIConstants.STATUS_SYMBOL_EMPTY :
+                													   UIConstants.STATUS_SYMBOL_FILLED);
                 lblOwnStatus.setTextFill(newValue.getColor());
                 Task<Void> changeStatusTask = client.changeUserStatus(newValue);
                 changeStatusTask.setOnFailed(e -> {
