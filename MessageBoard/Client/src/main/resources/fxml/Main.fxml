@@ -28,7 +28,7 @@
                <left>
                   <HBox prefHeight="93.0" prefWidth="384.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="groupButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="131.0" styleClass="current-group-button" text="# Vorstand" />
+                        <Button fx:id="groupButton" alignment="BASELINE_LEFT" mnemonicParsing="false" prefHeight="35.0" prefWidth="131.0" styleClass="current-group-button" text="# Vorstand" />
                      </children></HBox>
                </left>
                <right>
@@ -138,7 +138,7 @@
                      <children>
                         <HBox>
                            <children>
-                              <Label fx:id="fullNameLabel" styleClass="own-fullname-label" text="Marek Kohn">
+                              <Label fx:id="usernameLabel" styleClass="own-fullname-label" text="Marek Kohn">
                                  <HBox.margin>
                                     <Insets top="3.0" />
                                  </HBox.margin></Label>
@@ -154,7 +154,7 @@
                               </ComboBox>
                            </children>
                         </HBox>
-                        <Label fx:id="usernameLabel" styleClass="own-username-label" text="\@test" />
+                        <Label fx:id="fullNameLabel" styleClass="own-username-label" text="\@test" />
                      </children>
                   </VBox>
                </children>

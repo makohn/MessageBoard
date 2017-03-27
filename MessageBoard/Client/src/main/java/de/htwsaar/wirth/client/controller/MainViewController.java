@@ -52,9 +52,9 @@ public class MainViewController implements Initializable {
     @FXML
     private Label reloadLabel;
     @FXML
-    private Label usernameLabel;
-    @FXML
     private Label fullNameLabel;
+    @FXML
+    private Label usernameLabel;
     @FXML
     private ComboBox<Status> cmbStatus;
     @FXML
@@ -99,9 +99,9 @@ public class MainViewController implements Initializable {
         client = ClientImpl.getInstance();
         client.setView(this);
 
-        groupButton.setText(client.getGroupName());
-        usernameLabel.setText(client.getUsername());
+        groupButton.setText(UIConstants.GROUP_TAG + client.getGroupName());
         fullNameLabel.setText(client.getUsername());
+        usernameLabel.setText(client.getUsername());
 
         // Messages
         messages = FXCollections.observableArrayList();
