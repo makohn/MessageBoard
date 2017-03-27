@@ -27,7 +27,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 /**
- * The LoginController initialize the UI-Elements and controls the actions on the Login-Screen
+ * Class {@code LoginController} initializes the UI-Elements and controls the actions on the Login-Screen
  */
 public class LoginController implements Initializable {
 

@@ -7,7 +7,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
 
-
+/**
+ * Class {@code NewUserDialog} opens a popup which allows to input a username and a password
+ */
 public class NewUserDialog extends Dialog<Pair<String, String>> {
 
     public NewUserDialog(){

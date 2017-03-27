@@ -15,6 +15,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 
+/**
+ * Class {@code MessageCellController} initializes the UI-Elements and controls the actions to display a messagecell
+ */
 public class MessageCellController {
 	@FXML private Label usernameLabel;
 	@FXML private Label groupLabel;
@@ -29,12 +32,9 @@ public class MessageCellController {
 	
 	private final static int PADDING = 10;
 	private final static String TEXT_CLASS = ".text";
-	
 	private Message message;
-	private MainViewController mainView;
-	
 	private boolean isEditMode = false;
-	
+	private MainViewController mainView;
 	private ClientImpl client = ClientImpl.getInstance();
 	
 
@@ -83,7 +83,10 @@ public class MessageCellController {
 			initDeleteEventHandler();
 		}
 	}
-	
+
+	/**
+	 * Sets a action event on the Publish-button to call a publish method on the server.
+	 */
 	private void initPublishEventHandler() {
 		publishButton.setOnAction((actionEvent) -> {
 			Task<Void> publishTask = client.publishMessage(message.getID());
@@ -95,6 +98,9 @@ public class MessageCellController {
 		
 	}
 
+	/**
+	 * Sets a action event on the Edit-button to call a edit method on the server.
+	 */
 	private void initEditEventHandler() {
 		editButton.setOnAction((actionEvent) -> {
 			changeIntoEditMode();
@@ -122,7 +128,10 @@ public class MessageCellController {
 			});			
 		});
 	}
-	
+
+	/**
+	 * Sets a action event on the Delete-button to call a delete method on the server.
+	 */
 	private void initDeleteEventHandler() {
 		deleteButton.setOnAction((actionEvent) -> {
 			Task<Void> deleteTask = client.deleteMessage(message.getID());
@@ -132,7 +141,10 @@ public class MessageCellController {
 			mainView.getExecutorService().submit(deleteTask);
 		});
 	}
-	
+
+	/**
+	 * Calls a edit method on the server.
+	 */
 	private void editMessage() {
 		if (isEditMode) {
 			String editedMsgTxt = txtMessageEdit.getText();
@@ -144,7 +156,10 @@ public class MessageCellController {
 			changeIntoNormalMode();
 		}
 	}
-	
+
+	/**
+	 * Changes to a Edit-mode to display a textfield which allows to edit a message.
+	 */
 	private void changeIntoEditMode() {
 		isEditMode = true;
 		messageArea.setManaged(false);
@@ -162,6 +177,9 @@ public class MessageCellController {
 //		});
 	}
 
+	/**
+	 * Changes from the Edit-mode into a normal stage.
+	 */
 	private void changeIntoNormalMode() {
 		messageArea.setManaged(true);
 		messageArea.setVisible(true);
@@ -169,7 +187,8 @@ public class MessageCellController {
 		txtMessageEdit.setVisible(false);
 		isEditMode = false;
 	}
-	
+
+
 	private void enableButton(Button btn) {
 		btn.setManaged(true);
 		btn.setVisible(true);

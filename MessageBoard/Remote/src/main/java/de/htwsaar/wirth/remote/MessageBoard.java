@@ -11,6 +11,9 @@ import de.htwsaar.wirth.remote.model.auth.AuthPacket;
 import de.htwsaar.wirth.remote.model.auth.LoginPacket;
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
+/**
+ * Class {@code MessageBoard} contains all methodes which the client can call on the server.
+ */
 public interface MessageBoard extends Remote {
 	
 	/* Messages */

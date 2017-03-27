@@ -19,6 +19,9 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 
+/**
+ * Class {@code ClientImpl}
+ */
 public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableClient {
 	
     private static ClientImpl instance;

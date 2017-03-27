@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 
+
 public class UserCell extends ListCell<Pair<String,Status>> {
 	
 	private HBox listEntry;
@@ -28,6 +29,7 @@ public class UserCell extends ListCell<Pair<String,Status>> {
 	private ClientImpl client;
 	
 	private static final String BTN_STYLECLASS_DELETE = "btnDeleteUser";
+
 
     public UserCell (MainViewController mainView)
     {

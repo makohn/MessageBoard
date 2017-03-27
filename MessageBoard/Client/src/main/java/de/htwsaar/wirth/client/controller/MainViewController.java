@@ -32,6 +32,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
+/**
+ * Class {@code MainViewController} initializes the UI-Elements and controls the actions on the Messageboard-Screen
+ */
 public class MainViewController implements Initializable {
 
     @FXML
@@ -73,15 +76,19 @@ public class MainViewController implements Initializable {
     @FXML
     private Button btnLogout;
 
+    //List of all displayed messages
     private ObservableList<Message> messages;
+    //Sorted list of all displayed messages
     private FilteredList<Message> filteredAndSortedList;
+    //List of all displayed groups
     private ObservableList<String> groups;
+    //List of all displayed users
     private ObservableList<Pair<String, Status>> users;
-
+    //A Filter for groups
     private Predicate<Message> groupFilter;
-
+    //The Client
     private ClientImpl client;
-
+    //A manager for all outgoing server requests
     private ExecutorService exec;
 
     @Override
@@ -280,7 +287,6 @@ public class MainViewController implements Initializable {
 
     /**
      * Forces the server to send all user statuses. All user statuses in the UI will be replaced by the incoming statuses.
-     * @param shouldScrollToLast
      */
     private void refreshAllUserStatus() {
         Task<Map<String, Status>> getUserStatusTask = client.getUserStatus();
@@ -307,15 +313,16 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Scroll to the last message in the list
+     * Scrolls to the last message in the list
      */
     private void scrollToLastMessage() {
         if (!chatPane.getItems().isEmpty())
             chatPane.scrollTo(chatPane.getItems().size() - 1);
     }
 
+    ////////////////////////////// Mesthods called by the Server ///////////////////////////////////
     /**
-     * Insert a Message in the messagelist
+     * Inserts a Message in the messagelist
      * @param msg
      */
     public void insertMessage(Message msg) {
@@ -328,7 +335,7 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Update a Message in the messagelist
+     * Updates a Message in the messagelist
      * @param msg
      */
     public void editMessage(Message msg) {
@@ -336,27 +343,48 @@ public class MainViewController implements Initializable {
         messages.add(msg);
     }
 
-
+    /**
+     * Removes a Message from the messagelist
+     * @param msg
+     */
     public void deleteMessage(Message msg) {
         messages.remove(msg);
     }
 
+    /**
+     * Changes the status of an user.
+     * @param username
+     * @param status
+     */
     public void changeUserStatus(String username, Status status) {
         users.removeIf((pair) -> username.equals(pair.getKey()));
         users.add(new Pair<String, Status>(username, status));
     }
 
+    /**
+     * Removes a user from the userlist.
+     * @param username
+     */
     public void deleteUser(String username) {
         users.removeIf((pair) -> username.equals(pair.getKey()));
         refreshUserList();
     }
 
+    ////////////////////////////// Mesthods executed on the server ///////////////////////////////////
+    /**
+     * Calls a method on the server to add a user.
+     * @param username
+     * @param password
+     */
     public void addUser(String username, String password) {
         Task<Void> addUserTask = client.addUser(username, password);
         addUserTask.setOnFailed((e) -> onError(e.getSource().getException()));
         exec.submit(addUserTask);
     }
 
+    /**
+     * Calls a method on the server to send a message.
+     */
     public void sendMessage() {
         if (!messageBox.getText().isEmpty()) {
             Task<Void> sendMessageTask = client.sendMessage(messageBox.getText());
@@ -368,12 +396,13 @@ public class MainViewController implements Initializable {
         }
     }
 
+
     /**
      * Specifies the thrown exceptions from the MainViewController and
      * creates an individual Alert-message for each
      * @param e
      */
-    public void onError(Throwable e) {
+    protected void onError(Throwable e) {
         try {
             throw e;
         } catch (UserAlreadyExistsException userAlreadyExist) {

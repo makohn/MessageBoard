@@ -2,6 +2,7 @@ package de.htwsaar.wirth.client.util;
 
 import java.io.Serializable;
 
+
 public enum ExceptionUtil implements Serializable {
 
 	USER_ALREADY_EXISTS("Messagebord","Der verwendete Benutzername existiert bereits."),

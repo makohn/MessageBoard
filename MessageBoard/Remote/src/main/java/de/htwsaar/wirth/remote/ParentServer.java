@@ -6,6 +6,9 @@ import java.util.List;
 
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
+/**
+ * Class {@code ParentServer} contains all methodes which can be called on a parentServer.
+ */
 public interface ParentServer extends Remote {
 
 	void registerServer(Notifiable childServer) throws RemoteException;

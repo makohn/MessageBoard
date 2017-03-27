@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * The AuthPacket-Class is used by the client to authenticate on the server to execute remote functions.
+ * Class {@code AuthPacket} is given to the client if the user is already authenticated by the loginPackage.
  */
 public class AuthPacket implements Serializable {
 

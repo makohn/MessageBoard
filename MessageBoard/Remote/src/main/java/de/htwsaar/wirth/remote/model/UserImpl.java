@@ -15,8 +15,6 @@ import de.htwsaar.wirth.remote.model.interfaces.User;
 
 /**
  * Implements User-Interface
- * Created by stefanschloesser1 on 03.02.17.
- * Edited by oliverseibert on 09.02.17
  */
 @Entity
 @Table(name="users")

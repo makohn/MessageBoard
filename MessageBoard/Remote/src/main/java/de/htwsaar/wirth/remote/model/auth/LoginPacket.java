@@ -3,8 +3,7 @@ package de.htwsaar.wirth.remote.model.auth;
 import java.io.Serializable;
 
 /**
- * A LoginPacket is used the first time 
- * when the client starts a connection with a server.
+ * Class {@code LoginPacket} will be transfer from the client to the server to authenticate the client.
  */
 public class LoginPacket implements Serializable {
 

@@ -5,6 +5,9 @@ import java.rmi.RemoteException;
 
 import de.htwsaar.wirth.remote.model.interfaces.Message;
 
+/**
+ * Class {@code Notifiable} contains all methodes which can be called on a client or a server to notify changes.
+ */
 public interface Notifiable extends Remote {
 	
 	void notifyNew(Message msg) throws RemoteException;
