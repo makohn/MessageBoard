@@ -22,7 +22,7 @@
     </properties>
 	
 	<dependencies>
-	
+		<!--  Testing -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
@@ -39,6 +39,13 @@
     		<groupId>org.junit.jupiter</groupId>
     		<artifactId>junit-jupiter-api</artifactId>
     		<version>5.0.0-M3</version>
+		</dependency>
+		
+		<!-- Logging -->
+		<dependency>
+    		<groupId>log4j</groupId>
+    		<artifactId>log4j</artifactId>
+    		<version>1.2.17</version>
 		</dependency>
         
     </dependencies>
