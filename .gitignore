@@ -3,6 +3,7 @@
 #
 
 tomcat
+logs/
 
 # Database Files
 *.db
