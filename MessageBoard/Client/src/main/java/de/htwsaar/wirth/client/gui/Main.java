@@ -8,7 +8,6 @@ package de.htwsaar.wirth.client.gui;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -21,8 +20,6 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage stage) throws Exception {
-		Image icon = new Image(this.getClass().getResourceAsStream("/img/icon-1024-mac.png"));
-		stage.getIcons().add(icon);
 		Scene scene = new Scene(new StackPane());
 		
 		delegate = ApplicationDelegate.getInstance();
