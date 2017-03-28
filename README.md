@@ -1,6 +1,6 @@
 ## MessageBoard 
 
-<img src="http://www.bilder-upload.eu/upload/2584ea-1490713847.png" width="75" height="75" />&nbsp;&nbsp;&nbsp;             <img src="https://www.htwsaar.de/ingwi/logo.png" width="210" height="65" />
+<img src="http://www.bilder-upload.eu/upload/2584ea-1490713847.png" width="75" height="75" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://www.htwsaar.de/ingwi/logo.png" width="200" height="70" />
 
 *MessageBoard* is a students' project made with Java RMI as part of the distributed systems lecture at htw saar.
 Its main purpose is to depict a company's communication hierarchy in a distributed client-server system. Thus, each department of the company is represented as an individual group (server) in the system. Each group, except the root one, is child of a higher-level group, allowing messages to be cascaded top-down, beginning with the root group. Accordingly, the root group is the most public group with publicity being decreased by each level of the hierarchy.
@@ -31,7 +31,7 @@ java -jar server.jar -g <groupname> -p <port>
 ```
 java -jar server.jar -g <groupname> -p <port> -ph <parent_ip_adr> -pg <parentgroup>
 ```
-&nbsp;&nbsp;&nbsp;&nbsp; to connect to a existing server.
+&nbsp;&nbsp;&nbsp;&nbsp; to connect to an existing server.
 <br></br>
 - To start the **client**, simply click on the jar file when using a graphical explorer. Otherwise type: 
 ```
