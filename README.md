@@ -1,4 +1,11 @@
-# MessageBoard <img src="https://www.dropbox.com/s/b02zzdp8x3gaccd/icon-1024-mac.png" width="50" height="50" />
+## MessageBoard 
+
+<img src="http://www.bilder-upload.eu/upload/2584ea-1490713847.png" width="75" height="75" />&nbsp;&nbsp;&nbsp;             <img src="https://www.htwsaar.de/ingwi/logo.png" width="210" height="65" />
+
+*MessageBoard* is a students' project made with Java RMI as part of the distributed systems lecture at htw saar.
+Its main purpose is to depict a company's communication hierarchy in a distributed client-server system. Thus, each department of the company is represented as an individual group (server) in the system. Each group, except the root one, is child of a higher-level group, allowing messages to be cascaded top-down, beginning with the root group. Accordingly, the root group is the most public group with publicity being decreased by each level of the hierarchy.
+Since each group has an administrator, that very ones are allowed to publish messages into the next higher level as well as adding and deleting users.
+
 
 master | 
 -------|
@@ -6,24 +13,27 @@ master |
 
 
 
-##How to build
+### How to build
 - Install Java 8 [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 - Install [maven](http://maven.apache.org/).
 - Clone the project `git@github.com:makohn/MessageBoard.git` or download the [zip](https://github.com/makohn/MessageBoard/archive/master.zip) file. 
-- Change dir to the **inner** MessageBoard directory and type `mvn install` at the console.
-
-##How to run
-- Change dir to the **inner** MessageBoard directory
-- Type or copy the following command for starting the server 
-
+- Navigate into the **inner** MessageBoard directory and type `mvn clean install` at the console. 
+- This should create a build folder containing two executable jar files.
+  
+### How to run
+- Navigate into the **build/** directory
+- Decide which program you want to execute. Usually it is quite reasonable to start the server first, but if there is a server already you're good to go with starting a client instance.
+- To start the **server**, type
 ```
-java -cp Remote/target/Remote-0.0.1-SNAPSHOT.jar:Server/target/Server-0.0.1-SNAPSHOT.jar de.htwsaar.wirth.server.Main root 1099
+java -jar server.jar -g <groupname> -p <port>
 ```
-
-- Accordingly type the following at the console for starting the client
-
+&nbsp;&nbsp;&nbsp;&nbsp; if you want to start a root instance, or:
 ```
-java -cp Remote/target/Remote-0.0.1-SNAPSHOT.jar:Client/target/Client-0.0.1-SNAPSHOT.jar de.htwsaar.wirth.client.gui.Main
+java -jar server.jar -g <groupname> -p <port> -ph <parent_ip_adr> -pg <parentgroup>
 ```
-
-:bangbang: **_Note that this can and will be automated in a future version_**
+&nbsp;&nbsp;&nbsp;&nbsp; to connect to a existing server.
+<br></br>
+- To start the **client**, simply click on the jar file when using a graphical explorer. Otherwise type: 
+```
+java -jar client.jar
+```
