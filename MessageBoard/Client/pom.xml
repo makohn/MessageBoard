@@ -66,6 +66,23 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- For native macOS Support: uncomment this and run mvn jfx:native -->
+			<!-- 
+			<plugin>
+				<groupId>com.zenjava</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>8.8.3</version>
+				<configuration>
+					<vendor>htwsaar.wirth</vendor>
+					<mainClass>${project.mainClass}</mainClass>
+					<bundleArguments>
+						<icon.icns>${basedir}/src/main/deploy/package/macosx/client.icns</icon.icns>
+					</bundleArguments>
+				</configuration>
+			</plugin>
+			-->
+			
 		</plugins>
 	</build>
 
