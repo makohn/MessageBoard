@@ -1,15 +1,10 @@
-# MessageBoard
-
-
-```diff
-- _______________________INFO_________________________
-- 'Neustart_Issue' und 'gui' wurden in 'dev' gemerged.
-- ____________________________________________________
-```
+# MessageBoard <img src="https://www.dropbox.com/s/b02zzdp8x3gaccd/icon-1024-mac.png" width="50" height="50" />
 
 master | 
 -------|
 [![Build Status](https://travis-ci.com/makohn/MessageBoard.svg?token=z1kyyNNo3nk7k9bTgxPq&branch=master)](https://travis-ci.com/makohn/MessageBoard)|
+
+
 
 ##How to build
 - Install Java 8 [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
