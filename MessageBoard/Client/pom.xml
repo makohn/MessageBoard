@@ -12,6 +12,13 @@
     </parent>
     <artifactId>Client</artifactId>
     <packaging>jar</packaging>
+    
+    <properties>
+    <project.mainClass>de.htwsaar.wirth.client.gui.Main</project.mainClass>
+    <assembly.version>3.0.0</assembly.version>
+    <controlsfx.version>8.40.12</controlsfx.version>
+    <fontawesome.version>8.9</fontawesome.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -22,13 +29,44 @@
 	    <dependency>
 		    <groupId>org.controlsfx</groupId>
 		    <artifactId>controlsfx</artifactId>
-		    <version>8.40.12</version>
+		    <version>${controlsfx.version}</version>
 		</dependency>
 	    <dependency>
 	        <groupId>de.jensd</groupId>
 	        <artifactId>fontawesomefx</artifactId>
-	        <version>8.9</version>
+	        <version>${fontawesome.version}</version>
 	    </dependency>
 </dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${assembly.version}</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<finalName>client</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<outputDirectory>${basedir}/../build</outputDirectory>
+					<archive>
+						<manifest>
+							<mainClass>${project.mainClass}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
