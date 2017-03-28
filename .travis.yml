@@ -5,6 +5,12 @@ jdk:
 
 script: cd MessageBoard ; mvn install
 
+# addons
+addons:
+  apt:
+    packages:
+    - oracle-java8-installer
+
 # white list
 branches:
   only:
