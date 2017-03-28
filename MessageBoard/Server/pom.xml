@@ -45,7 +45,7 @@
 					</descriptorRefs>
 					<finalName>server</finalName>
 					<appendAssemblyId>false</appendAssemblyId>
-					<outputDirectory>${basedir}/build</outputDirectory>
+					<outputDirectory>${basedir}/../build</outputDirectory>
 					<archive>
 						<manifest>
 							<mainClass>${project.mainClass}</mainClass>
