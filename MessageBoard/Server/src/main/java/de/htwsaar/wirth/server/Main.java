@@ -88,6 +88,8 @@ public class Main {
 		String parentGroup 	= null;
 		String ipadr        = null;
 		int port 			= 0;
+		long startTime		= 0; //Debugging
+		long elapsedTime	= 0; //Debugging
 		
 		Options options = new Options();
 		options.addOption(GROUP);
@@ -121,10 +123,10 @@ public class Main {
 		}
 
 	    // start server
+		startTime = System.currentTimeMillis();
 		if (root) {
 			try {
 				new Server(group, port);
-				logger.info("Server is alive, running on Port " + port + " and kicking");
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (AlreadyBoundException e) {
@@ -134,7 +136,6 @@ public class Main {
 			try {
 				new Server(group, port, parent, parentGroup);
 				logger.info("Server is connected to "+ parent + " in group "+ parentGroup);
-
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (AlreadyBoundException e) {
@@ -143,6 +144,9 @@ public class Main {
 				logger.error(PARENT_NOT_AVAILABLE);
 			}
 		}
+		elapsedTime = System.currentTimeMillis();
+		logger.info("Server startup took " + (elapsedTime-startTime) + " milliseconds");
+		logger.info("Server is alive, running on Port " + port + " and kicking");
 		logger.info("Server is running on host: " + (ipadr != null ? ipadr : "Unknown"));
 	}
 	

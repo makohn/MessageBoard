@@ -2,6 +2,10 @@ package de.htwsaar.wirth.server.dao;
 
 import org.hibernate.dialect.identity.IdentityColumnSupportImpl;
 
+/**
+ * Hibernate util class
+ *
+ */
 public class SQLiteDialectIdentityColumnSupport extends IdentityColumnSupportImpl {
     @Override
     public boolean supportsIdentityColumns() {

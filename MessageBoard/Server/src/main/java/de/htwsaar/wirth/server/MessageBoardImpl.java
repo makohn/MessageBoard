@@ -168,6 +168,7 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 						// if we catch a remoteException the callback for this client doesn't work
 						if (clientNotifyMap.containsValue(entry.getValue())) {
 							clientNotifyMap.remove(entry);
+							//TODO: NoSuchObjectException catchen _
 							//changeUserStatusAndNotifyClients(entry.getKey(), Status.SHOW_AS_OFFLINE);
 						}
 					}

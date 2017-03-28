@@ -1,5 +1,11 @@
 package de.htwsaar.wirth.server;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import de.htwsaar.wirth.remote.exceptions.AuthenticationException;
 import de.htwsaar.wirth.remote.exceptions.NotLoggedInException;
 import de.htwsaar.wirth.remote.model.auth.AuthPacket;
@@ -9,11 +15,10 @@ import de.htwsaar.wirth.remote.model.interfaces.User;
 import de.htwsaar.wirth.remote.util.HashUtil;
 import de.htwsaar.wirth.server.service.Services;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class SessionManager {
-
+	
+	private static final Logger logger = LogManager.getLogger(SessionManager.class);
+	
     /**
      * the session map, which stores a authentification token for each username
      */
@@ -23,6 +28,7 @@ public class SessionManager {
     
     public SessionManager(String groupName) {
     	this.groupName = groupName;
+    	logger.info("Initialising the SessionManager for group: " + groupName);
     }
 
     /**
@@ -46,6 +52,7 @@ public class SessionManager {
 	    		// successful login
 	            AuthPacket auth = new AuthPacket(givenUsername, user.isGroupLeader(), groupName);
                 sessions.put(givenUsername, auth);
+                logger.info("User " + givenUsername + " logged in successfully");
                 return auth;
 	        }
 	    }
@@ -95,6 +102,7 @@ public class SessionManager {
      * @param username
      */
     public void logout(String username) {
+    	logger.info("User " + username + " logged out.");
         sessions.remove(username);
     }
 
