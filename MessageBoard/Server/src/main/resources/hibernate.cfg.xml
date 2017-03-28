@@ -14,7 +14,7 @@
 		<property name="hbm2ddl.auto">update</property>
 
 		<!-- SQL Output -->
-		<property name="show_sql">true</property>
+		<property name="show_sql">false</property>
 		<property name="format_sql">true</property>
 
 		<mapping class="de.htwsaar.wirth.remote.model.MessageImpl" />
