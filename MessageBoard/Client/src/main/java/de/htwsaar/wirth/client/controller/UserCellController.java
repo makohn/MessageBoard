@@ -41,7 +41,9 @@ public class UserCellController {
 		btnDeleteUser.setVisible(false);
 		btnDeleteUser.setDisable(true);
 		btnDeleteUser.setTooltip(TOOLTIP_DELETE_USER);
-		initDeleteButton(item.getKey());
+		if(ClientImpl.getInstance().isGroupLeader()) {
+			initDeleteButton(item.getKey());
+		}
 	}
 	
 	/**

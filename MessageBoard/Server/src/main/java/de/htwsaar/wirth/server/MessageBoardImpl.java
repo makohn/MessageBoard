@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -206,13 +207,17 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 					try {
 						handler.handle(entry.getValue());
 					} catch (RemoteException e) {
-						e.printStackTrace();
+						String s = entry.getValue().toString();
+						logger.warn("Client: " + entry.getKey() + " @endpoint: " 
+								    + s.substring(s.indexOf("endpoint") + 9, s.indexOf(']') + 1) 
+								    + " could not be resolved.");
 						// if we catch a remoteException the callback for this client doesn't work
 						if (clientNotifyMap.containsValue(entry.getValue())) {
 							clientNotifyMap.remove(entry);
-							//TODO: NoSuchObjectException catchen _
 							//changeUserStatusAndNotifyClients(entry.getKey(), Status.SHOW_AS_OFFLINE);
 						}
+					} catch (NoSuchElementException ex) {
+						logger.warn(entry.getKey() + " tried to execute a method on a non-existing object");
 					}
 				});
 			}

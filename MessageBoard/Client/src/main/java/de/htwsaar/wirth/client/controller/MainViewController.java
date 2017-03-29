@@ -217,7 +217,7 @@ public class MainViewController implements Initializable {
     private void initGroupFilter() {
         groupList.setOnMouseClicked((mouseEvent) -> {
             String clickedGroup = groupList.getSelectionModel().getSelectedItem();
-            groupFilter = msg -> clickedGroup.equals(msg.getGroup());
+            groupFilter = clickedGroup != null ? msg -> clickedGroup.equals(msg.getGroup()) : null;
             filteredAndSortedList.setPredicate(groupFilter);
             // entferne den Suchtext aus dem Suchfeld, da nun eine Gruppenfilterung ausgewählt wurde
             txtSearch.clear();
