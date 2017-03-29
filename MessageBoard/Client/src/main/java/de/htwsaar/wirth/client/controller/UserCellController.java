@@ -15,6 +15,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.util.Pair;
 
+/**
+ * Class {@code UserCellController} initializes the UI-Elements and controls the 
+ * actions to display a {@code UserCell}
+ */
 public class UserCellController {
 	
 	@FXML
@@ -40,6 +44,10 @@ public class UserCellController {
 		initDeleteButton(item.getKey());
 	}
 	
+	/**
+	 * {@code setStatus} sets the color of the status indicator.
+	 * @param status
+	 */
 	private void setStatus(Status status) {
 		switch(status) {
         case ONLINE:
@@ -62,6 +70,11 @@ public class UserCellController {
         }
 	}
 	
+	/**
+	 * {@code initDeleteButton} initializes the delete button that is used
+	 * by the administrator to delete users.
+	 * @param username
+	 */
 	private void initDeleteButton(String username) {
 		boolean isAdmin = ClientImpl.getInstance().getUsername().equals(username);
 		if (!isAdmin) {
@@ -84,6 +97,8 @@ public class UserCellController {
 				}
 			});
 		} else {
+			// reset everything in order to prevent the delete button to show up
+			// in an admin user cell
 			btnDeleteUser.setVisible(false);
 			btnDeleteUser.setDisable(true);
 			parent.setOnMouseEntered(null);

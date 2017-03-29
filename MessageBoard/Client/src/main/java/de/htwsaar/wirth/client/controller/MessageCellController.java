@@ -16,7 +16,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 
 /**
- * Class {@code MessageCellController} initializes the UI-Elements and controls the actions to display a messagecell
+ * Class {@code MessageCellController} initializes the UI-Elements and controls the 
+ * actions to display a {@code MessageCell}
  */
 public class MessageCellController {
 	@FXML private Label usernameLabel;

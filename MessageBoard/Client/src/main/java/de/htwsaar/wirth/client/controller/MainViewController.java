@@ -33,7 +33,8 @@ import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 
 /**
- * Class {@code MainViewController} initializes the UI-Elements and controls the actions on the Messageboard-Screen
+ * Class {@code MainViewController} initializes the UI-Elements and controls the actions on the 
+ * {@code MainView}.
  */
 public class MainViewController implements Initializable {
 

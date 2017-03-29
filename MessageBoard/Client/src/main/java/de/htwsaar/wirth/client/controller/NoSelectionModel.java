@@ -6,7 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.MultipleSelectionModel;
 
 /**
- * Dieses SelectionModel erlaubt es den Items einer ListView nicht selektiert zu werden.
+ * {@code NoSelectionModel} disables selecting within a {@code ListView}. 
+ * This is mainly because of aesthetic reasons.
  */
 public class NoSelectionModel extends MultipleSelectionModel<Message> {
 	@Override
