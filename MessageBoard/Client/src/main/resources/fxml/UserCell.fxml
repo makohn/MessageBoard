@@ -9,7 +9,7 @@
 <?import org.controlsfx.glyphfont.Glyph?>
 
 
-<BorderPane maxHeight="20.0" minHeight="20.0" prefHeight="20.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.UserCellController">
+<BorderPane maxHeight="20.0" minHeight="20.0" prefHeight="20.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.UserCellController">
    <right>
       <AnchorPane BorderPane.alignment="CENTER">
          <children>

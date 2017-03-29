@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.glyphfont.Glyph?>
 
-<BorderPane prefWidth="486.0" styleClass="messageCell" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.MessageCellController">
+<BorderPane prefWidth="486.0" styleClass="messageCell" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.htwsaar.wirth.client.controller.MessageCellController">
    <bottom>
       <Separator prefWidth="200.0" BorderPane.alignment="CENTER" />
    </bottom>
