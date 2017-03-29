@@ -2,11 +2,19 @@ package de.htwsaar.wirth.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import de.htwsaar.wirth.remote.MessageBoard;
 import de.htwsaar.wirth.remote.Notifiable;
@@ -42,6 +50,8 @@ import de.htwsaar.wirth.server.util.command.child.ChildCommand;
  * @author janibal, Schloesser, philippschaefer4
  */
 public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer {
+	
+	private static final Logger logger = LogManager.getLogger(MessageBoardImpl.class);
 	
 	/**
 	 * the {@code SessionManager} for the {@MessageBoard}
@@ -94,7 +104,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @throws RemoteException
 	 */
 	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
-		
+		logger.info("Initialising the MessageBoard instance...");
 		sessionManager = new SessionManager(groupName);
 		
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
@@ -110,6 +120,8 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 		threadPool = Executors.newCachedThreadPool();
 		
 		UnicastRemoteObject.exportObject(this, localPort);
+		logger.info("Successfully exported the MessageBoardImpl as UnicastRemoteObject.");
+		logger.info("MessageBoardImpl is listening on port " + localPort);
 	}
 	
 	
@@ -142,6 +154,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @throws RemoteException
 	 */
 	private void syncParent() throws RemoteException {
+		int count = 0;
 		List<Message> parentMessages = parent.getMessages();
 		List<Message> childMessages = Services.getInstance().getMessageService().getAll();
 		
@@ -153,6 +166,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 		
 		// iterate over the parentMessages and check, if the parentMsg is newer than the childMsg
 		for(Message parentMsg : parentMessages) {
+			count++;
 			Message childMsg = map.get(parentMsg.getID());
 			if (childMsg != null) {
 				if(parentMsg.getModifiedAt().after(childMsg.getModifiedAt())) {
@@ -168,6 +182,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 				Services.getInstance().getMessageService().saveMessage(parentMsg);
 			}
 		}
+		logger.info(count + " messages were checked");
 	}
 
 	/**
