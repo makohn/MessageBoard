@@ -141,15 +141,11 @@
 	-fx-text-fill: red;
 }
 
-.btnDeleteUser {
-	-fx-label-padding: 0 5 4 0;
+.btnDeleteUser-glyph {
+	-fx-text-fill: #d1d1d1;
 }
 
-.btnDeleteUser .glyph-font {
-	-fx-text-fill: white;
-}
-
-.btnDeleteUser:hover .glyph-font {
-	-fx-text-fill: red;
+.btnDeleteUser-glyph:hover {
+	-fx-text-fill: #890000;
 }
 

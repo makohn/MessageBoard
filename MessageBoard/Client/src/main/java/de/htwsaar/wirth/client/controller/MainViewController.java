@@ -234,7 +234,7 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a action event on the Adduser-Button which opens a dialog to crreate a new user.
+     * Sets a action event on the {@code AddUser} Button which opens a dialog to create a new user.
      */
     private void initAddUserButton() {
         btnAddUser.setOnAction((actionEv) -> {
@@ -248,7 +248,7 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a action event on the Logout-Button which log out the user and delegate to the Login-Screen
+     * Sets a action event on the Logout-Button which logs out the user and delegate to the Login-Screen
      */
     private void initLogoutButton() {
         btnLogout.setOnAction((actionEv) -> {
@@ -304,15 +304,6 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Reload the UI-Userlist.
-     */
-    private void refreshUserList() {
-        ObservableList<Pair<String, Status>> sortedUserList = users.sorted(Comparator.comparing(Pair::getKey));
-        userList.setCellFactory(list -> new UserCell(this));
-        userList.setItems(sortedUserList);
-    }
-
-    /**
      * Scrolls to the last message in the list
      */
     private void scrollToLastMessage() {
@@ -320,9 +311,9 @@ public class MainViewController implements Initializable {
             chatPane.scrollTo(chatPane.getItems().size() - 1);
     }
 
-    ////////////////////////////// Mesthods called by the Server ///////////////////////////////////
+    ////////////////////////////// Methods called by the Server ///////////////////////////////////
     /**
-     * Inserts a Message in the messagelist
+     * Inserts a Message into the messagelist
      * @param msg
      */
     public void insertMessage(Message msg) {
@@ -366,11 +357,12 @@ public class MainViewController implements Initializable {
      * @param username
      */
     public void deleteUser(String username) {
-        users.removeIf((pair) -> username.equals(pair.getKey()));
-        refreshUserList();
+        if(users.removeIf((pair) -> username.equals(pair.getKey()))) {
+        	userList.refresh();
+        };
     }
 
-    ////////////////////////////// Mesthods executed on the server ///////////////////////////////////
+    ////////////////////////////// Methods executed on the server ///////////////////////////////////
     /**
      * Calls a method on the server to add a user.
      * @param username
