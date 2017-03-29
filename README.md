@@ -11,6 +11,8 @@ master |
 -------|
 [![Build Status](https://travis-ci.com/makohn/MessageBoard.svg?token=z1kyyNNo3nk7k9bTgxPq&branch=master)](https://travis-ci.com/makohn/MessageBoard)|
 
+### Downloads
+- [Release 1.0.0](https://github.com/makohn/MessageBoard/wiki/Downloads)
 
 
 ### How to build
@@ -33,7 +35,7 @@ java -jar server.jar -g <groupname> -p <port> -ph <parent_ip_adr> -pg <parentgro
 ```
 &nbsp;&nbsp;&nbsp;&nbsp; to connect to an existing server.
 <br></br>
-- To start the **client**, simply click on the jar file when using a graphical explorer. Otherwise type: 
+- To start the **client**, simply click on the jar file if using a graphical explorer. Otherwise type: 
 ```
 java -jar client.jar
 ```
