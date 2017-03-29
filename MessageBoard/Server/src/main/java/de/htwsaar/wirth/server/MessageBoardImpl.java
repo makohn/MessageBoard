@@ -279,6 +279,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @throws RemoteException
 	 */
 	public AuthPacket login(LoginPacket login, NotifiableClient client) throws RemoteException {
+		logger.debug("user " + login.getUsername() + " requests login.");
 		// Authenticate throws an exception, if the username or password are wrong
 		// this exception can be handled on clientside
 		AuthPacket auth = sessionManager.authenticate(login);
@@ -297,6 +298,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @throws RemoteException
 	 */
 	public void logout(AuthPacket auth) throws RemoteException {
+		logger.debug("user " + auth.getUsername() + " requests logout.");
 		sessionManager.verifyAuthPacket(auth);
 		// remove the user from the clientNotifyMap and set his status to offline
 		clientNotifyMap.remove(auth.getUsername());
@@ -315,6 +317,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @throws RemoteException
 	 */
 	public void changeUserStatus(AuthPacket auth, Status status) throws RemoteException {
+		logger.debug("user::" + auth.getUsername() + " Status: " + status);
 		sessionManager.verifyAuthPacket(auth);
 		String username = auth.getUsername();
 		changeUserStatusAndNotifyClients(username, status);
@@ -333,6 +336,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @throws RemoteException
 	 */
 	public void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException{
+		logger.debug("Add new user: " + newUsername);
 		sessionManager.verifyAuthPacket(auth);
 		if (!sessionManager.isGroupLeader(auth)) {
 			throw new NoPermissionException("The user is not a group-leader");
@@ -366,6 +370,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @throws RemoteException
 	 */
 	public void deleteUser(AuthPacket auth, String username) throws RemoteException {
+		logger.debug("Delete user: " + username);
 		sessionManager.verifyAuthPacket(auth);
 		if (!sessionManager.isGroupLeader(auth)) {
 			throw new NoPermissionException("The user is not a group-leader");
