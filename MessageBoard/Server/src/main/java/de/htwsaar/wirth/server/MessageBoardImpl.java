@@ -33,33 +33,40 @@ import de.htwsaar.wirth.server.util.command.CommandBuilder;
 import de.htwsaar.wirth.server.util.command.ParentCmd;
 import de.htwsaar.wirth.server.util.command.child.ChildCommand;
 
-
-public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifiable, MessageBoard, ParentServer {
+/**
+ * {@code MessageBoardImpl} implements the {@code MessageBoard} interface and as such 
+ * provides all the functionality that could be called remotely in order to r/w the 
+ * data model.{@code MessageBoardImpl} also manages several lists of client instances
+ * and child servers in order to implement a callback mechanism.
+ * 
+ * @author janibal, Schloesser, philippschaefer4
+ */
+public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer {
 	
 	/**
-	 * the sessionManager for the MessageBoard
+	 * the {@code SessionManager} for the {@MessageBoard}
 	 */
 	private SessionManager sessionManager;
 
 	/**
-	 * childServerList with each ChildServer
+	 * childServerList with each {@code ChildServer}
 	 */
 	private List<Notifiable> childServerList;
 
 	/**
-	 * a Map with CommandRunners used to lookup a CommandRunner by its
-	 * Notifiable each CommandRunner is a Thread, which executes every Command
-	 * it gets
+	 * a {@code Map} with CommandRunners used to lookup a {@code CommandRunner} by its
+	 * {@code Notifiable} each {@code CommandRunner} is a thread, which executes every 
+	 * {@code Command} it gets.
 	 */
 	private Map<Notifiable, CommandRunner> childServerQueueMap;
 
 	/**
-	 * the parent of this server null, if this server is the root-server
+	 * the parent of this server {@code null}, if this server is the root-server
 	 */
 	private ParentServer parent;
 
 	/**
-	 * the queue to send commands to the parent
+	 * the {@code Queue} to send commands to the parent
 	 */
 	private CommandRunner parentQueue;
 
@@ -69,15 +76,23 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	private Map<String, NotifiableClient> clientNotifyMap;
 	
 	/**
-	 * a map to manage the status of each user
+	 * a map to manage the {@code Status} of each user
 	 */
 	private Map<String, Status> userStatus;
 
 	/**
-	 * a ThreadPool we use for callbacks to clients
+	 * a {@code ThreadPool} we use for callbacks to clients
 	 */
 	private ExecutorService threadPool;
 
+	/**
+	 * Constructor of {@code MessageBoardImpl}. Exports this instance as
+	 * a {@code UnicastRemoteObject} and binds it to the specified port in order
+	 * to make it accessible to incoming calls. 
+	 * @param groupName - the specified groupName of this server instance
+	 * @param localPort - the specified port this instance is listening on
+	 * @throws RemoteException
+	 */
 	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
 		
 		sessionManager = new SessionManager(groupName);
@@ -97,12 +112,15 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		UnicastRemoteObject.exportObject(this, localPort);
 	}
 	
-
+	
+	//================================================================================
+    // Auxiliary methods
+    //================================================================================
 	/**
-	 * addParent will only be called by the server.class to bind the parent to
-	 * this server.
-	 *
-	 * @param parent
+	 * {@code addParent} is called by this server instance in order to add the specified
+	 * instance as its parent.
+	 * @param parent - a {@code ParentServer} instance that is requested to be this 
+	 * 				   instance's parent.
 	 * @throws RemoteException 
 	 */
 	public void setParent(ParentServer parent) throws RemoteException {
@@ -117,6 +135,12 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		syncParent();
 	}
 
+	/**
+	 * {@code syncParent} compares the messages of the {@code ParentServer} with the own ones and adapts
+	 * all changes if there are any. This method is usually called during the connection process
+	 * to a parent server, i.e. during a initial start or a restart of the server instance.
+	 * @throws RemoteException
+	 */
 	private void syncParent() throws RemoteException {
 		List<Message> parentMessages = parent.getMessages();
 		List<Message> childMessages = Services.getInstance().getMessageService().getAll();
@@ -147,16 +171,19 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 
 	/**
-	 * checks, if the current Server is the root-server
-	 * @return
+	 * {@code isRoot} checks, whether the current Server is the root-server
 	 */
 	private boolean isRoot() {
 		return this.parent == null;
 	}
 	
 	/**
-	 * notify all clients
-	 * @param handler
+	 * {@code notifyClients} notifies all clients of this server instance. Each notification
+	 * process should be handled by its own worker thread. The action that should be performed
+	 * within this notification is represented by the {@code ClientNotifyHandler}. As this being
+	 * a single-method interface, the action might be defined as a lambda expression.
+	 * @param handler - a {@code ClientNotifyHandler} implementation specifying the action to be
+	 * 					performed. Could be implemented as lambda.
 	 */
 	private void notifyClients(ClientNotifyHandler handler) {
 		for (Entry<String, NotifiableClient> entry : clientNotifyMap.entrySet()) {
@@ -177,8 +204,11 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 
 	/**
-	 * queue up a command for each child-server
-	 * @param cmd
+	 * {@code queueCommandForAllChildServer} adds a specified command to a queue, that tries
+	 * to execute the command as soon as possible. This process is done for each {@code Notifiable}
+	 * child of this servers. (Each one of them has a corresponding queue)
+	 * @param cmd - a {@code ChildCommand} that wraps a certain action to be executed on a
+	 * 				child server
 	 */
 	private void queueCommandForAllChildServer(ChildCommand cmd) {
 		synchronized (childServerList) {
@@ -190,36 +220,47 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		}
 	}
 	
+	/**
+	 * {@code changeUserStatusAndNotifyClients} changes the status of a specified {@code User} 
+	 * and also notifies the clients of this server about the change.
+	 * @param username - the unique identifier of the {@code User}
+	 * @param status - one of the following {@code Status} values: ONLINE, OFFLINE, AWAY, BUSY
+	 */
 	private void changeUserStatusAndNotifyClients(String username, Status status) {
 		userStatus.put(username, status);
 		notifyClients(cl -> cl.notifyUserStatus(username, status));
 	}
 
 	/**
-	 *	needToSend decides whether a message has to send to the parent or not.
+	 * {@code needToSendParent} decides whether a {@code Message} has to be sent to the parent.
+	 * @param msg - the {@code Message} that should be checked
 	 */
 	private boolean needToSendParent(Message msg){
 		// FIXME: add condition Database has msg
-		// wäre es nicht besser einfach grundsätzlich hochzuschieben und wenn der parent die nachricht nicht hat ignoriert er es
+		// evtl. grundsätzlich hochzuschieben und ggf. ignorieren
 		return (msg.isPublished() && !isRoot());
 	}
 
 	/**
-	 *	needToPublish decides whether a message has to publish to the parent or not.
+	 * {@code needToPublish} decides whether a {@code Message} has to be published to the parent.
+	 * @param msg - the {@code Message} that should be checked
 	 */
 	private boolean needToPublish(Message msg){
 		// add condition Database has msg
 		return (!msg.isPublished() && !isRoot());
 	}
 	
-	//---------------------------------- MessageBoard Interface ----------------------------------
+	//================================================================================
+    // MessageBoard implemented methods
+    //================================================================================
 	
 	/**
-	 * registerClient is capsuled in the MessageBoard-Interface . This method
-	 * can be called by a client to connect his self by his group server.
-	 *
-	 * @param client
-	 * @return
+	 * {@code logout} is an implemented method of {@code MessageBoard}.
+	 * This method is remote-called by a client to login to its group (server)
+	 * and establish the corresponding connection. The server will then add the client
+	 * to its list of connected clients.
+	 * @param login - a {@code LoginPacket} providing the necessary user details
+	 * @param client - the {@code NotifableClient} instance that sends the request.
 	 * @throws RemoteException
 	 */
 	public AuthPacket login(LoginPacket login, NotifiableClient client) throws RemoteException {
@@ -232,6 +273,14 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		return auth;
 	}
 	
+	/**
+	 * {@code logout} is an implemented method of {@code MessageBoard}.
+	 * This method is remote-called by a client to logout and closes the corresponding connection. 
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param status - one of the following {@code Status} values: ONLINE, OFFLINE, AWAY, BUSY
+	 * @throws RemoteException
+	 */
 	public void logout(AuthPacket auth) throws RemoteException {
 		sessionManager.verifyAuthPacket(auth);
 		// remove the user from the clientNotifyMap and set his status to offline
@@ -241,6 +290,15 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		changeUserStatusAndNotifyClients(auth.getUsername(), Status.OFFLINE);
 	}
 	
+	/**
+	 * {@code changeUserStatus} is an implemented method of {@code MessageBoard}.
+	 * This method is remote-called by a client to change the status of a {@code User}. 
+	 * Note that only the user itself is allowed to perform this action.
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param status - one of this {@code Status} values: ONLINE, OFFLINE, AWAY, BUSY
+	 * @throws RemoteException
+	 */
 	public void changeUserStatus(AuthPacket auth, Status status) throws RemoteException {
 		sessionManager.verifyAuthPacket(auth);
 		String username = auth.getUsername();
@@ -248,11 +306,16 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 		
 	/**
-	 * @param auth
-	 * @param newUsername
-	 * @param newPassword
+	 * {@code addUser} is an implemented method of {@code MessageBoard}.
+	 * This method is remote-called by a client to add a {@code User}. A new 
+	 * user is created by providing its {@code password} and {@code username}. 
+	 * Note that only the administrator of the belonging group is allowed to
+	 * perform this action. The default {@code Status} is set to {@code Status.OFFLINE}
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param newUsername - the unique identifier for the new created {@code User}.
+	 * @param newPassword - the password of the new created {@code User}
 	 * @throws RemoteException
-	 * @throws UserAlreadyExistsException, if the username is already in use
 	 */
 	public void addUser(AuthPacket auth, String newUsername, String newPassword) throws RemoteException{
 		sessionManager.verifyAuthPacket(auth);
@@ -277,6 +340,16 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		}
 	}
 	
+	/**
+	 * {@code deleteUser} is an implemented method of {@code MessageBoard}.
+	 * This method is remote-called by a client to delete a {@code User}, specified by
+	 * its unique {@code username}. Note that only the administrator of the belonging 
+	 * group is allowed to perform this action. 
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param username - the unique identifier for a {@code User}.
+	 * @throws RemoteException
+	 */
 	public void deleteUser(AuthPacket auth, String username) throws RemoteException {
 		sessionManager.verifyAuthPacket(auth);
 		if (!sessionManager.isGroupLeader(auth)) {
@@ -300,13 +373,13 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 	
 	/**
-	 * publish is capsuled in the MessageBoard-Interface. This method can be
-	 * called by the admin to push a existing message to the parent-server. To
-	 * authenticate the User a username and a valid authentication token is
-	 * required.
-	 *
-	 * @param auth AuthPack given by the login
-	 * @param msg
+	 * {@code publish} is an implemented method of {@code MessageBoard}.
+	 * This method is remote-called by a client to publish a {@code Message}, specified by
+	 * its {@code UUID}.Note that only the administrator of the belonging group 
+	 * is allowed to perform this action.
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param id - the {@code UUID} of this message
 	 * @throws RemoteException
 	 */
 	public void publish(AuthPacket auth, UUID id) throws RemoteException {
@@ -325,13 +398,11 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 	
 	/**
-	 * NewMessage is capsuled in the MessageBoard-Interface. This method can be
-	 * called by the clients to submit a new message to their group-server. To
-	 * authenticate the User a username and a valid authentication token is
-	 * required.
-	 *
-	 * @param auth AuthPack given by the login
-	 * @param msg
+	 * {@code newMessage} is an implemented method of {@code MessageBoard}.
+	 * This method is remote-called by a client to create a new {@code Message},
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param msg - the textual content of the new {@code Message}
 	 * @throws RemoteException
 	 */
 	public void newMessage(AuthPacket auth, String msg) throws RemoteException {
@@ -341,14 +412,14 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 	
 	/**
-	 * editMessage is capsuled in the MessageBoard-Interface. This method can be
-	 * called by the author of a message to edit the existing message on their
-	 * group-server. In case the message was published the change effects also
-	 * all other servers which received this published message. To authenticate
-	 * the User a username and a valid authentication token is required.
-	 *
-	 * @param auth AuthPack given by the login
-	 * @param msgTxt
+	 * {@code editMessage} is an implemented method of {@code MessageBoard}. 
+	 * This method is remote-called by a client to edit a specified {@code Message},
+	 * identified by its {@code UUID}. Note that only the author of the message or
+	 * is allowed to perform this action.
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param msgText - the new text of the edited {@code Message}
+	 * @param id - the {@code UUID} of this message
 	 * @throws RemoteException
 	 */
 	public void editMessage(AuthPacket auth, String msgTxt, UUID id) throws RemoteException {
@@ -371,13 +442,13 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}	
 	
 	/**
-	 * deleteMessage is capsuled in the MessageBoard-Interface. This method can
-	 * be called by the admin to delete a existing message on their
-	 * group-server. To authenticate the User a username and a valid
-	 * authentication token is required.
-	 *
-	 * @param auth AuthPack given by the login
-	 * @param id
+	 * {@code deleteMessage} is an implemented method of {@code MessageBoard}. 
+	 * This method is remote-called by a client to delete a specified {@code Message},
+	 * identified by its {@code UUID}. Note that only the author of the message or
+	 * the administrator of the belonging group are allowed to perform this action.
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @param id - the {@code UUID} of this message
 	 * @throws RemoteException
 	 */
 	public void deleteMessage(AuthPacket auth, UUID id) throws RemoteException {
@@ -400,14 +471,15 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 	
 	/**
-	 * getMessages is used by the MessageBoard-Interface.
-	 * This method can be called by a client to
-	 * initialise and update his messageboard
-	 *
-	 * @param auth AuthPack given by the login
-	 * @return
+	 * {@code getMessages} is an implemented method of {@code MessageBoard}. 
+	 * This method is remote-called by a client to receive a list of {@code Message}
+	 * objects that are stored in the database.
+	 * @param auth - an {@code AuthPacket} given by the login. Identifies the
+	 * 				 caller of this method.
+	 * @return - a {@code List} of {@code Message} Objects
 	 * @throws RemoteException
 	 */
+	@Override
 	public List<Message> getMessages(AuthPacket auth) throws RemoteException {
 		sessionManager.verifyAuthPacket(auth);
 		return getMessages();
@@ -418,18 +490,19 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		return userStatus;
 	}
 	
-	//---------------------------------- Notifiable Interface ----------------------------------
-
+	//================================================================================
+    // Notifiable implemented methods
+    //================================================================================
 
 	/**
-	 * notifyNew is capsuled in the Notifyable-Interface. Every time a new
-	 * message is transmitted to the server either trough a client or the
-	 * parent, the notifyNew-method notifies all components which implements the
-	 * Notify-Interface.
-	 *
-	 * @param msg message to be created
+	 * {@code notifyNew} is an implemented method of {@code Notifiable}.  
+	 * This method is remote-called by a client or this instance itself in order to
+	 * handle a new message. Besides of storing the new message in this server's database,
+	 * {@code Notifiable} clients of this server are also notified about the new message.
+	 * @param msg - the {@code Message} to be created.
 	 * @throws RemoteException
 	 */
+	@Override
 	public void notifyNew(Message msg) throws RemoteException {
 		Services.getInstance().getMessageService().saveMessage(msg);
 
@@ -441,14 +514,14 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 
 	/**
-	 * notifyEdit is capsuled in the Notifyable-Interface. Every time a message
-	 * will be edited on the server through a admin or client, the
-	 * notifyNew-method notifies all components which implements the
-	 * Notify-Interface.
-	 *
-	 * @param msg message to be edited
+	 * {@code notifyEdit} is an implemented method of {@code Notifiable}. 
+	 * This method is remote-called by a client or this instance itself in order to
+	 * handle an edited message. Besides of storing the edited message in this server's database,
+	 * {@code Notifiable} clients of this server are also notified about the edited message.
+	 * @param msg - the {@code Message} that is edited.
 	 * @throws RemoteException
-	 */		
+	 */	
+	@Override
 	public void notifyEdit(Message msg) throws RemoteException {
 		Message clonedMessage = new MessageImpl(msg);
 		
@@ -458,7 +531,6 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 			msg.setPublished(isPublishedStatus);
 			msgService.saveMessage(msg/*message*/);
 		}
-		
 		// Add a EditMessageCommand to each CommandRunner
 		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(clonedMessage, ChildCmd.EDIT));
 
@@ -467,14 +539,15 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 
 	/**
-	 * notifyDelete is capsuled in the Notifyable-Interface. Every time a
-	 * message will be deleted on the server through a admin, the
-	 * notifyNew-method notifies all components which implements the
-	 * Notify-Interface.
-	 *
-	 * @param msg message to be delete
+	 * {@code notifyDelete} is an implemented method of {@code Notifiable}. 
+	 * This method is remote-called by a client or this instance itself in order to 
+	 * handle a requested deletion of a message. Besides of deleting the message from
+	 * this server's database, {@code Notifiable} clients of this server are also notified 
+	 * about the deleted message.
+	 * @param msg - the {@code Message} that should be deleted.
 	 * @throws RemoteException
 	 */
+	@Override
 	public void notifyDelete(Message msg) throws RemoteException {
 		Services.getInstance().getMessageService().deleteMessage(msg);
 		// Add a DeleteMessageCommand to each CommandRunner
@@ -483,16 +556,19 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		notifyClients(cl -> cl.notifyDelete(msg));
 	}
 	
-	//---------------------------------- ParentServer Interface ----------------------------------
+	//================================================================================
+    // ParentServer implemented methods
+    //================================================================================
 	
 	/**
-	 * registerServer is capsuled in the ParentServer-Interface. This method is
-	 * called from a child-server to bind itself to its parent. The register is
-	 * important for the notify process
+	 * {@code registerServer} is an implemented method of {@code ParentServer}. 
+	 * This method is remote-called by a child-server to bind itself to its parent (this).
+	 * The registration is important for the notify process
 	 *
-	 * @param childServer
-	 * @throws RemoteException
+	 * @param childServer - a {@code Notifiable} server requesting the binding
+	 * @throws RemoteException 
 	 */
+	@Override
 	public void registerServer(Notifiable childServer) throws RemoteException {
 		childServerList.add(childServer);
 		CommandRunner commandRunner = new CommandRunner();
@@ -501,13 +577,15 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 
 	/**
-	 * notifyServerDelete is capsuled in the ParentServer-Interface. Only if the message exist in
-	 * the Database this Method will be published and send a newMessage-command to all child-server.
-	 * In addition it will notify all clients.
-	 * If the message was already published this method has no effect.
+	 * {@code publish} is an implemented method of {@code ParentServer}.
+	 * This method is remote-called by a child-server in order to publish a message.
+	 * The message then is stored in the server's database. Also, {@code Notifiable}
+	 * clients of this server are notified about the new message.
+	 * If the message is already published this method has no effect.
 	 * @param msg
 	 * @throws RemoteException
 	 */
+	@Override
 	public void publish(Message msg) throws RemoteException {
 		Services.getInstance().getMessageService().saveMessage(msg);
 		
@@ -520,15 +598,18 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
 	}
 
-
 	/**
-	 * notifyServerEdit is capsuled in the ParentServer-Interface. Only if the message exist in
-	 * the Database this Method will edit the entry and send a edit-command to all child-server.
-	 * In addition it will notify all clients.
-	 * If the message was published, the edit-command will be send further to the parent.
-	 * @param msg
+	 * {@code notifyServerEdit} is an implemented method of {@code ParentServer}.
+	 * This method is remote-called by a child-server each time the child-server receives
+	 * an edited message. The server will then handle the edited message via its
+	 * {@code notifyEdit} method. 
+	 * It then checks whether it is necessary to send the edited message to its parent.
+	 * If so, the corresponding command is built via the {@code CommandBuilder} and sent
+	 * to this server's parent.
+	 * @param msg - the edited {@code Message} Object 
 	 * @throws RemoteException
 	 */
+	@Override
 	public void notifyServerEdit(Message msg) throws RemoteException {
 		notifyEdit(msg);
 		if(needToSendParent(msg)) {
@@ -538,13 +619,16 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	}
 
 	/**
-	 * notifyServerDelete is capsuled in the ParentServer-Interface. Only if the message exist in
-	 * the Database this Method will delete the entry and send a delete-command to all child-server.
-	 * In addition it will notify all clients.
-	 * If the message was published, the delete-command will be send further to the parent.
-	 * @param msg
+	 * {@code notifyServerDelete} is an implemented method of {@code ParentServer}.
+	 * This method is remote-called by a child-server each time the child-server receives
+	 * a deletion call. If the message exists in this server's database, it will be handled via the
+	 * {@code notifyDelete} method. 
+	 * If this server is not the root server, the corresponding delete command is built 
+	 * via the {@code CommandBuilder} and sent to this server's parent.
+	 * @param msg - the deleted {@code Message} Object 
 	 * @throws RemoteException
 	 */
+	@Override
 	public void notifyServerDelete(Message msg) throws RemoteException {
 		synchronized (Message.class) {
 			boolean hasMsg = Services.getInstance().getMessageService().getMessage(msg.getID()) != null;
@@ -558,8 +642,13 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 		}
 	}
 
+	/**
+	 * {@code getMessages} is an implemented method of {@code ParentServer}.
+	 * This method is remote-called by a child-server in order to receive all the messages
+	 * that are stored in this server's database.
+	 * @throws RemoteException
+	 */
 	public List<Message> getMessages() throws RemoteException {
-		// hier evtl noch ein limit fuer nachrichten
 		// TODO: wir sollten jeweils methoden mit limitierung und filterung nach gruppe erstellen
 		// entsprechende methoden sollten die jeweiligen Datenbankcalls nutzen
 		return Services.getInstance().getMessageService().getAll();
