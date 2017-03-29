@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: de.htwsaar.wirth.server
+Main-Class: de.htwsaar.wirth.server.Main
+

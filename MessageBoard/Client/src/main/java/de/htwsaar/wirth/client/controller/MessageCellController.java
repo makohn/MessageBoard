@@ -68,7 +68,7 @@ public class MessageCellController {
 			initEditEventHandler();
 		}
 		
-		boolean shouldShowPublished = client.isGroupLeader() && !message.isPublished();
+		boolean shouldShowPublished = client.isGroupLeader() && !message.isPublished() && !client.isConnectedToRoot();
 		
 		if (!shouldShowPublished) {
 			disableButton(publishButton);
@@ -171,10 +171,10 @@ public class MessageCellController {
 		txtMessageEdit.setWrapText(true);
 		txtMessageEdit.setPrefHeight( ((Text) messageArea.lookup(TEXT_CLASS))
 				.boundsInParentProperty().get().getMaxY() + PADDING);
-//		((Text) txtMessageEdit.lookup(TEXT_CLASS)).textProperty().addListener(b -> {
-//			txtMessageEdit.setPrefHeight(((Text) txtMessageEdit.lookup(TEXT_CLASS))
-//			.boundsInParentProperty().get().getMaxY());
-//		});
+		((Text) txtMessageEdit.lookup(TEXT_CLASS)).textProperty().addListener(b -> {
+			txtMessageEdit.setPrefHeight(((Text) txtMessageEdit.lookup(TEXT_CLASS))
+			.boundsInParentProperty().get().getMaxY());
+		});
 	}
 
 	/**

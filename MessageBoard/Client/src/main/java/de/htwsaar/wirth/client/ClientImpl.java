@@ -223,4 +223,8 @@ public class ClientImpl /*extends UnicastRemoteObject*/ implements NotifiableCli
 	public String getGroupName() {
 		return auth.getGroupName();
 	}
+
+	public boolean isConnectedToRoot() {
+		return auth.isConnectedToRoot();
+	}
 }

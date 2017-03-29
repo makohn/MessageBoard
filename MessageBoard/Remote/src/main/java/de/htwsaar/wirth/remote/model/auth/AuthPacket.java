@@ -13,14 +13,16 @@ public class AuthPacket implements Serializable {
 	private String username;
 	private String groupName;
 	private boolean isGroupLeader;
+	private boolean isConnectedToRoot;
 
 	private UUID token;
-	
-	public AuthPacket(String username, boolean isGroupLeader, String groupName) {
+
+	public AuthPacket(String username, boolean isGroupLeader, String groupName,boolean connectedToRoot) {
 		this.username = username;
 		this.isGroupLeader = isGroupLeader;
 		this.groupName = groupName;
 		this.token = UUID.randomUUID();
+		this.isConnectedToRoot= connectedToRoot;
 	}
 	
 	public String getUsername() {
@@ -33,6 +35,10 @@ public class AuthPacket implements Serializable {
 
 	public boolean isGroupLeader() {
 		return isGroupLeader;
+	}
+
+	public boolean isConnectedToRoot() {
+		return isConnectedToRoot;
 	}
 
 	@Override

@@ -79,8 +79,8 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	private ExecutorService threadPool;
 
 	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
-		
-		sessionManager = new SessionManager(groupName);
+
+		sessionManager = new SessionManager(groupName,parent == null);
 		
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
 		childServerQueueMap = new ConcurrentHashMap<Notifiable, CommandRunner>();

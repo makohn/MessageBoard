@@ -20,9 +20,11 @@ public class SessionManager {
     private Map<String, AuthPacket> sessions = new ConcurrentHashMap<String, AuthPacket>();
     
     private String groupName;
-    
-    public SessionManager(String groupName) {
+    private boolean isRootServer;
+
+    public SessionManager(String groupName,boolean isRootServer) {
     	this.groupName = groupName;
+    	this.isRootServer = isRootServer;
     }
 
     /**
@@ -44,7 +46,7 @@ public class SessionManager {
 	    	// check, if the hashValues are equal
 	    	if (givenPassword.equals(user.getPassword())) {
 	    		// successful login
-	            AuthPacket auth = new AuthPacket(givenUsername, user.isGroupLeader(), groupName);
+	            AuthPacket auth = new AuthPacket(givenUsername, user.isGroupLeader(), groupName,isRootServer);
                 sessions.put(givenUsername, auth);
                 return auth;
 	        }
