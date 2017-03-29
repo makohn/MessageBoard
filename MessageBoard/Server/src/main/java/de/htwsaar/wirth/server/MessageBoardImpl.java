@@ -1,5 +1,6 @@
 package de.htwsaar.wirth.server;
 
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -206,6 +206,9 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 				threadPool.execute(() -> {
 					try {
 						handler.handle(entry.getValue());
+					} catch (NoSuchObjectException ex) {
+						logger.warn(entry.getKey() + " tried to execute a method on a non-existing object");
+						logger.debug(ex.getStackTrace());
 					} catch (RemoteException e) {
 						String s = entry.getValue().toString();
 						logger.warn("Client: " + entry.getKey() + " @endpoint: " 
@@ -216,9 +219,6 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 							clientNotifyMap.remove(entry);
 							//changeUserStatusAndNotifyClients(entry.getKey(), Status.SHOW_AS_OFFLINE);
 						}
-					} catch (NoSuchElementException ex) {
-						logger.warn(entry.getKey() + " tried to execute a method on a non-existing object");
-						logger.debug(ex.getStackTrace());
 					}
 				});
 			}
