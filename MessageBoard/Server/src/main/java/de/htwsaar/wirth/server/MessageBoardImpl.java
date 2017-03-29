@@ -218,6 +218,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 						}
 					} catch (NoSuchElementException ex) {
 						logger.warn(entry.getKey() + " tried to execute a method on a non-existing object");
+						logger.debug(ex.getStackTrace());
 					}
 				});
 			}
