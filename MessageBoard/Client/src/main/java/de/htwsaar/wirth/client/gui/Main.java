@@ -26,8 +26,8 @@ public class Main extends Application {
 		delegate.setScene(scene);
 		delegate.showLoginScreen();
 		
-		stage.setHeight(DEFAULT_STAGE_HEIGHT);
-		stage.setWidth(DEFAULT_STAGE_WIDTH);
+		stage.setMinHeight(DEFAULT_STAGE_HEIGHT);
+		stage.setMinWidth(DEFAULT_STAGE_WIDTH);
 		stage.setScene(scene);
 		
 		stage.show();

@@ -69,7 +69,7 @@ public class MessageCellController {
 			initEditEventHandler();
 		}
 		
-		boolean shouldShowPublished = client.isGroupLeader() && !message.isPublished();
+		boolean shouldShowPublished = client.isGroupLeader() && !message.isPublished() && !client.isConnectedToRoot();
 		
 		if (!shouldShowPublished) {
 			disableButton(publishButton);

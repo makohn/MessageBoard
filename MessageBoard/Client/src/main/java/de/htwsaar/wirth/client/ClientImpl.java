@@ -319,4 +319,8 @@ public class ClientImpl implements NotifiableClient {
 	public String getGroupName() {
 		return auth.getGroupName();
 	}
+	
+	public boolean isConnectedToRoot() {
+		return auth.isConnectedToRoot();
+	}
 }

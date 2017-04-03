@@ -126,7 +126,7 @@ public class Main {
 		startTime = System.currentTimeMillis();
 		if (root) {
 			try {
-				new Server(group, port);
+				new Server(group, port, root);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (AlreadyBoundException e) {
@@ -134,7 +134,7 @@ public class Main {
 			}
 		} else {
 			try {
-				new Server(group, port, parent, parentGroup);
+				new Server(group, port, root, parent, parentGroup);
 				logger.info("Server is connected to "+ parent + " in group "+ parentGroup);
 			} catch (RemoteException e) {
 				e.printStackTrace();

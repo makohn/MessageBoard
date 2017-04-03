@@ -104,9 +104,9 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * @param localPort - the specified port this instance is listening on
 	 * @throws RemoteException
 	 */
-	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
+	public MessageBoardImpl(String groupName, int localPort, boolean isRoot) throws RemoteException {
 		logger.info("Initialising the MessageBoard instance...");
-		sessionManager = new SessionManager(groupName);
+		sessionManager = new SessionManager(groupName, isRoot);
 		
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
 		childServerQueueMap = new ConcurrentHashMap<Notifiable, CommandRunner>();
@@ -530,13 +530,15 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 */
 	@Override
 	public void notifyNew(Message msg) throws RemoteException {
-		Services.getInstance().getMessageService().saveMessage(msg);
-
-		// Add a NewMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
-
+		Message clonedMessage = new MessageImpl(msg);
+	    Services.getInstance().getMessageService().saveMessage(msg);
+	    clonedMessage.setPublished(true);
+	    
+	    // Add a NewMessageCommand to each CommandRunner
+		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(clonedMessage, ChildCmd.NEW));
+		
 		// Notify each client
-		notifyClients(cl -> cl.notifyNew(msg));
+	    notifyClients(cl -> cl.notifyNew(msg));
 	}
 
 	/**

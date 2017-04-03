@@ -39,12 +39,29 @@ public class Server {
 	private static final int REGISTRY_PORT = 1099;
 	private static final String HORIZONTAL_LINE = "**********************************************";
 
-	public Server(String groupName, int localPort) throws RemoteException, AlreadyBoundException {
+	public Server(String groupName, int localPort, boolean isRoot) throws RemoteException, AlreadyBoundException {
 		PersistenceManager.setDatabaseNameSuffix(groupName);
 		this.groupName = groupName;
-		messageBoard = new MessageBoardImpl(groupName, localPort);
+		messageBoard = new MessageBoardImpl(groupName, localPort, isRoot);
 		createRegistry();
 		checkGroupLeader();
+	}
+	
+	/**
+	 * Creates a Server instance that is bound to a parent server.
+	 * @param groupName - the group name of this instance
+	 * @param localPort - the port this instance is running on
+	 * @oaram isRoot - if this Server is the root server
+	 * @param parentHost - the address of the parent server
+	 * @param parentGroupName - the name of the parent server's group
+	 * @throws RemoteException, NotBoundException, AlreadyBoundException
+	 */
+	public Server(String groupName, int localPort, boolean isRoot, String parentHost, String parentGroupName)
+			throws RemoteException, NotBoundException, AlreadyBoundException {
+		this(groupName, localPort, isRoot);
+		this.parentHost = parentHost;
+		this.parentGroupName = parentGroupName;
+		bindToParent();
 	}
 
 	/**
@@ -69,22 +86,6 @@ public class Server {
 
 			Services.getInstance().getUserService().saveUser(groupLeader);
 		}
-	}
-	
-	/**
-	 * Creates a Server instance that is bound to a parent server.
-	 * @param groupName - the group name of this instance
-	 * @param localPort - the port this instance is running on
-	 * @param parentHost - the address of the parent server
-	 * @param parentGroupName - the name of the parent server's group
-	 * @throws RemoteException, NotBoundException, AlreadyBoundException
-	 */
-	public Server(String groupName, int localPort, String parentHost, String parentGroupName)
-			throws RemoteException, NotBoundException, AlreadyBoundException {
-		this(groupName, localPort);
-		this.parentHost = parentHost;
-		this.parentGroupName = parentGroupName;
-		bindToParent();
 	}
 
 	/**
