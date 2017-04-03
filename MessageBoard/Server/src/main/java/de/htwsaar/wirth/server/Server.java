@@ -27,10 +27,10 @@ public class Server {
     private MessageBoardImpl messageBoard;
     
 
-    public Server(String groupName, int localPort) throws RemoteException, AlreadyBoundException {
+    public Server(String groupName, int localPort, boolean isRootServer) throws RemoteException, AlreadyBoundException {
         PersistenceManager.setDatabaseNameSuffix(groupName);
         this.groupName = groupName;
-        messageBoard = new MessageBoardImpl(groupName, localPort);
+        messageBoard = new MessageBoardImpl(groupName, localPort, isRootServer);
         createRegistry();
         checkGroupLeader();
     }
@@ -53,8 +53,8 @@ public class Server {
     	}
 	}
 
-	public Server(String groupName, int localPort, String parentHost, String parentGroupName) throws RemoteException, NotBoundException, AlreadyBoundException {
-        this(groupName, localPort);
+	public Server(String groupName, int localPort, boolean isRootServer, String parentHost, String parentGroupName) throws RemoteException, NotBoundException, AlreadyBoundException {
+        this(groupName, localPort, isRootServer);
         this.parentHost = parentHost;
         this.parentGroupName = parentGroupName;
         bindToParent();

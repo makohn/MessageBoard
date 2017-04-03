@@ -78,9 +78,9 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	 */
 	private ExecutorService threadPool;
 
-	public MessageBoardImpl(String groupName, int localPort) throws RemoteException {
+	public MessageBoardImpl(String groupName, int localPort, boolean isRoot) throws RemoteException {
 
-		sessionManager = new SessionManager(groupName,parent == null);
+		sessionManager = new SessionManager(groupName, isRoot);
 		
 		childServerList = Collections.synchronizedList(new ArrayList<Notifiable>());
 		childServerQueueMap = new ConcurrentHashMap<Notifiable, CommandRunner>();
@@ -430,10 +430,12 @@ public class MessageBoardImpl /*extends UnicastRemoteObject*/ implements Notifia
 	 * @throws RemoteException
 	 */
 	public void notifyNew(Message msg) throws RemoteException {
+		Message clonedMessage = new MessageImpl(msg);
 		Services.getInstance().getMessageService().saveMessage(msg);
+		clonedMessage.setPublished(true);
 
 		// Add a NewMessageCommand to each CommandRunner
-		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(msg, ChildCmd.NEW));
+		queueCommandForAllChildServer(CommandBuilder.buildChildCommand(clonedMessage, ChildCmd.NEW));
 
 		// Notify each client
 		notifyClients(cl -> cl.notifyNew(msg));

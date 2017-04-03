@@ -123,7 +123,7 @@ public class Main {
 	    // start server
 		if (root) {
 			try {
-				new Server(group, port);
+				new Server(group, port, root);
 				logger.info("Server is alive, running on Port " + port + " and kicking");
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -132,7 +132,7 @@ public class Main {
 			}
 		} else {
 			try {
-				new Server(group, port, parent, parentGroup);
+				new Server(group, port, root, parent, parentGroup);
 				logger.info("Server is connected to "+ parent + " in group "+ parentGroup);
 
 			} catch (RemoteException e) {
