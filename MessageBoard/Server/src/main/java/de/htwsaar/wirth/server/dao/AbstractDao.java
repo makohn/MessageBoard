@@ -6,6 +6,8 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 /**
+ * Abstract Database Access Object. Implements a basic set of
+ * database access methods, such as saving, deleting and querying.
  * Created by Marius on 08.02.17
  */
 public abstract class AbstractDao<T> {

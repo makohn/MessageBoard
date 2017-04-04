@@ -1,8 +1,8 @@
 package de.htwsaar.wirth.server.dao;
 
 /**
- * Klasse stellt einen Abfrage-Parameter für die Datenbank dar mit Spaltennamen und Wert
- * Created by olli on 12.02.17.
+ * {@code DatabaseQueryParameter} represents a key-value query to the database.
+ * @author olli
  */
 public class DatabaseQueryParameter {
     private String key;

@@ -19,7 +19,7 @@ import de.htwsaar.wirth.server.dao.PersistenceManager;
 import de.htwsaar.wirth.server.service.Services;
 
 /**
- * Class {@code Server} serves as a initializer for all the server-side services.
+ * Class {@code Server} serves as an initializer for all the server-side services.
  * As such, it initializes the database access, creates the registry and binds 
  * a {@code MessageBoard} instance to it. 
  * If the created MessageBoard instance is a new one, a group leader has to be created.
