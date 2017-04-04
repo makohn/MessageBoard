@@ -11,8 +11,11 @@ master |
 -------|
 [![Build Status](https://travis-ci.com/makohn/MessageBoard.svg?token=z1kyyNNo3nk7k9bTgxPq&branch=master)](https://travis-ci.com/makohn/MessageBoard)|
 
+[Wiki](https://github.com/makohn/MessageBoard/wiki)
+
 ### Downloads
-- [Release 1.0.0](https://github.com/makohn/MessageBoard/wiki/Downloads)
+- [Release 1.0.0](https://github.com/makohn/MessageBoard/wiki/Downloads#release-100)
+- [Release 1.0.1](https://github.com/makohn/MessageBoard/wiki/Downloads#release-101)
 
 ### How to build
 - Install Java 8 [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
