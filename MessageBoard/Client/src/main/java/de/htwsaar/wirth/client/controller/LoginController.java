@@ -27,7 +27,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 /**
- * Class {@code LoginController} initializes the UI-Elements and controls the actions on the Login-Screen
+ * Class {@code LoginController} initializes the UI-Elements and controls the actions on the Login-Screen.
  */
 public class LoginController implements Initializable {
 
@@ -74,7 +74,8 @@ public class LoginController implements Initializable {
 
     /**
      * Sets a click event on the Connect-Button to delegate to the Main-View
-     * @param delegate
+     * @param delegate - an {@code ApplicationDelegate} instance, that manages
+     * 		  transitions within the UI.
      */
     public void initManager(final ApplicationDelegate delegate) {
         btnConnect.setOnAction(new EventHandler<ActionEvent>() {
@@ -125,7 +126,9 @@ public class LoginController implements Initializable {
     /**
      * Specifies the thrown exceptions from the LoginController and
      * creates an individual Alert-message for each
-     * @param e
+     * @param e - the {@code Throwable} that was caught within
+     * 			  the {@code LoginController}. It is handled differently
+     * 			  depending on its runtime type. 
      */
 	private void onError(Throwable e) {
         ApplicationDelegate.getInstance().showLoginScreen();
@@ -181,7 +184,5 @@ public class LoginController implements Initializable {
             alert.setContentText(ExceptionUtil.UNKNOWN_ERROR_LOGIN.toString());
             alert.showAndWait();
         }
-
-
     }
 }

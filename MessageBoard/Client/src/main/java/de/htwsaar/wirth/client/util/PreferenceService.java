@@ -3,8 +3,8 @@ package de.htwsaar.wirth.client.util;
 import java.util.prefs.Preferences;
 
 /**
- * Class {@code PreferenceService} saves to a specified space which will be individually handled by the BS
- * to restore user-specific data when the software starts.
+ * Class {@code PreferenceService} stores user-specific data. The persistence process
+ * is completely handled by the operating system.
  */
 public class PreferenceService {
 

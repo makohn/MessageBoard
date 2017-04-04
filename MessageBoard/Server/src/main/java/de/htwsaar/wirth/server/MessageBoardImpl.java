@@ -92,7 +92,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	private Map<String, Status> userStatus;
 
 	/**
-	 * a {@code ThreadPool} we use for callbacks to clients
+	 * a {@code ThreadPool} that is used for callbacks to clients
 	 */
 	private ExecutorService threadPool;
 

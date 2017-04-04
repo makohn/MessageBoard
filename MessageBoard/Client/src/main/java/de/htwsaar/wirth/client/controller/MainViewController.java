@@ -104,7 +104,7 @@ public class MainViewController implements Initializable {
         fullNameLabel.setText(client.getUsername());
         usernameLabel.setText(client.getUsername());
 
-        // Messages
+        //==============================Messages=================================
         messages = FXCollections.observableArrayList();
         ObservableList<Message> sortedWrapperList = messages.sorted((m1, m2) -> {
             return m1.getCreatedAt().compareTo(m2.getCreatedAt());
@@ -114,7 +114,7 @@ public class MainViewController implements Initializable {
         chatPane.setCellFactory(list -> new MessageCell(this));
         chatPane.setItems(filteredAndSortedList);
 
-        // Users
+        //==============================Users=====================================
         users = FXCollections.observableArrayList();
         ObservableList<Pair<String, Status>> sortedUserList = users.sorted((p1, p2) -> {
             return p1.getKey().compareTo(p2.getKey());
@@ -122,14 +122,14 @@ public class MainViewController implements Initializable {
         userList.setCellFactory(list -> new UserCell(this));
         userList.setItems(sortedUserList);
 
-        // Groups
+        //==============================Groups====================================
         groups = FXCollections.observableArrayList();
         ObservableList<String> sortedGroupList = groups.sorted((g1, g2) -> {
             return g1.compareTo(g2);
         });
         groupList.setItems(sortedGroupList);
 
-        // Status
+        //==============================Status====================================
         cmbStatus.setItems(FXCollections.observableArrayList(Status.values()));
         lblOwnStatus.setText(UIConstants.STATUS_SYMBOL_FILLED);
         cmbStatus.valueProperty().addListener(new ChangeListener<Status>() {
@@ -170,7 +170,7 @@ public class MainViewController implements Initializable {
                 // erstelle einen searchFilter
                 Predicate<Message> searchFilter = msg -> msg.getMessage().contains(txtSearch.getText()) || msg.getAuthor().contains(txtSearch.getText());
                 if (groupFilter != null) {
-                    // wenn ein GruppenFilter existiert verunde beide Filter
+                    // wenn ein GruppenFilter existiert verUNDe beide Filter
                     Predicate<Message> searchAndGroupFilter = msg -> searchFilter.test(msg) && groupFilter.test(msg);
                     filteredAndSortedList.setPredicate(searchAndGroupFilter);
                 } else {
@@ -312,7 +312,9 @@ public class MainViewController implements Initializable {
             chatPane.scrollTo(chatPane.getItems().size() - 1);
     }
 
-    ////////////////////////////// Methods called by the Server ///////////////////////////////////
+	//================================================================================
+    // Remote calls from the server (delegated by the client)
+    //================================================================================
     /**
      * Inserts a Message into the messagelist
      * @param msg
@@ -363,7 +365,9 @@ public class MainViewController implements Initializable {
         };
     }
 
-    ////////////////////////////// Methods executed on the server ///////////////////////////////////
+	//================================================================================
+    // Remote calls to the server
+    //================================================================================
     /**
      * Calls a method on the server to add a user.
      * @param username
@@ -391,9 +395,11 @@ public class MainViewController implements Initializable {
 
 
     /**
-     * Specifies the thrown exceptions from the MainViewController and
+     * Specifies the thrown exceptions from the {@code MainViewController} and
      * creates an individual Alert-message for each
-     * @param e
+     * @param e - the {@code Throwable} that was caught within
+     * 			  the {@code MainViewController}. It is handled differently
+     * 			  depending on its runtime type. 
      */
     protected void onError(Throwable e) {
         try {

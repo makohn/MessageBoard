@@ -22,8 +22,7 @@ import javafx.concurrent.Task;
 /**
  * {@code ClientImpl} represents a client instance. It is responsible for 
  * sending requests to the server and receiving callback notifications. As such it
- * servers as a broker between the UI classes and the {@code MessageBoard} instance.
- * 
+ * serves as a broker between the UI classes and the {@code MessageBoard} instance.
  */
 public class ClientImpl implements NotifiableClient {
 	

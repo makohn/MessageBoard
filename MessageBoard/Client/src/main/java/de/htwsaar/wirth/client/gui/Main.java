@@ -2,8 +2,6 @@ package de.htwsaar.wirth.client.gui;
 
 /**
  * Main entry point to the UI.
- * @author mkohn
- *
  */
 import javafx.application.Application;
 import javafx.application.Platform;

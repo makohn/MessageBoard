@@ -2,7 +2,9 @@ package de.htwsaar.wirth.client.util;
 
 import java.io.Serializable;
 
-
+/**
+ * {@code ExceptionUtil} is an enumeration of client-side exception messages.
+ */
 public enum ExceptionUtil implements Serializable {
 
 	USER_ALREADY_EXISTS("Messagebord","Der verwendete Benutzername existiert bereits."),
@@ -20,7 +22,11 @@ public enum ExceptionUtil implements Serializable {
 	UNKNOWN_ERROR_LOGIN("Login","Bitte versuchen Sie es erneut.");
 
 	private final String DEFAULT = "UPS! Es ist ein Fehler aufgetreten";
+	
+	/** The class in which the exception was thrown */
 	private String location;
+	
+	/** The text that should be displayed when the exception occurs*/
 	private String msg;
 
 	ExceptionUtil(String location, String msg) {
