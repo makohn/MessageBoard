@@ -95,7 +95,7 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * a {@code ThreadPool} that is used for callbacks to clients
 	 */
 	private ExecutorService threadPool;
-
+	
 	/**
 	 * Constructor of {@code MessageBoardImpl}. Exports this instance as
 	 * a {@code UnicastRemoteObject} and binds it to the specified port in order
@@ -136,12 +136,12 @@ public class MessageBoardImpl implements Notifiable, MessageBoard, ParentServer 
 	 * 				   instance's parent.
 	 * @throws RemoteException 
 	 */
-	public void setParent(ParentServer parent) throws RemoteException {
+	public void setParent(ParentServer parent, Server thisServer) throws RemoteException {
 		if (parentQueue != null) {
 			parentQueue.interrupt();
 		}
 		this.parent = parent;
-		this.parentQueue = new CommandRunner();
+		this.parentQueue = new CommandRunner(thisServer);
 		parentQueue.start();
 		
 		// müsste eigentlich nur beim ersten Start durchgeführt werden

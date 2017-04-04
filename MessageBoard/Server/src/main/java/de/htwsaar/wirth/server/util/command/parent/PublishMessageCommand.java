@@ -8,7 +8,6 @@ import de.htwsaar.wirth.remote.model.interfaces.Message;
 public class PublishMessageCommand extends ParentCommand {
 	
 	private Message messageToPublish;
-	private ParentServer parentToNotify;
 	
 	public PublishMessageCommand(ParentServer parentToNotify, Message messageToPublish) {
 		this.messageToPublish = messageToPublish;

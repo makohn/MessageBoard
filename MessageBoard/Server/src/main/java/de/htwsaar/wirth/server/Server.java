@@ -35,7 +35,7 @@ public class Server {
 	private String groupName;
 	private String parentHost;
 	private MessageBoardImpl messageBoard;
-
+	
 	private static final int REGISTRY_PORT = 1099;
 	private static final String HORIZONTAL_LINE = "**********************************************";
 
@@ -110,10 +110,11 @@ public class Server {
 	 * vice versa.
 	 * @throws RemoteException, NotBoundException
 	 */
-	public void bindToParent() throws RemoteException, NotBoundException {
+	public ParentServer bindToParent() throws RemoteException, NotBoundException {
 		Registry parentRegistry = LocateRegistry.getRegistry(parentHost);
 		ParentServer parent = (ParentServer) parentRegistry.lookup(parentGroupName);
 		parent.registerServer(messageBoard);
-		messageBoard.setParent(parent);
+		messageBoard.setParent(parent, this);
+		return parent;
 	}
 }
