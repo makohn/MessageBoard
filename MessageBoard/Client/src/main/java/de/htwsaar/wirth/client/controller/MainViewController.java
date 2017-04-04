@@ -77,19 +77,25 @@ public class MainViewController implements Initializable {
     @FXML
     private Button btnLogout;
 
-    //List of all displayed messages
+    /** a list of all displayed messages*/
     private ObservableList<Message> messages;
-    //Sorted list of all displayed messages
+    
+    /** a sorted list of all displayed messages*/
     private FilteredList<Message> filteredAndSortedList;
-    //List of all displayed groups
+    
+    /** a list of all displayed groups*/
     private ObservableList<String> groups;
-    //List of all displayed users
+    
+    /** a llist of all displayed users*/
     private ObservableList<Pair<String, Status>> users;
-    //A Filter for groups
+    
+    /** a filter for groups*/
     private Predicate<Message> groupFilter;
-    //The Client
+    
+    /** a client instance*/
     private ClientImpl client;
-    //A manager for all outgoing server requests
+    
+    /** a manager for all outgoing server requests*/
     private ExecutorService exec;
 
     @Override
@@ -159,7 +165,8 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a action event on the Search-Field and binds a Search-Filter to the search-field
+     * {@code initSearchField} attaches an action event to the searchfield and binds 
+     * a {@code Message} filter to the searchfield.
      */
     private void initSearchField() {
         txtSearch.setOnAction((actionEvent) -> {
@@ -182,7 +189,9 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a Returnkey-event on the Message-textfield to send the message to the server.
+     * {@code initSendMessageButton} attaches a {@code ReturnKey} event to the 
+     * {@code messageBox} textfield in order to send a message to the server, when
+     * the enter button is pressed.
      */
     private void initSendMessageButton() {
         /* Added to prevent the enter from adding a new line to inputMessageBox */
@@ -199,7 +208,8 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a action event on the Showall-Button to clear the filter.
+     * {@code initSendMessageButton} attaches an action event to the 
+     * {@code ShowAll} button to reset the filter.
      */
     private void initAllFilterButton() {
         btnAllFilter.setOnAction(e -> {
@@ -212,7 +222,8 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a action event on the Group-Buttons to filter the list of messages by a specified group.
+     * {@code initGroupFilter} attaches an action event to the {@code Group} 
+     * buttons to filter the list of messages by a specified group.
      */
     private void initGroupFilter() {
         groupList.setOnMouseClicked((mouseEvent) -> {
@@ -225,7 +236,8 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     *  Sets a action event on the Refresh-Button to force the serve to send all messages and user statuses
+     * {@code initRefreshButton} attaches an action event to the {@code Refresh} 
+     * button forcing the server to send all messages and user statuses.
      */
     private void initRefreshButton() {
         btnRefresh.setOnAction((actionEv) -> {
@@ -235,7 +247,8 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a action event on the {@code AddUser} Button which opens a dialog to create a new user.
+     * {@code initAddUserButton} attaches an action event to the {@code AddUser} 
+     * button which opens a dialog to create a new user.
      */
     private void initAddUserButton() {
         btnAddUser.setOnAction((actionEv) -> {
@@ -249,7 +262,8 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Sets a action event on the Logout-Button which logs out the user and delegate to the Login-Screen
+     * {@code initLogoutButton} Sets a action event to the {@code Logout} button 
+     * which logs out the user and delegates to the Login view
      */
     private void initLogoutButton() {
         btnLogout.setOnAction((actionEv) -> {
@@ -266,8 +280,10 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Forces the server to send all messages. All messages in the UI will be replaced by the incoming messages.
-     * @param shouldScrollToLast
+     * {@code refreshAllMessages} forces the server to send all messages. All messages 
+     * in the UI will be replaced by the incoming messages.
+     * @param shouldScrollToLast - a boolean value indicating whether to scroll
+     * 		  to the last message.
      */
     private void refreshAllMessages(boolean shouldScrollToLast) {
         Task<List<Message>> messageTask = client.getAllMessages();
@@ -287,7 +303,8 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Forces the server to send all user statuses. All user statuses in the UI will be replaced by the incoming statuses.
+     * {@code refreshAllUserStatus} forces the server to send all user statuses. 
+     * All user statuses in the UI will be replaced by the incoming statuses.
      */
     private void refreshAllUserStatus() {
         Task<Map<String, Status>> getUserStatusTask = client.getUserStatus();
