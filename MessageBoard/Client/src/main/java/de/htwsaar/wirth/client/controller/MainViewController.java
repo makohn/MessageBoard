@@ -86,7 +86,7 @@ public class MainViewController implements Initializable {
     /** a list of all displayed groups*/
     private ObservableList<String> groups;
     
-    /** a llist of all displayed users*/
+    /** a list of all displayed users*/
     private ObservableList<Pair<String, Status>> users;
     
     /** a filter for groups*/
