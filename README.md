@@ -47,7 +47,7 @@ java -jar client.jar
 - The bash scripts are located in the root directory of the project (**outer** MessageBoard directory)
 - Make sure, that you have all the rights to execute the scripts. Run
 ```
-chmod +x *sh
+chmod +x *.sh
 ```
 - To **build** the project, open a terminal and run
 ```
@@ -61,4 +61,4 @@ chmod +x *sh
 &nbsp;&nbsp;&nbsp;&nbsp; this will help you to create a server instance on your machine.
 
 ## NOTE
-To start **multiple client instances** on a OSX machine, you might have to copy the **client.jar**.
+To start **multiple client instances** on an OSX machine, you might have to copy the **client.jar**.
