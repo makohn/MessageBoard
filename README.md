@@ -14,7 +14,6 @@ master |
 ### Downloads
 - [Release 1.0.0](https://github.com/makohn/MessageBoard/wiki/Downloads)
 
-
 ### How to build
 - Install Java 8 [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
 - Install [maven](http://maven.apache.org/).
@@ -39,3 +38,24 @@ java -jar server.jar -g <groupname> -p <port> -ph <parent_ip_adr> -pg <parentgro
 ```
 java -jar client.jar
 ```
+### Using the shell scripts
+
+- If you are on a unixoid machine, you can also build and launch the application by using the bash scripts
+- The bash scripts are located in the root directory of the project (**outer** MessageBoard directory)
+- Make sure, that you have all the rights to execute the scripts. Run
+```
+chmod +x *sh
+```
+- To **build** the project, open a terminal and run
+```
+./build.sh
+```
+&nbsp;&nbsp;&nbsp;&nbsp; this will create a **MessageBoard/build/** folder containing the jars
+- To **launch** the **server.jar**, simply run
+```
+./server_launcher.sh
+```
+&nbsp;&nbsp;&nbsp;&nbsp; this will help you to create a server instance on your machine.
+
+## NOTE
+To start **multiple client instances** on a OSX machine, you might have to copy the **client.jar**.
